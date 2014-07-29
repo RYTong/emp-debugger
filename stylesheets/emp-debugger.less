@@ -5,4 +5,90 @@
 @import "ui-variables";
 
 .emp-debugger {
+  position: absolute;
+  top: 100px;
+  left: 50%;
+  width: 500px;
+  background: #fff;
+  color: @text-color;
+  // @base-background-color;
+  padding: 0;
+  margin-left: -250px;
+  z-index: 9999;
+  box-sizing: border-box;
+
+  .editor-container {
+    margin-bottom: @component-padding;
+
+    .editor.mini,
+    .editor.mini.is-focused {
+      // color: @text-color;
+      color: #333333;
+      background-color: #fff;
+      padding: 6px 12px;
+
+      .cursor {
+        border-color: #000;
+      }
+
+      .selection .region {
+        background-color: rgba(0, 0, 0, .2);
+      }
+
+      .placeholder-text {
+        color: #888;
+      }
+    }
+  }
+}
+
+.emp-btn-div {
+  margin: 10px 5px 10px 5px;
+}
+
+.emp-btn-ok {
+  // right:10px;
+  // margin：0 auto;
+  margin-left: 10px;
+}
+
+.emp-btn-cancel {
+  // right:60px;
+  // margin：0 auto;
+  margin-left: 60%;
+  margin-right: 0px;
+}
+
+.emp-conf-label {
+  color: #333333;
+  margin: 5px 5px 5px 0px;
+}
+
+.emp-label-conment {
+  color: @text-color;
+  margin: 5px 5px 5px 5px;
+}
+
+.emp-div-content {
+  margin: 5px 5px 5px 10px;
+}
+
+.emp-label-content {
+  color: @text-color-info;
+  margin: 5px 5px 5px 5px;
+}
+
+.emp-port-input {
+  margin: 5px 5px 5px 10px;
+}
+
+.overlay1 {
+  position: absolute;
+  left: 50%;
+  width: 500px;
+  margin-left: -250px;
+  z-index: 9999;
+  box-sizing: border-box;
+  background-color: #fff;
+  padding: 10px;
 }

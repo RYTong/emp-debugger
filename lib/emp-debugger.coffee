@@ -1,5 +1,6 @@
 EmpDebuggerInitView = require './view/emp-debugger-view'
 EmpDebuggerStateView = require './view/emp-state-view'
+EmpEnableView = require './view/emp-enable-view'
 # EmpDebuggerErrView = require './emp-debugger-err-view'
 ttt = require './ttt'
 {EditorView} = require 'atom'
@@ -12,6 +13,7 @@ module.exports =
   empDebuggerInitView: null
   empDebuggerStateView: null
   empDebuggerErrView: null
+  empEnableView: null
   emp_socket_server: null
 
   activate:(state) ->
@@ -20,12 +22,14 @@ module.exports =
     # ttt.test()
     atom.workspaceView.command "emp-debugger:convert", => @convert()
     atom.workspaceView.command "emp-debugger:init", => @init()
-    atom.workspaceView.command "emp-debugger:debug", => @debug()
+    atom.workspaceView.command "emp-debugger:live_preview", => @live_preview()
     atom.workspaceView.command "emp-debugger:close", => @close()
+    atom.workspaceView.command "emp-debugger:enable_view", => @enable_view()
     # @empDebuggerInitView = new empDebuggerInitView(state.empDebuggerInitViewState)
     @emp_socket_server = new EmpSocketServer()
     @empDebuggerInitView = new EmpDebuggerInitView(n_state.empDebuggerInitViewState, @emp_socket_server)
     @empDebuggerStateView = new EmpDebuggerStateView(n_state.empDebuggerStateViewState, @emp_socket_server)
+    @empEnableView = new EmpEnableView(n_state.empEnableViewState, @emp_socket_server)
     # @empDebuggerErrView = new EmpDebuggerErrView(n_state.empDebuggerErrViewState)
 
   convert: ->
@@ -63,6 +67,7 @@ module.exports =
   serialize: ->
     console.log '--- serialize'
     empDebuggerStateViewState: @empDebuggerStateView.serialize()
+    empEnableViewState: @empEnableView.serialize()
     empDebuggerInitViewState: @empDebuggerInitView.serialize()
 
 
@@ -70,7 +75,7 @@ module.exports =
     console.log '--- init'
     @emp_socket_server.init('localhost', 7003)
 
-  debug: ->
+  live_preview: ->
     editor = atom.workspace.activePaneItem
     if editor
       # console.log "editor:#{editor}"
@@ -81,6 +86,14 @@ module.exports =
       atom.confirm
         message:"Error"
         detailedMessage:"There's no editors~"
+
+  enable_view: ->
+    console.log "show enable view~"
+
+    if @emp_socket_server.get_server() isnt null
+      console.log @emp_socket_server.get_enable_view_list()
+
+
 
   close: ->
     @emp_socket_server.close()

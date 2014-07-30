@@ -11,4 +11,5 @@
   'ctrl-alt-o': 'emp-debugger:toggle'
   'ctrl-alt-p': 'emp-debugger:convert'
   'ctrl-alt-i': 'emp-debugger:init'
-  'ctrl-alt-d': 'emp-debugger:debug'
+  'ctrl-alt-d': 'emp-debugger:live_preview'
+  'ctrl-alt-s': 'emp-debugger:enable_view'

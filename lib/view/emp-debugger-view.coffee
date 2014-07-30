@@ -87,8 +87,8 @@ class EmpDebuggerView extends View
 
     console.log "port:#{@emp_server_port}"
     console.log "host:#{@emp_server_host}"
-    console.log @emp_sub_port
-    console.log @emp_sub_host
+    # console.log @emp_sub_port
+    # console.log @emp_sub_host
     new_server_host = @emp_sub_host.getText().trim()
     new_server_port = @emp_sub_port.getText().trim()
     console.log new_server_host

@@ -1,6 +1,7 @@
 net = require("net")
 emp_server = null
 emp_socket_map = {}
+emp_view_map = {}
 module.exports =
 class emp_socket
   server_state: false
@@ -29,9 +30,11 @@ class emp_socket
     isConnected = true
 
     remotePort = socket.remotePort
+    # console.log socket
     console.log "client #{remotePort} connect : #{socket.remoteAddress} #{remotePort}"
     socket.setEncoding 'utf8'
     emp_socket_map[remotePort] = socket
+    emp_view_map[remotePort] = new Array() unless emp_view_map[remotePort] is null
 
     buffers = ''
     #  设置监听--接受消息的方法
@@ -44,13 +47,19 @@ class emp_socket
         tailFlag = 1
       if String(data).indexOf("EditorMessageStart") == 0  # data以"EditorMessageStart"开头
         if (String(data).lastIndexOf(endStr) == String(data).length - String(endStr).length - tailFlag)
-          dealWithMessageFromTarget(data)
+          result = dealWithMessageFromTarget(data, remotePort)
+          # console.log "----------------------------------"
+          # console.log result
+          # emp_view_map[remotePort].push(result)
         else
           buffers += data
       else
         if (String(data).lastIndexOf(endStr) == String(data).length - String(endStr).length - tailFlag)
           buffers += data
-          dealWithMessageFromTarget(buffers)
+          result = dealWithMessageFromTarget(buffers, remotePort)
+          # console.log "----------------------------------"
+          # console.log result
+          # emp_view_map[remotePort].push(result)
           buffers = ''
         else
           buffers += data
@@ -122,18 +131,21 @@ class emp_socket
   get_socket_map: ->
     emp_socket_map
 
-dealWithMessageFromTarget = (data) ->
+  get_enable_view_list: ->
+    emp_view_map
+
+dealWithMessageFromTarget = (data, client_id) ->
   # console.log "line: #{data}"
   dataList = []
   dataList = data.split "EditorMessageEnd"
-  console.log "data: #{dataList}"
-  dealWithOneMessage(key + "EditorMessageEnd") for key in dataList
+  # console.log "data: #{dataList}"
+  dealWithOneMessage(key + "EditorMessageEnd", client_id) for key in dataList
 
   # (@dealWithOneMessage(content + "EditorMessageEnd") for content in dataList)
     # one = content + "EditorMessageEnd"
     # @dealWithOneMessage(one)
 
-dealWithOneMessage = (message) ->
+dealWithOneMessage = (message, client_id) ->
   # console.log "信息: #{message}"
   argsLog = message.split "#EditorLog#"
   if argsLog.length == 3
@@ -144,3 +156,5 @@ dealWithOneMessage = (message) ->
   # console.log "message: #{message}"
   argsContent = message.split "#EditorContent#"
   content = argsContent[1]
+  emp_view_map[client_id].push(content) unless content is undefined
+  # console.log content

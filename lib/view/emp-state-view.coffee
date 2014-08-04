@@ -5,7 +5,7 @@ class ServerStateView extends View
   emp_socket_server: null
 
   @content: ->
-    console.log 'constructor'
+    # console.log 'constructor'
     @div class: "emp-debugger bordered", =>
       @div outlet:'fa_div', class: "panel-heading", 'Service Config Dialog'
       @div class: "emp-div-content", =>
@@ -20,8 +20,8 @@ class ServerStateView extends View
         @button class: 'btn inline-block emp-btn-ok', click: 'process_stop', "Stop"
 
   initialize: (serializeState, @emp_socket_server) ->
-    console.log 'server state view initial'
-    atom.workspaceView.command "emp-debugger:convert", => @convert()
+    # console.log 'server state view initial'
+    atom.workspaceView.command "emp-debugger:debug-server", => @close()
 
 
   # Returns an object that can be retrieved when package is activated
@@ -31,29 +31,21 @@ class ServerStateView extends View
   destroy: ->
     @detach()
 
-  convert: ->
-    console.log "this is state"
-
+  close: ->
     if @emp_socket_server.get_server() isnt null
       if @hasParent()
         @detach()
       else
         atom.workspaceView.append(this)
-        console.log "state view~"
-        console.log @label_server_st
-        console.log @label_cl_no
-
+        # console.log "state view~"
         @label_server_st["context"].innerHTML="On"
-        # @label_server_st.setDocument("test")
-        @label_cl_no["context"].innerHTML=@emp_socket_server.get_socket_length()
-
+        @label_cl_no["context"].innerHTML=@emp_socket_server.get_client_map().get_active_len()
 
   process_cancel: (event, element) ->
-    # console.log element
-    console.log "Cancel State Preparing #{element.name} for launch!"
+    # console.log "Cancel State Preparing #{element.name} for launch!"
     @detach()
 
   process_stop: (event, element) ->
-    console.log element
+    # console.log element
     @emp_socket_server.close()
     @detach()

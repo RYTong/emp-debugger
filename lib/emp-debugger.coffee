@@ -2,9 +2,7 @@ EmpDebuggerInitView = require './view/emp-debugger-view'
 EmpDebuggerStateView = require './view/emp-state-view'
 EmpEnableView = require './view/emp-enable-view'
 # EmpDebuggerErrView = require './emp-debugger-err-view'
-ttt = require './ttt'
 {EditorView} = require 'atom'
-ds = require './debugger/debug_socket'
 EmpSocketServer = require './debugger/emp_socket'
 n_state = null
 
@@ -18,13 +16,12 @@ module.exports =
 
   activate:(state) ->
     n_state = state
-    console.log "active"
-    # ttt.test()
-    atom.workspaceView.command "emp-debugger:convert", => @convert()
-    atom.workspaceView.command "emp-debugger:init", => @init()
-    atom.workspaceView.command "emp-debugger:live_preview", => @live_preview()
-    atom.workspaceView.command "emp-debugger:close", => @close()
-    atom.workspaceView.command "emp-debugger:enable_view", => @enable_view()
+    # console.log "active"
+    # atom.workspaceView.command "emp-debugger:convert", => @convert()
+    # atom.workspaceView.command "emp-debugger:debug server", => @init()
+    atom.workspaceView.command "emp-debugger:live-preview", => @live_preview()
+    atom.workspaceView.command "emp-debugger:close-server", => @close()
+    # atom.workspaceView.command "emp-debugger:enable_view", => @enable_view()
     # @empDebuggerInitView = new empDebuggerInitView(state.empDebuggerInitViewState)
     @emp_socket_server = new EmpSocketServer()
     @empDebuggerInitView = new EmpDebuggerInitView(n_state.empDebuggerInitViewState, @emp_socket_server)
@@ -32,8 +29,7 @@ module.exports =
     @empEnableView = new EmpEnableView(n_state.empEnableViewState, @emp_socket_server)
     # @empDebuggerErrView = new EmpDebuggerErrView(n_state.empDebuggerErrViewState)
 
-  convert: ->
-    console.log "conver"
+  # convert: ->
     # @empDebuggerInitView.start_listen(@empDebuggerInitView)
     # @empDebuggerInitView = new empDebuggerInitView(n_state.empDebuggerInitViewState)
     # o = new Object("tetst");
@@ -60,43 +56,34 @@ module.exports =
 
 
   deactivate: ->
-    console.log '--- deactivate'
     @empDebuggerInitView.destroy()
     @empDebuggerStateView.destroy()
 
   serialize: ->
-    console.log '--- serialize'
     empDebuggerStateViewState: @empDebuggerStateView.serialize()
     empEnableViewState: @empEnableView.serialize()
     empDebuggerInitViewState: @empDebuggerInitView.serialize()
 
 
-  init: ->
-    console.log '--- init'
-    @emp_socket_server.init('localhost', 7003)
+  # init: ->
+    # console.log 'init emp server'
+    # @emp_socket_server.init('localhost', 7003)
 
   live_preview: ->
+    # console.log 'live preview'
     editor = atom.workspace.activePaneItem
     if editor
-      # console.log "editor:#{editor}"
       debug_text = editor.getText()
-      # console.log "debug_text: #{debug_text}"
       @emp_socket_server.debug(debug_text)
     else
       atom.confirm
         message:"Error"
         detailedMessage:"There's no editors~"
 
-  enable_view: ->
-    console.log "show enable view~"
-
-    if @emp_socket_server.get_server() isnt null
-      console.log @emp_socket_server.get_enable_view_list()
-
-
+  # enable_view: ->
+    # console.log "show enable view~"
+    # if @emp_socket_server.get_server() isnt null
+    #   console.log @emp_socket_server.get_enable_view_list()
 
   close: ->
     @emp_socket_server.close()
-
-
-      # @empDebuggerErrView = new EmpDebuggerErrView(n_state.empDebuggerErrViewState)

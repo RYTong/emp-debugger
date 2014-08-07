@@ -1,7 +1,6 @@
 {$, $$, View} = require 'atom'
 event = (require 'events').EventEmitter
 EmpEditView = require './emp-edit-view'
-ds = require '../debugger/debug_socket'
 
 module.exports =
 class EmpDebuggerView extends View
@@ -11,15 +10,15 @@ class EmpDebuggerView extends View
 
   @content: ->
     # console.log "constructor"
-    @div class: "emp-debugger bordered", =>
+    @div class: "emp-debugger overlay bordered", =>
       @div outlet:'fa_div', class: "panel-heading", 'Service Config Dialog'
       @div class: "panel-body padded", =>
-        @label class: "emp-conf-label", "IP  :"
-        @label class: "emp-label-conment", "如果您使用的是模拟器，建议使用localhost，如果使用真机等，请使用ip"
+        @label class: "emp-conf-label", "Host "
+        @label class: "emp-label-conment", "如果使用的是模拟器，建议使用localhost，如果使用真机等，请使用ip"
         @div class: 'controls', =>
           @div class: 'editor-container', =>
             @subview "emp_sub_host", new EmpEditView(attributes: {id: 'emp_host', type: 'string'},  placeholderText: 'Editor Server 监听的地址') #from editor view class
-        @label class: "emp-conf-label", "Port:"
+        @label class: "emp-conf-label", "Port "
         @div class: 'controls', =>
           @div class: 'editor-container', =>
             @subview "emp_sub_port".replace(/\./g, ''), new EmpEditView(attributes: {id: 'emp_port', type: 'number'}, placeholderText: '同Client交互的端口')
@@ -30,6 +29,7 @@ class EmpDebuggerView extends View
 
   initialize: (serializeState, @emp_socket_server) ->
     # console.log "server init view initial"
+
     atom.workspaceView.command "emp-debugger:debug-server", => @init()
 
   # Returns an object that can be retrieved when package is activated
@@ -41,22 +41,17 @@ class EmpDebuggerView extends View
 
   init: ->
     # console.log "EmpDebuggerView was toggled!"
-    if @emp_socket_server.get_server() is null
+    # if @emp_socket_server.get_server() is null
+    if !@emp_socket_server.get_server_sate()
       if @hasParent()
         @detach()
       else
         atom.workspaceView.append(this) # unless @emp_socket_server.server isnt null
-
-
-  button_listener: (arg1, arg2, f_view) ->
-    ->
-      console.log $(this).text()
-      if $(this).text() is 'Cancel'
-        console.log "cancel~"
-        f_view.detach()
-      else
-        console.log this
-        console.log 'ok'
+        @emp_sub_host.focus()
+        @emp_sub_host.on 'enter', =>
+          console.log 'enter input~'
+        @on 'enter', =>
+          console.log 'enter input~2'
 
   process_cancel: (event, element) ->
     # console.log element
@@ -91,9 +86,6 @@ class EmpDebuggerView extends View
     console.log "local server start with option parameters: host: #{@emp_server_host}, port: #{@emp_server_port}"
     @emp_socket_server.init(@emp_server_host, @emp_server_port) unless @emp_socket_server.get_server() isnt null
     @detach()
-
-  process_stop: ->
-    ds.close()
 
   # start_listen: (f_view)->
   #   console.log "start listen"

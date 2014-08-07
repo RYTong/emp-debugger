@@ -1,6 +1,7 @@
 EmpDebuggerInitView = require './view/emp-debugger-view'
 EmpDebuggerStateView = require './view/emp-state-view'
 EmpEnableView = require './view/emp-enable-view'
+EmpDebuggerLogView = require './view/emp-log-view.coffee'
 # EmpDebuggerErrView = require './emp-debugger-err-view'
 {EditorView} = require 'atom'
 EmpSocketServer = require './debugger/emp_socket'
@@ -12,6 +13,7 @@ module.exports =
   empDebuggerStateView: null
   empDebuggerErrView: null
   empEnableView: null
+  empDebuggerLogView: null
   emp_socket_server: null
 
   activate:(state) ->
@@ -20,13 +22,15 @@ module.exports =
     # atom.workspaceView.command "emp-debugger:convert", => @convert()
     # atom.workspaceView.command "emp-debugger:debug server", => @init()
     atom.workspaceView.command "emp-debugger:live-preview", => @live_preview()
-    atom.workspaceView.command "emp-debugger:close-server", => @close()
+    # atom.workspaceView.command "emp-debugger:close-server", => @close()
     # atom.workspaceView.command "emp-debugger:enable_view", => @enable_view()
     # @empDebuggerInitView = new empDebuggerInitView(state.empDebuggerInitViewState)
-    @emp_socket_server = new EmpSocketServer()
+    @empDebuggerLogView = new EmpDebuggerLogView(n_state.empDebuggerLogViewState, @empDebuggerLogView)
+    @emp_socket_server = new EmpSocketServer(@empDebuggerLogView)
     @empDebuggerInitView = new EmpDebuggerInitView(n_state.empDebuggerInitViewState, @emp_socket_server)
-    @empDebuggerStateView = new EmpDebuggerStateView(n_state.empDebuggerStateViewState, @emp_socket_server)
+    @empDebuggerStateView = new EmpDebuggerStateView(n_state.empDebuggerStateViewState, @emp_socket_server, @empDebuggerLogView)
     @empEnableView = new EmpEnableView(n_state.empEnableViewState, @emp_socket_server)
+
     # @empDebuggerErrView = new EmpDebuggerErrView(n_state.empDebuggerErrViewState)
 
   # convert: ->
@@ -60,10 +64,11 @@ module.exports =
     @empDebuggerStateView.destroy()
 
   serialize: ->
+    console.log 'debugger serialize'
     empDebuggerStateViewState: @empDebuggerStateView.serialize()
     empEnableViewState: @empEnableView.serialize()
     empDebuggerInitViewState: @empDebuggerInitView.serialize()
-
+    empDebuggerLogViewState: @empDebuggerLogView.serialize()
 
   # init: ->
     # console.log 'init emp server'

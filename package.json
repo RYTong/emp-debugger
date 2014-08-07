@@ -7,7 +7,8 @@
                       "emp-debugger:debug-server",
                       "emp-debugger:live-preview",
                       "emp-debugger:enable-view",
-                      "emp-debugger:close"],
+                      "emp-debugger:close-server",
+                      "emp-debugger:view-log"],
   "repository": "https://github.com/atom/emp-debugger",
   "license": "MIT",
   "engines": {

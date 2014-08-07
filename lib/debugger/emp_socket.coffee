@@ -2,17 +2,23 @@ net = require("net")
 emp_clients_map = require './emp_clients'
 emp_client = require './emp_client'
 emp_server = null
+emp_server_error = null
 # emp_socket_map = {}
 # emp_view_map = {}
 emp_client_map = null
+log_storage = null
+emp_server_state = false
+
 module.exports =
 class emp_socket
-  server_state: false
+
   timeout = 14400000
 
-  constructor: ->
+
+  constructor: (tmp_log_storage)->
     # console.log "init socket~"
     emp_client_map = new emp_clients_map()
+    log_storage = tmp_log_storage
 
   init_call: (socket) ->
     isConnected = true
@@ -57,16 +63,30 @@ class emp_socket
 
   init: (ip, socket_port) ->
     # console.log "socket server initial"
+    emp_server_error = null
     emp_server = net.createServer @init_call
-    .listen(socket_port, ip) #// 开始监听
-
-    emp_server.on 'listening', ->
-      console.log '\nSocket Server start as:' + emp_server.address().address + ":" +emp_server.address().port
 
     # // socket错误状态
     emp_server.on 'error', (exception) ->
-      # emp_socket_map = {}
+      # console.log exception
+      if exception.code is 'EADDRINUSE'
+        console.log('Address in use, retrying...');
+        emp_server_state = false
+        emp_server = null
+        emp_server_error = 'EADDRINUSE'
+        atom.confirm
+          message:"Error"
+          detailedMessage:"Address or Port in use, retrying..."
+
       emp_client_map.remove_all_client_socket()
+
+    emp_server.listen(socket_port, ip) #// 开始监听
+    emp_server.on 'listening', ->
+      emp_server_state = true
+      console.log '\nSocket Server start as:' + emp_server.address().address + ":" +emp_server.address().port
+
+    # # // socket错误状态
+
 
 
   debug: (con) ->
@@ -88,14 +108,27 @@ class emp_socket
         detailedMessage:"There's no socket server~"
 
   close: () ->
-    # console.log "close socket server"
-    emp_client_map.get_all_socket()
-    emp_client_map.close_all_socket()
-    # emp_socket_map = {}
-    emp_server.close()
-    emp_server_state = false
-    emp_server = null
-    console.log "close socket sever over"
+    console.log "close socket server"
+    # console.log emp_server
+    try
+      if emp_server
+        emp_client_map.get_all_socket()
+        emp_client_map.close_all_socket()
+        # emp_socket_map = {}
+        emp_server.close()
+        emp_server_state = false
+        emp_server = null
+        emp_server_error = null
+        console.log "close socket sever over"
+      else
+        atom.confirm
+          message:"Error"
+          detailedMessage:"There's no socket server~"
+    catch exc
+      # console.log exc
+      emp_server_state = false
+      emp_server = null
+      emp_server_error = null
 
 
   get_server: ->
@@ -107,6 +140,17 @@ class emp_socket
   get_enable_view_list: ->
     emp_view_map
 
+  get_server_error: ->
+    emp_server_error
+
+  get_server_sate: ->
+    emp_server_state
+
+  reset_server: ->
+    emp_server_state = false
+    emp_server = null
+    emp_server_error = null
+
 dealWithMessageFromTarget = (data, client_id) ->
   # console.log "line: #{data}"
   dataList = []
@@ -116,10 +160,17 @@ dealWithMessageFromTarget = (data, client_id) ->
 dealWithOneMessage = (message, client_id) ->
   # console.log "信息: #{message}"
   argsLog = message.split "#EditorLog#"
+  # console.log "message~~: #{message}"
+
   if argsLog.length == 3
+    # console.log "log~~: #{argsLog}"
     logInfo = argsLog[1]
+    console.log "log: #{logInfo}"
+    log_storage.store_log(client_id, logInfo)
+    logInfo
     return
 
+  # console.log "after log"
   argsContent = message.split "#EditorContent#"
   content = argsContent[1]
   emp_client_map.put_spec_view(client_id, content) unless content is undefined

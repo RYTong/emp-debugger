@@ -14,3 +14,4 @@
   'ctrl-alt-d': 'emp-debugger:live-preview'
   'ctrl-alt-e': 'emp-debugger:enable-view'
   'ctrl-alt-c': 'emp-debugger:close-server'
+  'ctrl-alt-l': 'emp-debugger:view-log'

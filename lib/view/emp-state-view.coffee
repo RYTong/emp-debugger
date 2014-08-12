@@ -84,5 +84,5 @@ class ServerStateView extends View
     @detach()
 
   process_log_close: (event, element) ->
-    @emp_log_view.close_view()
+    @emp_log_view.close_log_view()
     @detach()

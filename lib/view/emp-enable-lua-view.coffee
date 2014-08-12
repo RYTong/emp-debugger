@@ -1,7 +1,7 @@
 {$, $$, View, SelectListView, EditorView} = require 'atom'
 
 module.exports =
-class EnableView extends SelectListView
+class EnableLuaView extends SelectListView
   emp_socket_server: null
 
   initialize: (serializeState, @emp_socket_server) ->
@@ -9,7 +9,7 @@ class EnableView extends SelectListView
     super
     @addClass('overlay from-top')
     @setMaxItems(20)
-    atom.workspaceView.command "emp-debugger:enable-view", => @enable_view()
+    atom.workspaceView.command "emp-debugger:enable-lua", => @enable_lua()
 
 
   # Returns an object that can be retrieved when package is activated
@@ -20,28 +20,32 @@ class EnableView extends SelectListView
     @cancel()
     @remove()
 
-  enable_view: ->
-    # console.log "enable_view"
+  enable_lua: ->
+    console.log "enable_view"
     if @hasParent()
       @cancel()
     else
-      @setItems(@get_view_items())
+      @setItems(@get_script_items())
       @storeFocusedElement()
       atom.workspaceView.append(this)
       @focusFilterEditor()
 
-  get_view_items: ->
+  get_script_items: ->
     # console.log @emp_socket_server.get_client_map()
     # console.log @emp_socket_server.get_client_map().get_all_views()
-    tmp_map = @emp_socket_server.get_client_map().get_all_views()
+    tmp_map = @emp_socket_server.get_client_map().get_all_script()
     re_map = new Array()
     index = 0
     len = tmp_map.length
-    loop
-      break if len is 0
-      len -= 1
-      re_map[index] = tmp_map[len]
-      index += 1
+    # console.log tmp_map
+    for name,scr_obj of tmp_map
+      # console.log name
+      re_map.push(scr_obj)
+    # loop
+    #   break if len is 0
+    #   len -= 1
+    #   re_map[index] = tmp_map[len]
+    #   index += 1
     re_map
 
   # Public: Get the property name to use when filtering items.
@@ -56,8 +60,8 @@ class EnableView extends SelectListView
   #
   # Returns the property name to fuzzy filter by.
   getFilterKey: ->
-    console.log "get key"
-    'index'
+    # console.log "get key"
+    'script_index'
 
   # Public: Create a view for the given model item.
   #
@@ -76,7 +80,7 @@ class EnableView extends SelectListView
 
     "<li class=\"two-lines\">
          <div class=\"status icon #{icon_class}\"></div>
-         <div class=\"primary-line icon icon-file-text\">#{item.index}</div>
+         <div class=\"primary-line icon icon-file-text\">#{item.script_index}</div>
          <div class=\"secondary-line no-icon\">From client: ##{item.fa_address}:#{item.fa_from}</div>"
 
   # Public: Callback function for when an item is selected.
@@ -90,7 +94,7 @@ class EnableView extends SelectListView
   confirmed: (item) ->
     # console.log("#{item.index} was selected")
     # console.log item.readed
-    item.set_view_readed()
+    item.set_readed()
     @cancel()
     @initial_new_pane(item)
 
@@ -110,11 +114,11 @@ class EnableView extends SelectListView
   # initial a new editor pane
   initial_new_pane: (item)->
     tmp_editor = atom.workspace.openSync()
-    tmp_editor["emp_live_view"] = item
-    tmp_editor["emp_live_script_name"] = null
-    tmp_editor["emp_live_script"] = null
+    tmp_editor["emp_live_view"] = item.fa_view.view
+    tmp_editor["emp_live_script_name"] = item.script_name
+    tmp_editor["emp_live_script"] = item
     # console.log tmp_editor
-    tmp_editor.setText(item.view)
+    tmp_editor.setText(item.script_con)
     gramers = @getGrammars()
     tmp_editor.setGrammar(gramers[0]) unless gramers[0] is undefined
 
@@ -122,14 +126,10 @@ class EnableView extends SelectListView
   getGrammars: ->
     grammars = atom.syntax.getGrammars().filter (grammar) ->
       (grammar isnt atom.syntax.nullGrammar) and
-      grammar.name is 'HTML'
+      grammar.name is 'Lua'
 
-    # grammars.sort (grammarA, grammarB) ->
-    #   if grammarA.scopeName is 'text.plain'
-    #     -1
-    #   else if grammarB.scopeName is 'text.plain'
-    #     1
-    #   else
-    #     grammarA.name?.localeCompare?(grammarB.name) ? grammarA.scopeName?.localeCompare?(grammarB.name) ? 1
-
+    if !grammars
+      grammars = atom.syntax.getGrammars().filter (grammar) ->
+        (grammar isnt atom.syntax.nullGrammar) and
+        grammar.name is 'HTML'
     grammars

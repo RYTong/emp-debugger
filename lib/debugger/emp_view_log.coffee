@@ -20,5 +20,7 @@ class emp_view_log
   get_color: ->
     @color
 
+  set_color: (@color)->
+
   get_id: ->
     @id

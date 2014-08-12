@@ -5,12 +5,14 @@ emp_log = require '../debugger/emp_view_log'
 
 module.exports =
 class EmpDebuggerLogView extends View
+  emp_conf_view: null
   line_height: null
   line_number: null
   default_ln: null
   # state: true      #
   first_show: true #是否为第一次显示
   show_state: false # 当前 log pane 是否为显示状态
+  stop_state: false
 
   color_arr: ["#000033", "#000066", "#000099", "#0000CC", "#0000FF",
               "#003300", "#003333", "#003366", "#003399", "#0033CC", "#0033FF",
@@ -57,30 +59,20 @@ class EmpDebuggerLogView extends View
         @span 'Log From The Script Of Views: '
         # @span outlet: 'keystroke', 'Press any key'
       @div outlet:"emp_log_panel", class:'emp-log-panel', =>
-        @div outlet:"emp_log_view", class:'emp-log-view', =>
+        @div outlet:"emp_log_view", id:'ewp_log_view', class:'emp-log-view', =>
           # @div class:'emp-log-view-scr', =>
         # @subview 'gutter', new GutterView
           # @div outlet: 'index_pane', class: 'emp_gutter', =>
           @div outlet: 'emp_lineNumber', class: 'line-numbers'
           # @div outlet: 'log_pane', class: 'emp_body', =>
-          @div outlet: 'log_detail', class: 'emp-log-row'
+          @div outlet: 'log_detail', id:'emp_log_row', class: 'emp-log-row'
             # @div outlet: 'emp_scrollbar', class: 'emp_scrollbar', =>
             #   @div
 
   initialize: ({attached})->
-    # console.log attached
-    # console.log attached
-    # @attach() unless attached
     @line_number = 1
     # @log_map["test"] = new emp_log("test", @get_color())
-    # @log_map["test"].put_log("11sdasjnzhxch1j2hb3uy9ubjhhbjhwbhrbl1kjb32411sdasjnzhxch1j2hb3uy9ubjhhbjhwbhrbl1kjb32411sdasjnzhxch1j2hb3uy9ubjhhbjhwbhrbl1kjb32411sdasjnzhxch1j2hb3uy9ubjhhbjhwbhrbl1kjb32411sdasjnzhxch1j2hb3uy9ubjhhbjhwbhrbl1kjb324")
-    # @log_map["test"].put_log("this is a test content~.this is a test content~.this is a test content~.this is a test content~.this is a test content~.this is a test content~.this is a test content~.this is a test content~.")
-    # @log_map["test"].put_log("------\nasdasd\n\n test functione")
     # @log_map["test"].put_log("\nasdasd `    asda;")
-    # @log_map["test"].put_log("------\nasdasd\n\n test functione")
-    # @log_map["test"].put_log("------\nasdasd\n\n test functione")
-    # @log_map["test"].put_log("------\nasdasd\n\n test functione")
-    # @log_map["test"].put_log("------\nasdasd\n\n test functione")
     # @log_map["test"].put_log("------\nasdasd\n\n test functione")
     # @log_map["test"].put_log("------\nasdasd\n\n test functione")
     # @log_map["test"].put_log("------\nasdasd\n\n test functione")
@@ -93,18 +85,22 @@ class EmpDebuggerLogView extends View
   destroy: ->
     @detach()
 
+  set_conf_view: (@emp_conf_view)->
+
   toggle: ->
-    console.log @first_show
+    # console.log @first_show
     if @first_show
       @first_show = false
       if @hasParent()
         @detach()
         @show_state = false
+        @stop_state = false
       else
         @attach()
+        @stop_state = false
         @show_state = true
     else
-      console.log @show_state
+      # console.log @show_state
       if @show_state
         this.hide()
         @show_state = false
@@ -116,10 +112,6 @@ class EmpDebuggerLogView extends View
   attach: ->
     atom.workspaceView.prependToBottom(this)
     @initial_height()
-    console.log "attach over"
-    # @update()
-
-    # @update_gutter()
     @update()
     @update_ln()
 
@@ -144,25 +136,20 @@ class EmpDebuggerLogView extends View
     tmp_log_map = @log_map
 
     for name, view_logs of tmp_log_map
-      console.log name
       @log_detail.append $$ ->
         tmp_color = view_logs.get_color()
         # @div class: "emp-log-line", =>
         @pre class: "emp-log-con", style:"color:#{tmp_color}; padding:0px;", "########################## CLIENT:#{view_logs.get_id()} ##########################"
         for tmp_log in view_logs.get_log()
           for log in tmp_log.split("\n")
-            console.log "|#{log}| ,#{tmp_color}"
-
+            # console.log "|#{log}| ,#{tmp_color}"
             if log isnt "" and log isnt " "
               @pre class: "emp-log-con",style:"color:#{tmp_color};padding:0px;", "#{log}"
 
-
-              # @div class: "emp-log-line", =>
-              #   @span class: "emp-log-con", style:"color:#{tmp_color};", "#{log}"
     # console.log @log_detail.context.scrollHeight
     # console.log
-    # console.log @log_detail
-    @log_detail.stop().animate({scrollTop:@log_detail.context.scrollHeight}, 1000)
+    $('#ewp_log_view').stop().animate({scrollTop:@log_detail.context.scrollHeight}, 1000)
+
     # $("#log_content").stop().animate({
     #   scrollTop: document.getElementById("log_content").scrollHeight
     # }, 1000);
@@ -171,7 +158,7 @@ class EmpDebuggerLogView extends View
     @do_show_live_log(client_id, log, show_color) unless @first_show
 
   do_show_live_log: (client_id, log, show_color)->
-    console.log "do_show_live_log"
+    # console.log "do_show_live_log"
     start_color_ln = @get_line_number_count()
     @update_log(client_id, log, show_color)
     @update_gutter(show_color, start_color_ln, client_id)
@@ -182,8 +169,8 @@ class EmpDebuggerLogView extends View
     # console.log @get_line_number_count()
     end_ln = @get_line_number_count()
     start_ln = @line_number+1
-    console.log "update_gutter: s: #{start_ln} ,e: #{end_ln}"
-    console.log "ln: #{@line_number}, s: #{start_color_ln}"
+    # console.log "update_gutter: s: #{start_ln} ,e: #{end_ln}"
+    # console.log "ln: #{@line_number}, s: #{start_color_ln}"
     @do_update_gutter_css(start_color_ln, show_color) unless @line_number < start_color_ln
     @do_update_gutter(start_ln, end_ln, show_color, client_id) unless start_ln > end_ln
 
@@ -199,8 +186,8 @@ class EmpDebuggerLogView extends View
     @emp_lineNumber.append(html)
 
   do_update_gutter_css: (start_color_ln, show_color) ->
-    console.log "do_update_gutter_css"
-    console.log @emp_lineNumber
+    # console.log "do_update_gutter_css"
+    # console.log @emp_lineNumber
     chile_nodes = @emp_lineNumber.context.children
     for row in [start_color_ln..@line_number]
       chile_nodes[row].style.backgroundColor=show_color
@@ -216,18 +203,29 @@ class EmpDebuggerLogView extends View
           @pre id:"log_#{client_id}",class: "emp-log-con",style:"color:#{show_color};padding:0px;", "#{log}"
           # @div class: "emp-log-line", =>
           #   @span class: "emp-log-con", style:"color:#{show_color};", "#{log}"
-    @log_detail.stop().animate({scrollTop:@log_detail.context.scrollHeight}, 1000)
-
+    # @log_detail.stop().animate({scrollTop:@log_detail.context.scrollHeight}, 1000)
+    $('#ewp_log_view').stop().animate({scrollTop:@log_detail.context.scrollHeight}, 1000)
 
 
   store_log: (client_id, log) ->
     if !@log_map[client_id]
-      @log_map[client_id] = new emp_log(client_id, @get_color())
-    @log_map[client_id].put_log(log)
-    @show_live_log(client_id, log, @log_map[client_id].get_color())
-    # console.log "log"
+      tmp_color = @get_color()
+      @log_map[client_id] = new emp_log(client_id, tmp_color)
+      @refresh_conf_view(client_id, tmp_color)
+    if !@stop_state and !@first_show and @show_state
+      @log_map[client_id].put_log(log)
+      # console.log "print"
+      @show_live_log(client_id, log, @log_map[client_id].get_color())
+    # else
+      # console.log "store_log"
 
+  refresh_conf_view: (client_id, color)->
+    # unless !emp_conf_view
+    @emp_conf_view.refresh_log_view(client_id, color) unless !@emp_conf_view
 
+  remove_client_log: (client_id)->
+    delete @log_map[client_id]
+    # @emp_conf_view.remove_log_view(client_id) unless !@emp_conf_view
 
   get_line_number_count: ->
     pane_height = @get_int(@log_detail.css('height'))
@@ -248,7 +246,7 @@ class EmpDebuggerLogView extends View
 
   get_default_ln: ->
     tmp_height = @emp_log_panel.css('height')
-    console.log tmp_height
+    # console.log tmp_height
     if tmp_height isnt undefined
       @default_ln = Math.floor(@get_int(tmp_height) / @line_height)
     else
@@ -271,32 +269,81 @@ class EmpDebuggerLogView extends View
         this.show()
         @show_state = true
 
-  clear_log: ->
-    console.log 'clear_log'
+
+  clear_store_log: ->
+    for name, view_logs of  @log_map
+      # console.log name
+      view_logs.reset_log()
+
+  #-------------------------------------------------------------------------
+  get_log_store: ->
+    @log_map
+
+  # -------------------------------------------------------------------------
+  # call by config vieww
+  # show log pane
+  show_log: ->
+    console.log "show_log"
+    if @first_show
+      @first_show = false
+      @attach()
+      @show_state = true
+    else
+      console.log @show_state
+      this.show()
+      @show_state = true
+
+  hide_log_view: ->
     if @hasParent()
-      # console.log 'clear_log111'
-      # console.log @log_detail
+      if @show_state
+        this.hide()
+        @show_state = false
+
+  show_log_state: ->
+    @show_state
+
+  # -------------------------------------------------------------------------
+  # clear log content in the log pane
+  clear_log: ->
+    # console.log 'clear_log'
+    if @hasParent()
       @log_detail.context.innerHTML = ''
       @update_ln()
-      # if @show_state
-      #
-      # else
-    # else
 
     @clear_store_log()
 
-  close_view: ->
-    console.log "close1"
+  # -------------------------------------------------------------------------
+  # pause the log poutput
+  stop_log: ->
+    # console.log "stop_log"
+    @stop_state = true
+
+  continue_log: ->
+    @stop_state = false
+
+  get_pause_state: ->
+    @stop_state
+
+  # -------------------------------------------------------------------------
+  #close and clear the log pane
+  close_log_view: ->
+    # console.log "close1"
     if @hasParent()
-      console.log "close12"
       @log_detail.context.innerHTML = ''
       @detach()
       @show_state = false
       @first_show = true
+      @stop_state = false
     @clear_store_log()
 
-
-  clear_store_log: ->
-    for name, view_logs of  @log_map
-      console.log name
-      view_logs.reset_log()
+  get_log_pane_state: ->
+    if @first_show
+      "Close"
+    else
+      if @show_state
+        if @stop_state
+          "Pause"
+        else
+          "Show"
+      else
+        "Hide"

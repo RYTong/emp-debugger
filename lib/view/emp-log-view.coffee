@@ -69,7 +69,7 @@ class EmpDebuggerLogView extends View
             # @div outlet: 'emp_scrollbar', class: 'emp_scrollbar', =>
             #   @div
 
-  initialize: ({attached})->
+  initialize: ()->
     @line_number = 1
     # @log_map["test"] = new emp_log("test", @get_color())
     # @log_map["test"].put_log("\nasdasd `    asda;")
@@ -283,13 +283,13 @@ class EmpDebuggerLogView extends View
   # call by config vieww
   # show log pane
   show_log: ->
-    console.log "show_log"
+    # console.log "show_log"
     if @first_show
       @first_show = false
       @attach()
       @show_state = true
     else
-      console.log @show_state
+      # console.log @show_state
       this.show()
       @show_state = true
 

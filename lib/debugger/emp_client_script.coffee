@@ -12,7 +12,7 @@ class emp_client_script
 
   constructor: (@script_name, @script_con, @local_index, @fa_from, @fa_address, @view_obj)->
     @script_index = "#{@fa_from}:#{@script_name}"
-    console.log "init script obj :#{@script_index}"
+    # console.log "init script obj :#{@script_index}"
 
   set_readed: ->
     @readed = true

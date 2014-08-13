@@ -10,10 +10,10 @@
 '.workspace':
   # 'ctrl-alt-o': 'emp-debugger:toggle'
   # 'ctrl-alt-p': 'emp-debugger:convert'
-  'ctrl-alt-i': 'emp-debugger:debug-server'
+  # 'ctrl-alt-i': 'emp-debugger:debug-server'
   'ctrl-alt-d': 'emp-debugger:live-preview'
   'ctrl-alt-e': 'emp-debugger:enable-view'
-  'ctrl-alt-c': 'emp-debugger:close-server'
+  # 'ctrl-alt-c': 'emp-debugger:close-server'
   'ctrl-alt-l': 'emp-debugger:view-log'
   'ctrl-alt-s': 'emp-debugger:setting-view'
   'ctrl-alt-p': 'emp-debugger:enable-lua'

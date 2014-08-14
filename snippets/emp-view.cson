@@ -1,0 +1,64 @@
+'.text.html':
+  # content
+  'EMP Content':
+    'prefix': 'xml'
+    'body' : '<?xml version="1.0" encoding="UTF-8" ?>\n<content>\n\t<head>
+\n\t\t<style>\n\t\t\t.body{background-color:#ffffff;}\n\t\t</style>
+\n\t\t<script type="text/x-lua" src="RYTL.lua"></script>
+\n\t\t<script type="text/x-lua">\n\t\t\t<![CDATA[
+\n\t\t\t\tryt = RYTL:new{};\n\t\t\t]]>\n\t\t</script>
+\n\t</head>\n\t<body>\n\t</body></content>'
+
+  'EMP Details Content':
+    'prefix': 'xmld'
+    'body': '<?xml version="1.0" encoding="UTF-8" ?>\n<content>\n\t<head>\n\t\t<style>
+\n\t\t\t.title_div{left:0px;top:0px;width:320px;height:51px;background-image:url(title_bg.png);}
+\n\t\t\t.label_title{left:123px;top:11px;font-size:19px;font-weight:bold;color:#FFFFFF;}
+\n\t\t\t.button_main{left:260px;top:6px;width:54px;height:32px;background-image:url(main_but.png);}
+\n\t\t\t.button_back{left:8px;top:6px;width:54px;height:32px;background-image:url(back_but.png);}
+\n\t\t\t.acc_div{left:0px;top:51px;width:320px;}
+\n\n\t\t</style>\n\t\t<script type="text/x-lua" src="RYTL.lua"></script>
+\n\t\t<script type="text/x-lua">\n\t\t\t<![CDATA[
+\n\t\t\t\tryt = RYTL:new{};
+\n\n\t\t\t\tfunction main_page()
+\n\t\t\t\t\tlocal result = history:get(-1);
+\n\t\t\t\t\tlocation:replace(result);
+\n\t\t\t\tend;
+\n\n\t\t\t\tfunction back_fun()
+\n\t\t\t\t\tlocal result = history:get(-1);
+\n\t\t\t\t\tlocation:replace(result);
+\n\t\t\t\tend;
+\n\n\t\t\t\t--[[Next Page]]--
+\n\n\t\t\t\tfunction common_req()
+\n\t\t\t\t\ttrancode="";
+\n\t\t\t\t\tnvoke_trancode(channelId, trancode, {}, callback_channel, {});
+\n\t\t\t\tend;\n\t\t\t]]>
+\n\t\t</script>\n\t</head>\n\n\t<body>\n\t\t<!--Title-->\n\t\t<div class="title_div" border="0">
+\n\t\t\t\t<label class="label_title">标题</label>
+\n\t\t\t\t<input type="button" class="button_back" name="back_but" onclick="back_fun()"/>
+\n\t\t\t\t<input type="button" class="button_main" name="main_but" onclick="main_page()"/>
+\n\t\t\t</div>\n\t\t<div class="acc_div" name="div_acc" border="0">
+\n\t\t\t<label>此处填页面内容．</label>\n\t\t</div>\n\t</body>\n</content>'
+
+  'EMP Lua Script':
+    'prefix': 'lua'
+    'body' : '\n\t\t<script type="text/x-lua">\n\t\t\t<![CDATA[
+\n\t\t\t\tryt = RYTL:new{};$1\n\t\t\t]]>\n\t\t</script>'
+
+  'EMP Lua Frame':
+    'prefix': 'luad'
+    'body' : '<![CDATA[\n\t\t\t\tryt = RYTL:new{};$1\n\t\t\t]]>'
+
+  'EMP 选择控件':
+    'prefix': 'seg'
+    'body': '<input type=\'segment\' value=\'$1\' checked=\'checked\'></input>
+\n<input type=\'segment\' value=\'$2\'></input>\n$0'
+
+  'EMP 开关控件':
+    'prefix': 'swi'
+    'body': '<input type=\'switch\' value=\'$1\' checked=\'checked\'/>
+\n<input type=\'switch\' value=\'$2\'/>\n$0'
+
+  'EMP WebView':
+    'prefix': 'web'
+    'body': '<div type=\'webview\' name=\'$1\' class=\'$2\' url=\'$3\'>$0</div>'

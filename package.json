@@ -1,17 +1,10 @@
 {
   "name": "emp-debugger",
   "main": "./lib/emp-debugger",
-  "version": "0.1.0",
-  "description": "实现Emp Editor(Ace)相关功能, 从 ctrl-alt-s 开始~",
-  "maintainers": [
-    {
-      "name": "Ju Chao",
-      "email": "ju.chao@rytong.com"
-    }
-  ],
-  "bugs": {
-    "url": "https://github.com/RYTong/emp-debugger/issues"
-  },
+  "version": "0.2.0",
+  "description": "实现Emp Editor(Ace)相关功能, 一切从 ctrl-alt-s 开始~",
+  "maintainers": [{"name":"Ju Chao", "email":"ju.chao@rytong.com"}],
+  "bugs": {"url":"https://github.com/RYTong/emp-debugger/issues"},
   "author": "Ju chao <cqjcrom@gmail.com>",
   "activationEvents": [
     "emp-debugger:toggle",

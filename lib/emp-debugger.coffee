@@ -83,7 +83,7 @@ module.exports =
     empDebuggerSettingViewState: @empDebuggerSettingView.serialize()
 
   live_preview: ->
-    editor = atom.workspace.activePaneItem
+    editor = atom.workspace.getActiveEditor()
     if editor
       text_path = editor.getPath()
       text_ext  = undefined
@@ -107,10 +107,14 @@ module.exports =
         if debug_script
           debug_script.script_con = debug_text
           @emp_socket_server.live_preview_view(debug_view, debug_text, debug_script_name)
-        else
+        else if debug_view
           # if the script isn't exist , then live preview the view
           debug_view.view = debug_text
           @emp_socket_server.live_preview_view(debug_text)
+        else
+          atom.confirm
+            message:"Error"
+            detailedMessage:"No Content to live preview~"
     else
       atom.confirm
         message:"Error"

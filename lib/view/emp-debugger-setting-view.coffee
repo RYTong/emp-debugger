@@ -1,17 +1,28 @@
 {$, $$, View} = require 'atom'
 EmpEditView = require './emp-edit-view'
+EmpAppMan = require '../emp_app/emp_app_manage'
+EmpBarView = require './emp-setting-bar'
+EmpAppManaView = require './emp-app-manage-view'
+
+PANE_DENUG = 'debug'
+PANE_APP = 'emp'
+EMP_DEBUG_HOST_KEY = 'emp-debugger.Emp-debugger-host'
+EMP_DEBUG_PORT_KEY = 'emp-debugger.Emp-debugger-port'
 
 
 module.exports =
 class EmpDebuggerSettingView extends View
   emp_socket_server: null
   empDebuggerLogView: null
+  app_view:null
+
   default_host: 'default'
   default_port: '7003'
   server_host: null
   server_port: null
   first_show: true
   show_state: false
+  activ_pane: 'debug'
 
   log_state_pause: "#FF6600"
   log_state_show: "#66FF33"
@@ -25,10 +36,14 @@ class EmpDebuggerSettingView extends View
   @content: ->
     # console.log 'constructor'
     @div class: 'emp-setting tool-panel pannel panel-right padding', =>
-      @div class: 'emp-setting-bar panel-heading padded', =>
-        @span 'Emp Debugger Config Setting: '
+      # @div class: 'emp-setting-bar panel-heading padded', =>
+      # @subview "emp-setting-bar", new EmpBarView(this)
+
       @div outlet:"emp_setting_panel", class:'emp-setting-panel', =>
-        @div outlet:"emp_setting_view", class:'emp-setting-server', =>
+        # @subview "emp_app_view", new EmpAppManaView(this)
+
+
+        @div outlet:"emp_setting_view", class:'emp-setting-server',  =>
           # @div outlet: 'emp_lineNumber', class: 'line-numbers'
 
           # ------------------------ server setting pane ------------------------
@@ -91,21 +106,47 @@ class EmpDebuggerSettingView extends View
                   @option value: "#990099", "紫"
                   @option value: "#000033", "黑"
 
-
               # @div class: "emp-set-div-content", =>
               #   @button outlet: "emp_test_btn", class: 'btn btn-default icon icon-link-external', click: 'emp_test_fun', "test remove"
 
   initialize: (serializeState, @emp_socket_server, @empDebuggerLogView) ->
     # console.log 'server state view initial'
+    bar_view = new EmpBarView(this)
+    @emp_setting_panel.before(bar_view)
     atom.workspaceView.command "emp-debugger:setting-view", => @set_conf()
-    @server_host = atom.config.get('emp-debugger.s_host')
-    @server_port = atom.config.get('emp-debugger.s_port')
+    @server_host = atom.config.get(EMP_DEBUG_HOST_KEY)
+    @server_port = atom.config.get(EMP_DEBUG_PORT_KEY)
 
     @empDebuggerLogView.set_conf_view(this)
     @emp_socket_server.set_conf_view(this)
     @defailt_host = @emp_socket_server.get_default_host()
     @default_port = @emp_socket_server.get_default_port()
 
+  show_app: ->
+    # console.log "fa show ~~"
+    # console.log @app_view
+    unless @activ_pane is PANE_APP
+      @create_new_panel()
+      @emp_setting_view.hide()
+
+      @app_view.show()
+      @app_view.check_os()
+      @app_view.focus()
+      @activ_pane = PANE_APP
+
+  show_debug: ->
+    unless @activ_pane is PANE_DENUG
+      unless !@app_view
+        @app_view.hide()
+      @emp_setting_view.show()
+      @emp_setting_view.focus()
+      @activ_pane = PANE_DENUG
+
+  create_new_panel: ->
+    unless @app_view
+      @app_view = new EmpAppManaView(this)
+      @emp_setting_view.before(@app_view)
+    @app_view
 
   # Returns an object that can be retrieved when package is activated
   serialize: ->
@@ -157,11 +198,11 @@ class EmpDebuggerSettingView extends View
     # console.log atom.config.get('emp-debugger.s_host')
     if @server_host is undefined
       @server_host = @default_host
-      atom.config.set('emp-debugger.s_host', @server_host)
+      atom.config.set(EMP_DEBUG_HOST_KEY, @server_host)
 
     if @server_port is undefined
       @server_port = @default_port
-      atom.config.set('emp-debugger.s_port', @server_port)
+      atom.config.set(EMP_DEBUG_PORT_KEY, @server_port)
     @emp_set_port.getEditor().setText(@server_port)
     @emp_set_host.getEditor().setText(@server_host)
 
@@ -172,14 +213,14 @@ class EmpDebuggerSettingView extends View
       # console.log tmp_port
       if @server_port isnt tmp_port
         @server_port = tmp_port
-        atom.config.set('emp-debugger.s_port', @server_port)
+        atom.config.set(EMP_DEBUG_PORT_KEY, @server_port)
 
     @emp_set_host.getEditor().on 'contents-modified', =>
       tmp_host = @emp_set_host.getEditor().getText()
       # console.log tmp_host
       if @server_host isnt tmp_host
         @server_host = tmp_host
-        atom.config.set('emp-debugger.s_host', @server_host)
+        atom.config.set(EMP_DEBUG_HOST_KEY, @server_host)
 
     # atom.config.set('emp-debugger.s_host', 'value')
     # atom.config.observe 'my-package.key', ->
@@ -333,6 +374,9 @@ class EmpDebuggerSettingView extends View
     @emp_log_st.context.innerHTML = log_st_str
     @emp_log_st.css('color', css_style)
   # -------------------------------------------------------------------------
+
+
+
 
   valueToString: (value) ->
     if _.isArray(value)

@@ -15,9 +15,54 @@
   // background-color: #f2f2f2;
 
   .emp-setting-bar {
-    // display: -webkit-flex;
+
     // -webkit-user-select: none;
     margin: 0;
+    // padding: 0;
+    .eul {
+      list-style:none;
+      display: -webkit-flex;
+
+      padding:0;
+
+      // height:40px;
+      // -webkit-flex-direction: row;
+      // margin: 1px;
+      margin:0;
+      border-bottom:2px solid @app-background-color;
+      }
+    .eli {
+      // border:1px solid #ccc;
+      // background:#eee;
+
+      -webkit-flex: 1;
+      width: -webkit-fit-content;
+      // background: @background-color-info;
+      padding:10px 0px 10px 0px;
+      cursor:pointer;
+      display:block;
+      float:left;
+      text-align:center;
+      text-decoration:none;
+      // width:50%;
+      // height:21px;
+      // line-height:21px;
+      margin:0 1px;
+      position:relative;
+      border-bottom: 4px solid @app-background-color;
+      top:1px;
+      z-index:9; }
+    .eli:hover {
+      text-decoration:underline;
+      }
+    .eli.curr {
+      background:@background-color-highlight;
+      // border-bottom-color:#fff;
+
+      cursor:default;
+      font-weight:bold;
+      border-bottom: 4px solid @background-color-info;
+      }
   }
 
   .emp-setting-panel{
@@ -52,12 +97,13 @@
         // -webkit-flex: 1;
         // top:0;
         // bottom:0;
+        margin: 5px 0px 5px 0px;
         right:0;
         left:0;
         min-width: 0;
         // position: relative;
         opacity: 0.6;
-        overflow:auto;
+        // overflow:auto;
         display:block;
 
 
@@ -95,7 +141,7 @@
               // color: @text-color;
               color: #333333;
               background-color: #FAFFFF;
-              padding: 6px 12px;
+              // padding: 6px 12px;
 
               .cursor {
                 border-color: #000;
@@ -178,3 +224,4 @@
   // color: @text-color;
   border: 1px solid #ccc;
 }
+//

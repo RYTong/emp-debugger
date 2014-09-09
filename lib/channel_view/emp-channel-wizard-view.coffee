@@ -53,18 +53,16 @@ class EmpChannelWizardView extends ScrollView
     @detach()
 
   toggle: ->
-    console.log "EmpChannelWizardView was toggled!"
+    # console.log "EmpChannelWizardView was toggled!"
     if @hasParent()
       @detach()
     # else
       atom.workspaceView.append(this)
       @add_new_panel()
       # @parse_conf()
-
 #
   add_new_panel: ->
-    console.log "add_new_panel"
-
+    # console.log "add_new_panel"
     @emp_channel_list_view.refresh_channel_view() unless !@emp_channel_list_view
     if @active_panel
       @panels.append(@active_panel) unless $.contains(@panels[0], @active_panel[0])
@@ -72,8 +70,6 @@ class EmpChannelWizardView extends ScrollView
       for editorElement, index in @active_panel.find(".editor")
         $(editorElement).view().redraw()
       @active_panel.focus()
-
-
 
   focus: ->
     super
@@ -96,21 +92,3 @@ class EmpChannelWizardView extends ScrollView
 
   isEqual: (other) ->
     other instanceof EmpChannelWizardView
-
-
-
-			# logger.debug('cmd now:', compile_erl);
-			# console.log('consol:'+stdout);
-			# if (error !== null ){
-			# 	logger.error('exec error', error);
-			# }
-			# var t_erl = 'erl -pa '+ ebinDir + ' ' + erl_conf +' -sname testjs -run ects_util test -noshell -s erlang halt';
-			# logger.debug('t_erl:', t_erl);
-			# c_process.exec(t_erl, function (error, stdout, stderr){
-			# 	//logger.debug('cmd now:', cmd);
-			# 	console.log('--------consol------------:'+stdout);
-			# 	if (error !== null ){
-			# 		logger.error('exec error', error);
-			# 	}
-			# 	var tmp_file = path.join(dir, 'config/tmp_channel_json.json');
-			# 	logger.debug('tmp_file:', tmp_file);

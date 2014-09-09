@@ -4,12 +4,23 @@ module.exports =
 class ChannelView extends View
   @content: ->
     @li class: 'file entry list-item', =>
-      @span class: 'text-success icon  icon-file-media', outlet: 'channelName'
+      @span class: 'text-success icon  icon-diff-modified', outlet: 'channelName'
 
-  initialize: (obj, new_all_obj)->
-    console.log "---------channel view~-----------"
-    console.log obj
+  initialize: (obj, new_all_obj, error)->
+    # console.log "---------channel view~-----------:#{error}"
+    # console.log obj
+    if !error
+      @create_channel_enrey(obj)
+    else
+      @create_error_entry(obj)
 
+
+  create_channel_enrey: (obj) ->
     name = obj.name
     name ?= obj.id
     @channelName.text(name)
+
+  create_error_entry:(cha_id) ->
+    @channelName.text(cha_id)
+    @channelName.removeClass('text-success')
+    @channelName.addClass('text-error')

@@ -37,7 +37,7 @@ class EmpChannelManaView extends View
     # unless os.platform().toLowerCase() isnt OS_DARWIN
     # @emp_app_manage = new EmpAppMan(this)
     atom.workspace.registerOpener (uri) ->
-      console.log "emp registerOpener: #{uri}"
+      # console.log "emp registerOpener: #{uri}"
       create_view({uri}) if uri is EMP_CHANNEL_URI
     atom.deserializers.add(deserializer)
     this
@@ -48,7 +48,7 @@ class EmpChannelManaView extends View
 
 
 create_view =  (params)->
-  console.log "params:#{params}"
+  # console.log "params:#{params}"
   empChannelWizardView = new EmpChannelWizardView(params)
 
 
@@ -62,7 +62,7 @@ deserializer =
   name: 'EmpView'
   version: 1
   deserialize: (state) ->
-    console.log "emp deserialize"
+    # console.log "emp deserialize"
     create_view(state) if state.constructor is Object
 
 

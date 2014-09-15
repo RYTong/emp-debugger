@@ -1,5 +1,6 @@
 {$, $$, View} = require 'atom'
 EmpEditView = require './emp-edit-view'
+EmpChaManaView = require '../channel_view/emp-channel-manage-view'
 EmpAppMan = require '../emp_app/emp_app_manage'
 os = require 'os'
 OS_DARWIN = 'darwin'
@@ -27,10 +28,10 @@ class EmpAppManaView extends View
           @span outlet:"emp_app_load", class: 'loading loading-spinner-small inline-block',style:"display:none;"
         @div outlet:"emp_conmiunication_pane", class: "emp-setting-con panel-body padded", =>
 
-          @label class: "emp-setting-label", "Erl "
+          @label class: "emp-setting-label", "Erl source"
           @div class: 'controls', =>
             @div class: 'setting-editor-container', =>
-              @subview "emp_app_erl", new EmpEditView(attributes: {id: 'emp_erl', type: 'string'},  placeholderText: 'Erlang') #fr
+              @subview "emp_app_erl", new EmpEditView(attributes: {id: 'emp_erl', type: 'string'},  placeholderText: 'Erlang Source') #fr
           @button outlet:"btn_r", class: 'btn btn-default ', click: 'run_erl', "Run Erl"
 
 
@@ -43,6 +44,8 @@ class EmpAppManaView extends View
   initialize: ->
     # unless os.platform().toLowerCase() isnt OS_DARWIN
     @emp_app_manage = new EmpAppMan(this)
+    @emp_cha_manage = new EmpChaManaView(this)
+    @app_detail.after(@emp_cha_manage)
     this
 
   focus: ->

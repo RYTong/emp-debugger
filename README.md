@@ -1,3 +1,4 @@
+![EMP](https://github.com/jcrom/emp-debugger/blob/master/images/emp.png)
 # emp-debugger package
 
 ## EMP 模板实时调试插件

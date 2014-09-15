@@ -17,3 +17,11 @@
   'ctrl-alt-l': 'emp-debugger:view-log'
   'ctrl-alt-s': 'emp-debugger:setting-view'
   'ctrl-alt-p': 'emp-debugger:enable-lua'
+  'ctrl-alt-q': 'emp-debugger:show-channel'
+
+
+
+'.platform-darwin .emp-debugger':
+  'cmd-c': 'emp-debugger:copy'
+  'cmd-x': 'emp-debugger:cut'
+  'cmd-v': 'emp-debugger:paste'

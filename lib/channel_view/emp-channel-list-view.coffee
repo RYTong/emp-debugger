@@ -19,11 +19,13 @@ test_conf1 = path.join(__dirname, '../../erl_util/channel0.conf')
 befor_select = null
 cha_conf_dir = null
 
+fa_view = null
 
 module.exports =
 class ChannelListView extends ScrollView
   com_state :0
   @content: ->
+
     @ul class: 'emp_cha_list panels-list list-tree has-collapsable-children', =>
       @li class: 'list-nested-item', outlet:"emp_root_dir", =>
         @div class: 'root_header list-item',click:'root_clicked', =>
@@ -39,8 +41,9 @@ class ChannelListView extends ScrollView
         @ol class: 'entries list-tree', outlet: 'cha_entries'
 
 
-  initialize: ->
+  initialize: (initial_fa)->
     super
+    fa_view = initial_fa
     ex_state = fs.existsSync(parser_beam_file)
     # cha_conf_dir = atom.config.get(ATOM_CONF_CHANNEL_DIR_KEY)
 
@@ -68,20 +71,25 @@ class ChannelListView extends ScrollView
     console.log "copySelectedEntries~~~~~~~~~~"
 
   refresh_channel_view: ->
-    console.log "refresh_channel_view"
+    # console.log "refresh_channel_view"
     parse_conf(this)
 
   refresh_view: (cha_json)->
     all_objs = JSON.parse(cha_json)
-    console.log "do refresh "
+    # console.log "do refresh "
     new_all_obj = @parse_params(all_objs)
     root_col = new_all_obj.root
+    @entries.empty()
     if root_col isnt {}
+
       for key, obj of root_col
         col_views = new CollectionView(obj, new_all_obj)
         @entries.append(col_views)
-      console.log new_all_obj
+      # console.log new_all_obj
       @add_unused_list(new_all_obj)
+
+    fa_view.refresh_view(new_all_obj)
+    # fa_view.remove_loading()
 
 
   add_unused_list: (all_obj)->
@@ -89,10 +97,10 @@ class ChannelListView extends ScrollView
     @add_unused_cha(all_obj)
 
   add_unused_col: (all_obj) ->
-    console.log "add unused collections"
+    # console.log "add unused collections"
     col_child = all_obj.child
     ulen = col_child.ulen
-
+    @col_entries.empty()
     if ulen isnt 0
       ucol_child = col_child.get_unused()
       # console.log ucol_child
@@ -102,9 +110,10 @@ class ChannelListView extends ScrollView
         @col_entries.append(col_views)
 
   add_unused_cha: (all_obj) ->
-    console.log "add unused channel"
+    # console.log "add unused channel"
     cha = all_obj.cha
     ulen = cha.ulen
+    @cha_entries.empty()
     if ulen isnt 0
       ucha = cha.get_unused()
       @unused_cha.show()

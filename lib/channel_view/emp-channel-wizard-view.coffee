@@ -16,6 +16,7 @@ class EmpChannelWizardView extends ScrollView
   gen_add_cha:null
   gen_add_col:null
   panels_list: {}
+  all_objs:null
 
   @content: ->
     @div class: 'emp-channel-wizard pane-item', tabindex: -1, =>
@@ -34,6 +35,8 @@ class EmpChannelWizardView extends ScrollView
     # console.log activePanelName
     # @panelToShow = activePanelName
     process.nextTick =>@initializePanels()
+    @all_objs = null
+    @panels_list={}
     # @initializePanels()
     # atom.workspaceView.command "emp-channel-wizard:toggle", => @toggle()
 
@@ -42,7 +45,7 @@ class EmpChannelWizardView extends ScrollView
     return if @panels.size > 0
     # console.log @panels.size()
     @gen_info_view = new GeneralPanel(this)
-    @gen_add_cha = new AddChaPanel(this)
+    @gen_add_cha = new AddChaPanel(this, @all_objs)
     @panels_list[@gen_info_view.name] = @gen_info_view
     @panels_list[@gen_add_cha.name] = @gen_add_cha
 
@@ -112,9 +115,6 @@ class EmpChannelWizardView extends ScrollView
           $(editorElement).view().redraw()
         @active_panel.focus()
 
-
-
-
   focus: ->
     super
 
@@ -137,13 +137,13 @@ class EmpChannelWizardView extends ScrollView
   isEqual: (other) ->
     other instanceof EmpChannelWizardView
 
-  refresh_view:(objs) ->
+  refresh_view:(@all_objs) ->
     @remove_loading()
-    @refresh_gen_info_view(objs)
+    @refresh_gen_info_view()
 
-  refresh_gen_info_view: (objs) ->
+  refresh_gen_info_view: () ->
     if @active_panel is @gen_info_view
-      @gen_info_view.refresh_list(objs)
+      @gen_info_view.refresh_list(@all_objs)
 
   remove_loading: ->
     @loadingElement.remove()

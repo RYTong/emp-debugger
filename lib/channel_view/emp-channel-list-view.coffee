@@ -204,6 +204,7 @@ parse_conf = (callback)->
   console.log project_path
 
   channel_conf1 = path.join project_path, cha_conf_dir
+  atom.project.channel_conf = channel_conf
   console.log "~~---------------~~"
   console.log channel_conf1
 

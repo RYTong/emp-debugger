@@ -1,0 +1,19 @@
+# -*- mode: makefile -*-
+# C/C++ build variables
+#
+# Copyright (c) 2009-2010 Beijing RYTong Information Technologies, Ltd.
+# All rights reserved.
+#
+# No part of this source code may be copied, used, or modified
+# without the express written consent of RYTong.
+
+SHELL = /bin/sh
+ECHO = @ECHO@
+CC = @CC@
+CXX = @CXX@
+AR = ar rucs
+ERL = @ERLANG@
+ERL_ROOT = @ERL_ROOT@
+ERL_INTF_ROOT = @ERL_INTF_ROOT@
+ERL_DRV = @ERL_HOME@/erlang/usr
+

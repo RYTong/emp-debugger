@@ -1,0 +1,47 @@
+dnl -*- Mode: autoconf; -*-
+dnl autoconf library script for common autoconf detections.
+dnl 
+dnl Copyright (c) 2009-2010 Beijing RYTong Information Technologies, Ltd.
+dnl All rights reserved.
+dnl
+dnl No part of this source code may be copied, used, or modified
+dnl without the express written consent of RYTong.
+dnl
+dnl $Id$
+
+AC_PROG_CC
+AC_PROG_CXX
+AC_PROG_CC_STDC
+
+dnl
+dnl Generate an absolute path.
+dnl
+absolutize() {
+    case $1 in 
+    -L*) prefix="-L"; p=`echo $1 | sed 's/^-L//'` ;;
+    -I*) prefix="-I"; p=`echo $1 | sed 's/^-I//'` ;;
+    *) prefix=""; p=$1 ;;
+    esac
+    d=`dirname $p`
+    f=`basename $p`
+    if test "$f" = "." -o "$f" = ".." -o "$f" = '$(srcdir)' -o "$f" = '$(top_srcdir)'; then
+        d=$p
+        f=""
+    fi
+    if test -d "$d"; then
+       ad=`(cd "$d"; pwd)`
+    else
+       ad="$d"
+    fi
+    if test "x$f" = "x" ; then 
+        echo $prefix$ad
+    elif test "x$ad" = "x/" ; then
+        echo $prefixu$f 
+    else
+        echo $prefix$ad/$f 
+    fi
+}
+
+dnl Initialize some variables
+ERLC_FLAGS="-Wall"
+EMAKE_FLAGS=""

@@ -1,0 +1,8 @@
+
+{channels,[[{id,"${channel}"},
+            {app,"${app}"},
+            {name,"${name}"},
+            {entry,channel_adapter},
+            {views, ${views}},
+            {props,${props}},
+            {state,${state}}]

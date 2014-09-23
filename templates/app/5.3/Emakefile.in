@@ -1,0 +1,12 @@
+%% -*- mode: erlang -*-
+{"src/*", [@EMAKE_FLAGS@, 
+           {outdir, "ebin"},
+           {i, "include"},
+           {i, "@EWP_SRCDIR@/include"}, 
+           {i, "@YAWS_INCL@"}]}.
+           
+{"src/*/*", [@EMAKE_FLAGS@, 
+            {outdir, "ebin"},
+            {i, "include"},
+            {i, "@EWP_SRCDIR@/include"}, 
+            {i, "@YAWS_INCL@"}]}.

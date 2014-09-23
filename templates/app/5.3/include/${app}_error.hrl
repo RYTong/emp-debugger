@@ -1,0 +1,2 @@
+%% ${app} Error Code header
+%%

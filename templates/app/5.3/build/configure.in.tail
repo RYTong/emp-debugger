@@ -1,0 +1,24 @@
+dnl -*- Mode: autoconf; -*-
+dnl autoconf library script for completing the autoconf output process.
+dnl 
+dnl Copyright (c) 2009-2010 Beijing RYTong Information Technologies, Ltd.
+dnl All rights reserved.
+dnl
+dnl No part of this source code may be copied, used, or modified
+dnl without the express written consent of RYTong.
+
+dnl
+dnl Generate some output variables.
+dnl
+AC_SUBST(CFLAGS)
+AC_SUBST(CPPFLAGS, ${CPPFLAGS})
+
+AC_SUBST(ERLC_FLAGS)
+AC_SUBST(EMAKE_FLAGS)
+
+dnl
+dnl if nothing else, do Makefile
+dnl 
+define([AcOutputFiles],ifdef([AcOutputFiles],AcOutputFiles,[Makefile Makefile.include:../conf/Makefil
+e.include.in]))
+AC_OUTPUT(AcOutputFiles)

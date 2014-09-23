@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<content>
+  <head>
+    <script type="text/x-lua" src="RYTL.lua"></script>
+    <!-- 离线资源-->
+    <script type="text/x-lua" src="unit_fun.lua" ></script>
+    <!-- 服务端资源-->
+    <!-- <script type="text/x-lua" src="//${app}/resource_dev/common/lua/unit_fun.lua"></script> -->
+    <script type="text/x-lua">
+      <![CDATA[
+
+        local first_cha_id = "";
+        local first_tran_code = "";
+
+        local globalData = nil;
+        local Content = nil;
+        --[[此回调方法中做返回错误json的判断，如果正确则将数据放入全局变量并请求界面进入下个界面]]--
+        function callback_login(params)
+            local ret_code,ret_msg = error_judge(params);
+            if ret_code == -1 then
+                window:alert(ret_msg);
+                return;
+            else
+                local trancode = params["trancode"];
+                globalTable[trancode] = params["responseBody"];
+                --[[ 添加Channel之后,替换下列的channelId 和channelView ]]--
+                invoke_page(first_cha_id.."/xhtml/"..first_tran_code..".xhtml",page_callback,nil);
+            end;
+        end;
+        --window:alert("please!");
+        --在获取数据的回调中做界面的跳转，这样能保证数据写入的及时性
+        --替换下列channelID
+        invoke_trancode(first_cha_id, first_tran_code, {id=first_cha_id,tranCode= first_tran_code}, callback_login, {trancode=first_tran_code});
+
+      ]]>
+    </script>
+</head>
+<body >
+</body>
+</content>

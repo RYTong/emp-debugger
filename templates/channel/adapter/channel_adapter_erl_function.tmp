@@ -1,0 +1,25 @@
+
+%% @doc $trancode desc.
+%% @spec $trancode(TranCode, Channel) -> Json.
+%%  Json = string()
+%% @throw
+'$trancode'(TranCode, Channel) ->
+$params
+    $preadapter_region
+    Response =
+        ewp_adapter:invoke_procedure("$adapter",
+                                     "$procedure",
+                                     [$keylist]),
+    CsKey = ewp_channel_util:channel_adapter_cs_key(Channel, TranCode),
+    cs_api:render(CsKey, Response).
+    $preadapter_region
+
+    $noadapter_region
+    Body = "",
+    Re = ewp_json:encode({obj,[{"return", {obj, [{"error_code", <<"000000">>},
+                                                 {"error_msg", <<"">>},
+                                                 {"body", list_to_binary(Body)}
+                                                ]}}
+                              ]}),
+    list_to_binary(Re).
+    $noadapter_region

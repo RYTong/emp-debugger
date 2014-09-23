@@ -1,0 +1,53 @@
+# -*- mode: makefile -*-
+# Erlang build rules
+#
+# Copyright (c) 2009-2010 Beijing RYTong Information Technologies, Ltd.
+# All rights reserved.
+#
+# No part of this source code may be copied, used, or modified
+# without the express written consent of RYTong.
+
+# NOTE: every application that includes these rules must define:
+# (1) APPNAME: the application name.
+# (2) EWP_TOP: the top-level build directory above all apps.
+# (3) APP_TOP: the application top directory, e.g., apps/ewp.
+# (4) VERSION: application version.
+# (5) ERL, ERLC, ERLC_FLAGS, ERLC_INCLS: parameters to the erlang compiler.
+# (6) DIALYZER: erlang dialyzer.
+
+.PHONY: ebin doc dialyzer $(APPNAME).plt 
+
+.SUFFIXES: .erl .hrl
+
+EBIN_DIR = $(EWP_TOP)/ebin
+
+ifdef ERL_SRCDIR
+ERL_SRCS = $(shell find $(ERL_SRCDIR) -name \*.erl)
+ERL_MODS = $(basename $(notdir $(ERL_SRCS)))
+ERL_BEAMS = $(addsuffix .beam, $(ERL_MODS))
+ERL_BEAM_PATHS = $(addprefix $(EBIN_DIR)/,$(ERL_BEAMS))
+endif
+
+ebin:
+	$(ERL) -noshell -eval 'make:all().' $(ERLC_LIBS) -s erlang halt
+
+doc:
+	$(ERL) -noshell -run edoc_run application "'$(APPNAME)'" '"."' '[{vsn,"$(VERSION)"}, no_packages, {subpackages, true}]'
+
+$(APPNAME).plt:
+	$(DIALYZER) --build_plt --output_plt $@ $(DIALYZER_STDLIB)
+
+dialyzer: $(APPNAME).plt
+	$(DIALYZER) --plt $(APPNAME).plt -r .
+
+# We will wait till erlc produces dependency during compilation like
+# what GCC does, then activate this rule. Before that, we will use 
+# Emakefile.
+
+#SRCS = $(shell find . -name *.erl)
+#OBJS = $(foreach src, $(SRCS), $(basename $(notdir $(src))).beam)
+
+#%.beam: %.erl
+#	$(ERLC) $(ERLC_FLAGS) $(ERLC_INCLS) -o $(APP_TOP)/ebin $< 
+
+#-include $(APP_TOP)/.deps

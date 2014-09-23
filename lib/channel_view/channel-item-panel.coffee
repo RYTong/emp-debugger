@@ -5,6 +5,7 @@ emp =  require '../exports/emp'
 module.exports =
 class ChannelItemPanel extends View
   select_entry:null
+  new_all_obj:null
   @content: ->
     @div class: 'cha-list-panel', =>
       # @section class: 'config-section', =>
@@ -30,9 +31,9 @@ class ChannelItemPanel extends View
     # @bindFormFields()
     # @bindEditors()
 
-  refresh_cha_list:(new_all_obj) ->
-    console.log new_all_obj
-    cha_obj = new_all_obj.cha.obj_list
+  refresh_cha_list:(@new_all_obj) ->
+    # console.log new_all_obj
+    cha_obj = @new_all_obj.cha.obj_list
 
     for n, obj of cha_obj
       tmp_item = new ChaItemView(obj)
@@ -48,7 +49,7 @@ class ChannelItemPanel extends View
     @select_entry = entry
 
   add_cha: (e, element)->
-    console.log 'add_cha'
+    # console.log 'add_cha'
     @fa_view.show_panel(emp.ADD_CHA_VIEW)
 
   edi_cha: (e, element)->

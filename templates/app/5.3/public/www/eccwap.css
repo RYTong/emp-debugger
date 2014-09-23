@@ -1,0 +1,193 @@
+//=============================web start=============================
+*{ 
+  margin:0px;
+  padding:0px;
+}
+body{ 
+  font-size:12px;
+  margin:0px;
+  padding:0px;
+  border:0px;
+  line-height:18px;
+}
+ 
+img {
+    border: none;
+    margin:0;
+    padding:0;
+}
+td {
+    font-size: 12px;
+    color:#000000;
+    text-decoration: none;
+}
+table {
+    width:100%;
+}
+ 
+#HeadArea #MenuArea a{
+    color:Black; 
+    text-decoration:none; 
+    outline:none;
+}
+ 
+#MenuArea .Content{
+    padding:3px; 
+    font-size:12px; 
+    text-align:center;
+    background-color:White;
+    border:0px; 
+}
+#MenuArea #Content table { 
+    width:100%; 
+    text-align:center; 
+    border:0px;
+}
+ 
+#MenuArea #Content img { 
+    border-width: 0px;
+}
+ 
+#MainArea{
+    width:100%;
+    border:0px;
+}
+ 
+.webMenu{
+    border-color: #0394ca;
+    color: white;
+}
+ 
+//======================================web end=======================================
+hr {
+    background-color: #085397;
+}
+ 
+div {
+    padding: 0px;
+}
+ 
+input {
+    border-color:#085397;
+}
+ 
+select {
+    border-color:#085397;
+}
+ 
+.amt {
+    color: red;
+    font-weight: bold;
+}
+ 
+.head{
+    text-align: left;
+    padding-left:5px;
+    background: url(/ebank/head_bg.gif) repeat-x;
+}
+.logo{
+    padding-top:0px;
+}
+ 
+.tail{
+    text-align: left;
+    background: url(/ebank/head_bg.gif) repeat-x;
+    color: white;
+    text-indent: 0px;
+    padding-left: 10px;
+}
+ 
+/** Menu **/
+a.menu_item{
+    color: #085397;
+    text-decoration: none;
+}
+a.menu_item1{
+    color: #085397;
+}
+ 
+div.menu_style{
+    background-color:#F0F8FF;
+    text-align:center;
+}
+ 
+td.menu_item_pstyle img {
+    margin-right: 2px;
+    border-width: 0px;
+}
+p.menu_item_pstyle{
+    display: inline;
+    margin-right: 5px;
+    text-align: left;
+}
+ 
+table.menu_table {
+    text-align: left;
+    background-color: #F0F8FF;
+    color: #085397;
+    text-decoration: none;
+}
+table.menu_table_center{
+    text-align: left;
+    background: url(/ebank/trans_bg.gif) repeat-x;
+    color: #085397;
+    padding-left: 10px;
+}
+ 
+/** Body **/
+.center {
+    text-align: center;
+}
+
+.step_name {
+    border: 1px solid #D5EBFF;
+    font-weight: bolder;
+    color: #434342;
+    background-color: #F9FEFF;
+    text-align:left;
+    margin-bottom: 10px;
+}
+ 
+tr.input_item{
+    text-align: left;
+    color: #085397;
+}
+ 
+.tran_area {
+    text-align: left;
+    background: url(/ebank/trans_bg.gif) repeat-x top;
+    background-color:#e4e3e4;
+    color: #085397;
+    text-decoration: none;
+    padding-left: 10px;
+    line-height: 18px;
+}
+ 
+.result_area {
+    layout-grid: both strict 10px 10px;
+    text-align: left;
+    background-color: #F0F8FF;
+    color: #085397;
+    text-decoration: none;
+}
+ 
+.unnamed0_a{
+    text-decoration:none;
+    color:#0068CB;
+    font-weight:bolder;
+}
+.weight{
+font-weight:bolder;
+}
+
+.nav{ width:100%; background-color:#FFFFFF; border:1px solid #dcdcdc; overflow:hidden; padding:5px;}
+.nav ul{border-bottom:1px dashed #dcdcdc; padding-left:3px; margin:2px 0px 2px 0px;}
+.nav ul:hover{ background-color:#f0f0f0;}
+.nav ul li{ width:100%;list-style:none;}
+.Banner{ text-align: left; background-color:#e9e9e9; color: #085397; padding-left: 10px; padding-right: 2px;}
+.Banner span{ margin-left:1px; line-height:20px; font-size:14px;}
+.navTitle{ width:100%; height:18px; float:left; color:#000000; background-color:#e9e9e9; margin-top:1px;  margin-bottom:1px;}
+.navTitle:hover{ background-color:#b2b2b2; color:#FFFFFF;}
+.navTitle span{ line-height:20px; font-weight:bold;}
+.navContent{ width:100%; height:auto; float:left; color:#444444; margin-top:1px; margin-bottom:5px;}
+.navContent li{ list-style:none; width:auto; float:left; line-height:20px;}

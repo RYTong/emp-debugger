@@ -1,0 +1,33 @@
+dnl -*- Mode: autoconf; -*-
+dnl autoconf library script for detection of erlang.
+dnl
+dnl Copyright (c) 2009-2010 Beijing RYTong Information Technologies, Ltd.
+dnl All rights reserved.
+dnl
+dnl No part of this source code may be copied, used, or modified
+dnl without the express written consent of RYTong.
+
+AC_MSG_CHECKING([EWP])
+
+EWP_DIRS="../ewp \
+.. \
+../.. \
+/var/www/apps/ewp \
+/usr/local/lib/ewp"
+
+dnl
+dnl Find EWP header files
+dnl
+EWP_SRCDIR=""
+for d in $EWP_DIRS ; do
+    if test -r $d/include/ewp.hrl ; then
+        EWP_SRCDIR=$d
+        break
+    fi
+done
+if test "x$EWP_SRCDIR" = "x" ; then
+   AC_MSG_ERROR([Cannot EWP installation.])
+fi
+AC_MSG_RESULT([$EWP_SRCDIR])
+
+AC_SUBST(EWP_SRCDIR)

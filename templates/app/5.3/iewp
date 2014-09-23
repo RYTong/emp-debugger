@@ -1,0 +1,30 @@
+#!/bin/sh
+
+YAWS_CONF="config/yaws.conf"
+EWP_CONF="config/ewp.conf"
+EWP_SHELL="${ecl_ewp}/bin/ewp"
+
+if test -f $YAWS_CONF ; then
+    echo "Using yaws config file $YAWS_CONF"
+else
+    echo "Cannot find yaws config file $YAWS_CONF"
+    exit 1
+fi
+if test -f $EWP_CONF ; then
+    echo "Using ewp config file $EWP_CONF"
+else
+    echo "Cannot find ewp config file $EWP_CONF"
+    exit 1
+fi
+
+if test -f $EWP_SHELL ; then
+    echo "Using ewp script $EWP_SHELL"
+elif which ewp ; then
+    EWP_INSTALL=`which ewp`
+    echo "Using ewp script $EWP_INSTALL"
+    EWP_SHELL=$EWP_INSTALL
+else
+    echo "Cannot find ewp script"
+    exit 1
+fi
+$EWP_SHELL --sname ${app} --id ${app} --yaws_conf $YAWS_CONF --ewp_conf $EWP_CONF

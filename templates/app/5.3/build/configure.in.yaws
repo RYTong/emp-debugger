@@ -1,0 +1,33 @@
+dnl -*- Mode: autoconf; -*-
+dnl autoconf library script for detection of Yaws.
+dnl 
+dnl Copyright (c) 2009-2010 Beijing RYTong Information Technologies, Ltd.
+dnl All rights reserved.
+dnl
+dnl No part of this source code may be copied, used, or modified
+dnl without the express written consent of RYTong.
+
+# Assuming that yaws is in the current PATH.
+AC_PATH_PROG(YAWS, yaws,)
+if test -z "$YAWS"; then
+    AC_MSG_ERROR([Yaws must be installed to build EWP. Please make sure it is reachable in your bash PATH.])
+fi
+
+# Check for erl_interface library and headers.
+YAWS_BINROOT=`dirname $YAWS`
+YAWS_ROOT=`dirname $YAWS_BINROOT`
+# NOTE: even on a 64-bit system, we install yaws under /usr/local/lib
+# instead of lib64.
+YAWS_HOME=$YAWS_ROOT/lib/yaws
+
+AC_MSG_CHECKING([Yaws headers])
+if test -r $YAWS_HOME/include/yaws.hrl ; then
+   YAWS_INCL=$YAWS_HOME/include
+else
+   AC_MSG_ERROR([Cannot find yaws.hrl under $YAWS_HOME/include. Bad installation?])
+fi
+AC_MSG_RESULT([$YAWS_INCL])
+
+AC_SUBST(YAWS_HOME)
+AC_SUBST(YAWS_BINROOT)
+AC_SUBST(YAWS_INCL)

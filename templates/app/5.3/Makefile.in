@@ -1,0 +1,55 @@
+# Copyright (c) 2009-2010 Beijing RYTong Information Technologies, Ltd.
+# All rights reserved.
+#
+# No part of this source code may be copied, used, or modified
+# without the express written consent of RYTong.
+
+EWP_SRCDIR = @EWP_SRCDIR@
+APP_TOP = @APP_TOP@
+
+MODULES = drivers ebank
+CONFGEN = config.cache config.log config.status Makefile \
+        build/Makefile.include.c_vars stamp-h* autom4te.cache confdefs.h
+
+ERL_ROOT = @ERL_ROOT@
+DIALYZER = $(ERL_ROOT)/bin/dialyzer
+ERL = $(ERL_ROOT)/bin/erl
+ERLC = $(ERL_ROOT)/bin/erlc
+
+ERLC_FLAGS = @ERLC_FLAGS@
+ERLC_INCLS = -I @YAWS_INCL@ -I $(APP_TOP)/include -I $(EWP_SRCDIR)/include
+ERLC_LIBS = -pa $(APP_TOP)/ebin -pa $(EWP_SRCDIR)/ebin -pz @YAWS_HOME@/ebin
+DIALYZER_STDLIB =\
+    -r @ERL_KERNEL@ \
+    -r @ERL_STDLIB@ \
+    -r @ERL_MNESIA@ \
+    -r @ERL_XMERL@
+
+all: $(MODULES) 
+
+.PHONY: $(MODULES) ebin clean distclean
+
+drivers:
+	$(MAKE) -C $@
+
+# Build rules
+include $(APP_TOP)/build/Makefile.include.erl_build
+
+ebank: ebin
+
+clean:
+	@for d in $(MODULES) ; do \
+	   if test -d $$d ; then \
+	     $(MAKE) -C $$d $@ ; \
+	   fi ; \
+	 done ; \
+	 find . -name \*.beam | xargs rm -f
+
+distclean: clean
+	@for d in $(MODULES) ; do \
+	   if test -d $$d ; then \
+	     $(MAKE) -C $$d $@ ; \
+	     /bin/rm -rf $(CONFGEN) ; \
+	   fi ; \
+	 done ; \
+	 find . -name \*~ | xargs rm -f 

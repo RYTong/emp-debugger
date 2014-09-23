@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<content>
+    <head>
+        <style>
+            .body {background-color:#ffffff;}
+            .button1 {width:55px;height:40px;top:50px;background-color:#FF9999;}
+            .button2 {width:55px;height:40px;top:50px;background-color:#DD9999;}
+            .table_save{display:none;width:300px;height:45px;background-color:#CC9999;}
+            .input1{width:300px;}
+        </style>
+        <script type="text/x-lua" src="RYTL.lua"></script>
+        <script type="text/x-lua">
+            <![CDATA[
+                ryt = RYTL:new{};
+                
+                function callback(responsedata)
+                    if responsedata["responseCode"] == 200 then
+                        history:add(responsedata["responseBody"]);
+                        location:replace(responsedata["responseBody"]);
+                    else
+                        ryt:alert("网络请求失败！");
+                    end;
+                end;
+                
+                local input = document:getElementsByProperty{name="url"};
+                
+                function update()
+                    local url = input[1]:getPropertyByName("value");
+                    local restr = "name="..url;
+                    ryt:post(nil, "test_s/get_json_data", restr, callback, {},false);
+                end;
+                
+                function get_save()
+                	local table_save = document:getElementsByName("table_save");
+                	if table_save and #table_save > 0 then
+                		table_save[1]:setStyleByName("display","block");
+                		ryt:reload();
+                		transition:from(table_save[1],{x=-300});
+                		transition:to(table_save[1],{x=10},2);
+                	else
+                		ryt:alert("控件不存在");
+                	end;
+                	
+                end;
+                
+                function get_tz()
+                	ryt:alert("222");
+                end;
+                
+                function test_space()
+                	local input_test = document:getElementsByName("input_test");
+                	local value = input_test[1]:getPropertyByName("value");
+                	local newValue = value .. " wo";
+                	input_test[1]:setPropertyByName("value",newValue);
+                end;
+            ]]>
+        </script>
+    </head>
+    <body name='body'>
+        <input type="button" class='button1' value="存款类" onclick="get_save()"/>
+        <input type="button" class="button2" value="投资类" onclick="get_tz()"/>
+        <table name="table_save" class="table_save">
+	         <tr>
+	         	<td>
+	         		<label>从左往右动画测试</label>
+	         	</td>
+	         </tr>
+	    </table>
+	    <input type="text" name="input_test" class="input1" onblur="test_space()"></input>
+    </body>
+</content>

@@ -37,7 +37,7 @@ class SettingsPanel extends View
     # @bindEditors()
 
   refresh_col_list:(new_all_obj) ->
-    console.log new_all_obj
+    # console.log new_all_obj
     root_col = new_all_obj.root
     child_col = new_all_obj.child.obj_list
 

@@ -3,9 +3,11 @@
 # ChannelItemPanel = require './channel-item-panel.coffee'
 GeneralPanel = require './general-panel'
 AddChaPanel = require './panel_view/add_channel_view'
+AddColPanel = require './collection_view/add_collection_view'
 EmpEditView = require '../view/emp-edit-view'
 EmpChaListView = require './emp-channel-list-view'
 s_name = 'EmpView'
+emp = require '../exports/emp'
 
 module.exports =
 class EmpChannelWizardView extends ScrollView
@@ -16,6 +18,7 @@ class EmpChannelWizardView extends ScrollView
   gen_add_cha:null
   gen_add_col:null
   panels_list: {}
+  createPanel:{}
   all_objs:null
 
   @content: ->
@@ -34,36 +37,58 @@ class EmpChannelWizardView extends ScrollView
     super
     # console.log activePanelName
     # @panelToShow = activePanelName
-    process.nextTick =>@initializePanels()
-    @all_objs = null
+    # process.nextTick =>
     @panels_list={}
+    @createPanel = {}
+    @initializePanels()
+    @all_objs = null
+
     # @initializePanels()
     # atom.workspaceView.command "emp-channel-wizard:toggle", => @toggle()
 
-  initializePanels: ->
+  initializePanels: ()->
     # console.log @panels.size()
     return if @panels.size > 0
     # console.log @panels.size()
     @gen_info_view = new GeneralPanel(this)
-    @gen_add_cha = new AddChaPanel(this, @all_objs)
     @panels_list[@gen_info_view.name] = @gen_info_view
-    @panels_list[@gen_add_cha.name] = @gen_add_cha
+
+    # @gen_add_cha = new AddChaPanel(this, @all_objs)
+    # @panels_list[@gen_add_cha.name] = @gen_add_cha
+
+
+    @store_panel emp.ADD_CHA_VIEW, => new AddChaPanel(this)
+    @store_panel emp.ADD_COL_VIEW, => new AddColPanel(this)
 
     @emp_channel_list_view = new EmpChaListView(this)
     @emp_logo.after(@emp_channel_list_view)
 
     @active_panel = @gen_info_view
     @active_panel_name = @gen_info_view.name
+
     # @active_panel = @gen_add_cha
     # @active_panel_name = @gen_add_cha.name
 
-    @emp_channel_list_view.refresh_channel_view() unless !@emp_channel_list_view
+    # @gen_add_col = new AddColPanel(this)
+    # console.log @gen_add_col.name
+    # @panels_list[@gen_add_col.name] = @gen_add_col
+    #
+    # @active_panel = @gen_add_col
+    # @active_panel_name = @gen_add_col.name
+
+    # if @emp_channel_list_view.fex_state
+      # @emp_channel_list_view.refresh_channel_view() unless !@emp_channel_list_view
     @panels.append(@active_panel) unless $.contains(@panels[0], @active_panel[0])
     @active_panel.show()
     for editorElement, index in @active_panel.find(".editor")
       $(editorElement).view().redraw()
     @active_panel.focus()
     # @add_new_panel()
+
+
+  store_panel: (name, callback)->
+    @createPanel[name] = callback
+
 
 
 
@@ -90,9 +115,12 @@ class EmpChannelWizardView extends ScrollView
       @add_new_panel()
       # @parse_conf()
 #
-  add_new_panel: ->
-    # console.log "add_new_panel"
+  add_new_panel_f: ->
     @emp_channel_list_view.refresh_channel_view() unless !@emp_channel_list_view
+
+  add_new_panel: ->
+    if @emp_channel_list_view.fex_state
+      @emp_channel_list_view.refresh_channel_view() #unless !@emp_channel_list_view
     # if @active_panel
     #   @panels.append(@active_panel) unless $.contains(@panels[0], @active_panel[0])
     #   @active_panel.show()
@@ -101,11 +129,14 @@ class EmpChannelWizardView extends ScrollView
     #   @active_panel.focus()
 
   show_panel: (name) ->
-    # console.log "show panels:#{name}"
+    console.log "show panels:#{name}"
     # console.log @active_panel_name
     if @active_panel_name isnt name
       tmp_pan = @panels_list[name]
-      unless !tmp_pan
+      if !tmp_pan
+          unless !call_back = @createPanel[name]
+            # console.log "d call"
+            tmp_pan = call_back()
         @active_panel = tmp_pan
         @active_panel_name = tmp_pan.name
         @panels.children().hide()
@@ -117,7 +148,6 @@ class EmpChannelWizardView extends ScrollView
 
   focus: ->
     super
-
     # Pass focus to panel that is currently visible
     for panel in @panels.children()
       child = $(panel)
@@ -147,3 +177,30 @@ class EmpChannelWizardView extends ScrollView
 
   remove_loading: ->
     @loadingElement.remove()
+
+  after_add_channel: (add_cha)->
+    cha_state = @all_objs.cha.check_exist(add_cha)
+    @show_panel(@gen_info_view.name)
+    if !cha_state
+      @emp_channel_list_view.refresh_cha_panel(add_cha, @all_objs)
+      @gen_info_view.refresh_cha_panel(add_cha)
+  after_del_channel: (del_id_list)->
+    @emp_channel_list_view.refresh_cha_panel_re(del_id_list)
+
+  after_add_col: (tmp_col_obj) ->
+    col_state = false
+    all_col = @all_objs.col
+    for key,obj of all_col
+      if tmp_col_obj.id is key
+        if tmp_col_obj.type is obj.type
+          col_state = true
+
+    @show_panel(@gen_info_view.name)
+    if !col_state
+      # console.log "list view"
+      @emp_channel_list_view.refresh_col_panel(tmp_col_obj, @all_objs)
+      # console.log "info view"
+      @gen_info_view.refresh_col_panel(tmp_col_obj, @all_objs)
+
+  after_del_col: (del_id_list) ->
+    @emp_channel_list_view.refresh_col_panel_re(del_id_list)

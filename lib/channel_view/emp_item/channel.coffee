@@ -72,19 +72,20 @@ class emp_channel
       @params[tmp_key] = tmp_val
 
 
-  #
+  # 完成创建 channel
   create_channel: (all_cha_len)->
     # console.log "create_channel"
     # console.log atom.project.channel_conf
     @format_channel(all_cha_len)
     # console.log @entry
-
+    # 根据channel 的实例类型不同，进行不同的处理
     if @entry is emp.CHANNEL_NEW_CALLBACK
       console.log "create new callback"
     else
       console.log "create adapter"
       @create_adapter_detail()
 
+  # 在channel.conf 中添加channel
   format_channel: (all_cha_len)->
     entry_dir = null
     tmp_view = [] #'undefined'
@@ -131,6 +132,7 @@ class emp_channel
     fs.writeFileSync(atom.project.channel_conf, cha_con, 'utf8')
 
 
+  # 为实例类型为adapter 的channel 进行处理
   create_adapter_detail: ->
     try
       project_path = atom.project.getPath()
@@ -140,13 +142,11 @@ class emp_channel
         @create_off(project_path)
       if @use_cs
         @create_cs(project_path)
-      emp.show_info("添加 channel 完成~")
     catch err
       console.error(err)
-      emp.show_error("创建辅助代码失败~")
+      throw("创建辅助代码失败")
 
-
-
+  #@doc 创建辅助的erlang代码
   create_code: (project_path)->
     src_dir = path.join project_path,emp.CHA_CODE_DIR
     cha_dir = path.join src_dir, emp.OFF_DEFAULT_BASE
@@ -192,6 +192,7 @@ class emp_channel
           console.error(err)
           emp.show_error("创建辅助Erl代码失败~")
 
+  #@doc 处理adapter 中配置的参数
   format_key_list: (obj)->
     param_con = ""
     rkey_con = emp.ADAPTER_REQUEST_PARAMS
@@ -217,11 +218,12 @@ class emp_channel
       rkey_con = rkey_con + ',\r\n' + tmp_rcon
     [param_con, rkey_con]
 
+  # @doc 创建变量名称，把首字母修改为大写（符合Erlang 变量命名规范）
   format_key: (key,i)->
     (key+i).replace /^[a-z]/ig,($1) =>$1.toLocaleUpperCase()
 
 
-  # 创建简单的Cs 模板
+  # @doc创建简单的Cs 模板
   create_cs: (project_path)->
     pub_dir = path.join project_path,emp.CHA_PUBLIC_DIR
     cs_dir = path.join pub_dir, emp.OFF_EXTENSION_CS;
@@ -251,7 +253,7 @@ class emp_channel
             console.error(err)
             emp.show_error("创建辅助Cs代码失败~:#{tmp_cs_file}")
 
-  # 创建离线资源文件
+  # @doc 创建离线资源文件
   create_off: (project_path)->
     cha_dir = @initial_dir(project_path)
 
@@ -283,6 +285,7 @@ class emp_channel
             console.error(err)
             emp.show_error("创建离线资源代码失败~:#{tmp_json_file}")
 
+  # @doc 初始化离线资源文件的路径
   initial_dir:(project_path) ->
     pub_dir = path.join project_path,emp.CHA_PUBLIC_DIR
     www_dir = path.join pub_dir, "/www";
@@ -319,9 +322,7 @@ class emp_channel
     # console.log cha_dir
     cha_dir
 
-
-
-
+  # @doc 构建 离线资源的根目录（平台） root=/resource_dev/plateform
   initial_root_dir: (resrc_dir) ->
     for dir in emp.OFF_CHA_PLT_LIST
       tmp_dir = path.join resrc_dir,dir
@@ -332,6 +333,7 @@ class emp_channel
       else
         @initial_channels_dir(tmp_dir)
 
+  # @doc 构建分辨率级别目录，默认为 base = root(上述路径)/default
   initial_base_dir: (tmp_dir) ->
     for dir in emp.OFF_BASE_DIR_LIST
       base_dir = path.join tmp_dir,dir
@@ -339,6 +341,7 @@ class emp_channel
         fs.mkdirSync(base_dir);
       @initial_channels_dir(base_dir)
 
+  # @doc 构建通用资源目录 ，默认为 common_src = base/channel
   initial_channels_dir: (base_dir) ->
     for dir in emp.COMMON_DIR_LIST
       tmp_dir = path.join base_dir,dir
@@ -350,6 +353,7 @@ class emp_channel
         if !fs.existsSync(cha_dir)
           fs.mkdirSync(cha_dir);
 
+  # @doc 构建指定 channel 的资源存放路径
   initial_cha_temp_dir:(cha_dir) ->
     for dir in emp.OFF_CHA_DIR_LIST
       tmp_dir = path.join cha_dir,dir

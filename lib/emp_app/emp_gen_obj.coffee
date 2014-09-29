@@ -20,7 +20,23 @@ class GenObj
 
 
   put: (obj)->
-    @obj_list[obj.id] = obj
+    if !@obj_list[obj.id]
+      @obj_list[obj.id] = obj
+      @len += 1
+
+    if !@unused[obj.id]
+      @unused[obj.id] = obj
+      @ulen += 1
+
+  check_exist:(obj) ->
+    if !@obj_list[obj.id]
+      @obj_list[obj.id] = obj
+      @len += 1
+      @unused[obj.id] = obj
+      @ulen += 1
+      false
+    else
+      true
 
   get: (id) ->
     @obj_list[id]

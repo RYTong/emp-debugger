@@ -7,6 +7,8 @@ class ChaItemView extends View
   cha_name:null
   cha_id:null
   isSelected:false
+  use:false
+
   @content: (@cha_obj)->
     @cha_name = @cha_obj.name
     @cha_id = @cha_obj.id
@@ -15,8 +17,9 @@ class ChaItemView extends View
       @div outlet: 'cha_item', id:@cha_id, class: 'emp_cha_item_tag list-item', =>
         @span outlet: 'chaName', class: 'text-success icon  icon-diff-modified', 'data-name':"*.json", @cha_name
 
-  initialize: (obj)->
+  initialize: (@cha_obj)->
     this
+    @cha_id = @cha_obj.id
 
   select: ->
     if !@isSelected
@@ -29,3 +32,12 @@ class ChaItemView extends View
       @removeClass('selected')
       @chaName.removeClass('text-highlight').addClass('text-success')
       @isSelected=false
+
+  destroy: ->
+    @detach()
+
+  set_used: ->
+    @use = true
+
+  set_unused: ->
+    @use = false

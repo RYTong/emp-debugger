@@ -1,6 +1,6 @@
 {View} = require 'atom'
 ColItemPanel = require './collection-item-panel'
-ChannelItemPanel = require './channel-item-panel.coffee'
+ChannelItemPanel = require './channel-item-panel'
 emp = require '../exports/emp'
 
 module.exports =
@@ -22,6 +22,11 @@ class GeneralPanel extends View
     @append(@cha_view)
 
   refresh_list: (objs) ->
-    console.log "refresh list"
     @col_view.refresh_col_list(objs)
     @cha_view.refresh_cha_list(objs)
+
+  refresh_cha_panel:(cha_obj) ->
+    @cha_view.refresh_add_cha(cha_obj)
+
+  refresh_col_panel: (col_obj, all_objs) ->
+    @col_view.refresh_col_panel(col_obj, all_objs)

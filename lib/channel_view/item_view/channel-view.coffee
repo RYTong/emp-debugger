@@ -14,6 +14,9 @@ class ChannelView extends View
     else
       @create_error_entry(obj)
 
+  destroy: ->
+    @detach()
+
 
   create_channel_enrey: (obj) ->
     name = obj.name

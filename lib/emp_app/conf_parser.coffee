@@ -10,17 +10,18 @@ bash_path_key = 'emp-channel-wizard.path'
 
 rel_erl_dir = '../../erl_util/parse_json.erl'
 rel_ebin_dir = '../../erl_util/'
+emp = '../exports/emp'
 
 com_state = 0
 
-initial_parser = ->
+initial_parser = (callback)->
   console.log "init"
   console.log "state:#{com_state}"
   if com_state is 0
     initial_path()
-    compile_paser()
+    compile_paser(callback)
   else if com_state is 1
-    compile_paser()
+    compile_paser(callback)
 
   return com_state
 
@@ -50,9 +51,7 @@ initial_path = ->
       set_path_state()
 
 
-
-
-compile_paser = ->
+compile_paser = (callback)->
   # check the erl environmenr
   c_process.exec "which erlc", (error, stdout, stderr) ->
     try
@@ -67,22 +66,39 @@ compile_paser = ->
   #
       c_process.exec erlc_str, (error, stdout, stderr) ->
         if (error instanceof Error)
-          # throw error
           console.warn error.message
-          show_error("Compile erl error ~")
+          emp.show_error("Compile erl error ~")
         set_compile_state()
-        # console.log "compile:#{error}"
-        # console.log "compile:#{stdout}"
-        # console.log "compile:#{stderr}"
-        # console.log "compile erl"
+        callback.add_new_panel_f()
     catch err
-      show_error(err)
+      emp.show_error(err)
 
+module.exports.remove_cha = (cha_str) ->
+  # console.log "~~---------------remove cha ~~:#{cha_str}"
+  channel_conf = atom.project.channel_conf
+  parse_beam_dir = atom.project.parse_beam_dir
+  t_erl = 'erl -pa '+parse_beam_dir+' -channel_conf '+channel_conf
+  t_erl = t_erl+' -cha_id'+cha_str+' -sname testjs -run parse_json remove_channel -noshell -s erlang halt'
+  c_process.exec t_erl, (error, stdout, stderr) ->
+    if (error instanceof Error)
+      console.log error.message
+      emp.show_error(error.message)
+    if stderr
+      console.error "compile:#{stderr}"
 
-show_error = (err_msg) ->
-  atom.confirm
-    message:"Error"
-    detailedMessage:err_msg
+module.exports.remove_col = (col_str) ->
+  # console.log "~~---------------remove col ~~:#{col_str}"
+  channel_conf = atom.project.channel_conf
+  parse_beam_dir = atom.project.parse_beam_dir
+  t_erl = 'erl -pa '+parse_beam_dir+' -channel_conf '+channel_conf
+  t_erl = t_erl+' -col_id'+col_str+' -sname testjs -run parse_json remove_col -noshell -s erlang halt'
+  c_process.exec t_erl, (error, stdout, stderr) ->
+    console.log "compile:#{stdout}"
+    if (error instanceof Error)
+      console.log error.message
+      emp.show_error(error.message)
+    if stderr
+      console.error "compile:#{stderr}"
 
 set_path_state = ->
   com_state = 1

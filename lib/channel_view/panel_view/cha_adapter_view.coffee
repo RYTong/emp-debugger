@@ -46,7 +46,7 @@ class AdapterPanel extends View
         #     @li 'two'
         #     @li 'three'
         @select outlet: "off_rel", class: "form-control", =>
-          @option value: emp.ADAPTER_PLT_R,selected:"selected", emp.ADAPTER_PLT_R
+          @option value: emp.ADAPTER_PLT_R,selected:"selected", "Default"
           @option value: emp.ADAPTER_PLT_R1, emp.ADAPTER_PLT_R1
           @option value: emp.ADAPTER_PLT_R2, emp.ADAPTER_PLT_R2
           @option value: emp.ADAPTER_PLT_R3, emp.ADAPTER_PLT_R3

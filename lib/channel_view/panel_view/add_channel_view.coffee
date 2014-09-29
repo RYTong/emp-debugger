@@ -64,11 +64,16 @@ class AddGenPanel extends View
     @cha_id.getEditor().on 'contents-modified', =>
       @cha_obj.id = @cha_id.getEditor().getText().trim()
 
+  # Tear down any state and detach
+  destroy: ->
+    @detach()
+
   focus: ->
     @cha_id.focus()
 
   do_cancel:  ->
     @fa_view.show_panel(emp.GEN_VIEW)
+    @destroy()
 
 
   do_submit: ->
@@ -90,13 +95,14 @@ class AddGenPanel extends View
       @cha_obj.id = tmp_id
       @cha_obj.app = tmp_app
       @cha_obj.name = tmp_name
-      @cha_obj.name = tmp_name
       @cha_obj.set_entry(tmp_entry)
       @cha_obj.set_state(tmp_state)
 
       @active_view.submit_detail()
       @params_view.submit_detail()
       @do_add()
+      @fa_view.after_add_channel(@cha_obj)
+      @destroy()
 
     catch e
       console.log e
@@ -110,6 +116,7 @@ class AddGenPanel extends View
       throw("该channel 已经存在~")
 
     @cha_obj.create_channel(@fa_view.all_objs.cha.len)
+    emp.show_info("添加 channel 完成~")
     # console.log __dirname
     # path.join __dirname,
     # console.log @all_objs

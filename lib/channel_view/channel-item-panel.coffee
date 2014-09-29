@@ -1,11 +1,14 @@
 {$, $$, View} = require 'atom'
+os = require 'os'
 ChaItemView = require './item_view/channel-item-view'
 emp =  require '../exports/emp'
+conf_parser = require '../emp_app/conf_parser'
 
 module.exports =
 class ChannelItemPanel extends View
-  select_entry:null
+  select_entry:{}
   new_all_obj:null
+
   @content: ->
     @div class: 'cha-list-panel', =>
       # @section class: 'config-section', =>
@@ -23,37 +26,65 @@ class ChannelItemPanel extends View
               @button class: 'item_btn btn btn-info inline-block-tight', click:'del_cha',' Delete '
 
   initialize: (@fa_view) ->
-    # @loadingElement.remove()
-    # settings = atom.config.getSettings()
     @on 'click', '.emp_cha_item_tag', (e, element) =>
       @itemClicked(e, element)
-
-    # @bindFormFields()
-    # @bindEditors()
+    @select_entry = {}
 
   refresh_cha_list:(@new_all_obj) ->
     # console.log new_all_obj
     cha_obj = @new_all_obj.cha.obj_list
-
     for n, obj of cha_obj
       tmp_item = new ChaItemView(obj)
+      # @cha_view_list[obj.id] = tmp_item
       @gen_cha_list.append(tmp_item)
 
 
   itemClicked:(e, element) ->
-    console.log "item click"
+    # console.log "item click"
     entry = $(e.currentTarget).view()
-    if @select_entry isnt null
-      @select_entry.deselect()
-    entry.select()
-    @select_entry = entry
+    shift_key = e.shiftKey
+    ctrl_key = e.ctrlKey
+
+    os_platform = os.platform().toLowerCase()
+    # console.log os_platform
+    unless os_platform isnt emp.OS_DARWIN
+      ctrl_key = e.metaKey
+    # console.log @select_entry
+    if ctrl_key
+      if entry.isSelected
+        entry.deselect()
+        delete @select_entry[entry.cha_id]
+      else
+        entry.select()
+        @select_entry[entry.cha_id] = entry
+    else
+      for key, tmp_entry of @select_entry
+        tmp_entry.deselect()
+        delete @select_entry[key]
+      entry.select()
+      @select_entry[entry.cha_id] = entry
 
   add_cha: (e, element)->
-    # console.log 'add_cha'
+    console.log 'add_cha'
     @fa_view.show_panel(emp.ADD_CHA_VIEW)
 
   edi_cha: (e, element)->
     console.log 'edi_cha'
 
+
   del_cha: (e, element)->
-    console.log 'del_cha'
+    # console.log 'del_cha'
+    tmp_cha_str = " cha_list  "
+    if @select_entry
+      tmp_id_list = []
+      for key, tmp_obj of @select_entry
+        tmp_id_list.push(key)
+        tmp_cha_str = tmp_cha_str+' '+key
+        tmp_obj.destroy()
+      conf_parser.remove_cha(tmp_cha_str)
+      @fa_view.after_del_channel(tmp_id_list)
+
+
+  refresh_add_cha: (cha_obj)->
+    tmp_item = new ChaItemView(cha_obj)
+    @gen_cha_list.append(tmp_item)

@@ -5,6 +5,7 @@ configUri = 'emp://wizard'
 empChannelWizardView = null
 
 create_view =  (params)->
+  # console.log "create view "
   # console.log "params:#{params}"
   empChannelWizardView = new EmpChannelWizardView(params)
 

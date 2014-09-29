@@ -10,11 +10,67 @@
 -compile([export_all]).
 
 -define(CHANNEL_CONF, 'channel_conf').
+-define(CHANNEL_RPCOL, 'col_id').
+-define(CHANNEL_RPCHA, 'cha_id').
+-define(CHA, 'channels').
+-define(COLL, 'collections').
+-define(ID, 'id').
 -define(TMP_JSON, "tmp_channel_json.json").
 
+remove_col() ->
+  ConfFile = script_get_init_argument(?CHANNEL_CONF),
+  Col_ids = script_get_init_arguments(?CHANNEL_RPCOL),
+  io:format("~p", [Col_ids]),
+  [_|ACol_ids] = Col_ids,
+  check_conf_file(ConfFile),
+  ConfC = consult_file(ConfFile),
+  CollList = proplists:get_value(?COLL, ConfC),
+  ChaList = proplists:get_value(?CHA, ConfC),
+  NewColList = do_remove_cha(CollList, ACol_ids),
 
+  NewCol = [{?COLL, NewColList}, {?CHA, ChaList}],
+  New_con = lists:flatten(io_lib:format("~p.~n~p.",NewCol)),
+  file:write_file(ConfFile, New_con).
+
+do_remove_col(CollList, Id) ->
+    lists:foldr(fun(Col, Acc) ->
+                        ItemId = proplists:get_value(?ID, Col),
+                        case lists:member(ItemId, Id) of
+                            true -> Acc;
+                            _ -> [Col|Acc]
+                        end
+                end,
+                [], CollList).
+
+remove_channel() ->
+  ConfFile = script_get_init_argument(?CHANNEL_CONF),
+  Cha_ids = script_get_init_arguments(?CHANNEL_RPCHA),
+  io:format("~p", [Cha_ids]),
+  [_|ACha_ids] = Cha_ids,
+  check_conf_file(ConfFile),
+  ConfC = consult_file(ConfFile),
+  CollList = proplists:get_value(?COLL, ConfC),
+  ChaList = proplists:get_value(?CHA, ConfC),
+  NewChaList = do_remove_cha(ChaList, ACha_ids),
+
+  NewCha = [{?COLL, CollList}, {?CHA, NewChaList}],
+  New_con = lists:flatten(io_lib:format("~p.~n~p.",NewCha)),
+  file:write_file(ConfFile, New_con).
+
+
+do_remove_cha(ChaList, Id) ->
+    lists:foldr(fun(Cha, Acc) ->
+                        ItemId = proplists:get_value(?ID, Cha),
+                        case lists:member(ItemId, Id) of
+                            true -> Acc;
+                            _ -> [Cha|Acc]
+                        end
+                end,
+                [], ChaList).
+
+
+% @doc 解析channel.conf
 parse() ->
-    Params = init:get_arguments(),
     ConfFile = script_get_init_argument(?CHANNEL_CONF),
     check_conf_file(ConfFile),
     ConfC = consult_file(ConfFile),
@@ -25,7 +81,6 @@ parse() ->
     io:format("~s", [Result2]).
 
 test() ->
-    Params = init:get_arguments(),
     ConfFile = script_get_init_argument(?CHANNEL_CONF),
     check_conf_file(ConfFile),
     ConfC = consult_file(ConfFile),
@@ -68,7 +123,7 @@ consult_file(ConfFile) ->
     case file:consult(ConfFile) of
         {ok, C} ->
             C;
-        E ->
+        _E ->
             % io:format("read file error:~p~n", [E]),
             throw("the file isn't exist!")
     end.
@@ -90,6 +145,14 @@ script_get_init_argument(Key) ->
         {ok, Result} ->
             [Value] = hd(Result),
             Value
+    end.
+
+script_get_init_arguments(Key) ->
+    case init:get_argument(Key) of
+        error ->
+            throw(lists:concat(["required params:", Key]));
+        {ok, Result} ->
+            hd(Result)
     end.
 
 

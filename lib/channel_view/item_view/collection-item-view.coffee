@@ -25,9 +25,15 @@ class ColItemView extends View
 
 
   initialize: (obj)->
+    @col_obj = obj
+    @col_name = obj.name
+    @col_id = obj.id
+    @col_type = obj.type
     # console.log "---------collection view~-----------: #{error}"
     this
 
+  destroy: ->
+    @detach()
 
   select: ->
     if !@isSelected

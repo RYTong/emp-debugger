@@ -42,12 +42,14 @@ module.exports =
 
   GEN_VIEW:'gen_view'
   ADD_CHA_VIEW:'add_cha_view'
+  ADD_COL_VIEW:'add_col_view'
 
 
   ATOM_CONF_CHANNEL_DIR_KEY:'emp-debugger.Channel-config-file'
   ATOM_CONF_CHANNEL_DIR_DEFAULT:'/config/channel.conf'
 
   # adapter template
+  STATIC_COLLECTION_TEMPLATE:"/templates/"
   STATIC_CHANNEL_TEMPLATE:"/templates/channel/"
   CHANNEL_ADAPTER_DIR:'adapter'
   CHANNEL_NEW_CALLBACK_DIR: 'new_callback'
@@ -68,6 +70,8 @@ module.exports =
   OFF_EXTENSION_CS: "cs";
   OFF_EXTENSION_JSON: "json";
   OFF_EXTENSION_XHTML:"xhtml";
+
+  DEFAULT_COL_ITEM:'[{item_id,"$cha_id"},{item_type,$itype},{menu_order,$order}]'
 
   DEFAULT_CHA_TMP:'\n{channels,[[{id,\"${channel}\"},\r\n'+
                   '            {app,\"${app}\"},\r\n'+
@@ -92,6 +96,11 @@ module.exports.show_info = (info_msg) ->
   atom.confirm
     message:"Info"
     detailedMessage:info_msg
+
+module.exports.isEmpty = (obj) ->
+    for key,name of obj
+        false;
+    true;
 
 
 

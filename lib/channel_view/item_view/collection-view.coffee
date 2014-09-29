@@ -1,6 +1,6 @@
 {$, View} = require 'atom'
 ChannelView = require './channel-view'
-emp = require '../exports/emp'
+emp = require '../../exports/emp'
 
 module.exports =
 class CollectionView extends View
@@ -120,3 +120,6 @@ class CollectionView extends View
     # else
     #   @colName.removeClass('text-highlight').addClass('text-warning')
     @isSelected=false
+
+  destroy: ->
+    @detach()

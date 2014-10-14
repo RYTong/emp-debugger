@@ -1,0 +1,8 @@
+{collections, [[{id,"${collection}"},
+                {app,"${app}"},
+                {name, "${name}"},
+                {url, ${url}},
+                {user_id, ${uid}},
+                {type, ${type}},
+                {state, ${state}},
+                {items, ${items}}],

@@ -72,23 +72,34 @@ class ChannelListView extends ScrollView
     else
       conf_parser.initial_path()
 
+  refresh_edit_cha:(tmp_obj, all_objs) ->
+    # console.log "refresh list"
+    @refresh_view_obj(all_objs)
+    
+  refresh_edit_col:(tmp_obj, all_objs) ->
+    # console.log "refresh list"
+    @refresh_view_obj(all_objs)
 
 
-  refresh_cha_panel_re: (tmp_id_list) ->
-    for tmp_id in tmp_id_list
-      tmp_view = @unused_cha_map[tmp_id]
-      if tmp_view
-        tmp_view.destroy()
-        delete @unused_cha_map[tmp_id]
+  refresh_cha_panel_re: (tmp_id_list, new_all_objs) ->
+    # for tmp_id in tmp_id_list
+    #   tmp_view = @unused_cha_map[tmp_id]
+    #   if tmp_view
+    #     tmp_view.destroy()
+    #     delete @unused_cha_map[tmp_id]
+    @refresh_view_obj(new_all_objs)
 
-  refresh_col_panel_re: (tmp_id_list) ->
-    for tmp_id in tmp_id_list
-      tmp_view = @unused_col_map[tmp_id]
-      if tmp_view
-        tmp_view.destroy()
-        delete @unused_col_map[tmp_id]
 
-  refresh_col_panel: (add_col_obj, tmp_all_objs)->
+  refresh_col_panel_re: (tmp_id_list, new_all_objs) ->
+    # for tmp_id, tmp_type of tmp_id_list
+    #   tmp_view = @unused_col_map[tmp_id]
+    #   if tmp_view
+    #     if tmp_view.col_type is tmp_type
+    #       tmp_view.destroy()
+    #       delete @unused_col_map[tmp_id]
+    @refresh_view_obj(new_all_objs)
+
+  refresh_add_col: (add_col_obj, tmp_all_objs)->
     tmp_col_views = new CollectionView(add_col_obj, tmp_all_objs)
     # console.log @unused_cha.isVisible()
     if @un_col.isHidden()
@@ -127,8 +138,17 @@ class ChannelListView extends ScrollView
       @add_unused_list(new_all_obj)
 
     fa_view.refresh_view(new_all_obj)
-    # fa_view.remove_loading()
 
+  refresh_view_obj: (new_all_obj)->
+    # console.log "do refresh ----"
+    root_col = new_all_obj.root
+    @entries.empty()
+    if root_col isnt {}
+      for key, obj of root_col
+        col_views = new CollectionView(obj, new_all_obj)
+        @entries.append(col_views)
+      @add_unused_list(new_all_obj)
+    # fa_view.refresh_view(new_all_obj)
 
   add_unused_list: (all_obj)->
     @add_unused_col(all_obj)
@@ -136,14 +156,18 @@ class ChannelListView extends ScrollView
 
   add_unused_col: (all_obj) ->
     # console.log "add unused collections"
+    # console.log all_obj
     col_child = all_obj.child
     ulen = col_child.ulen
     @col_entries.empty()
+    # console.log ulen
+    # console.log col_child
     if ulen isnt 0
       ucol_child = col_child.get_unused()
       # console.log ucol_child
       @un_col.show()
       for key, obj of ucol_child
+        obj.unsed_flag = true
         col_views = new CollectionView(obj, all_obj)
         @col_entries.append(col_views)
         @unused_col_map[obj.id] = col_views

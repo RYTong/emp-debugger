@@ -57,8 +57,8 @@ class EmpChannelWizardView extends ScrollView
     # @panels_list[@gen_add_cha.name] = @gen_add_cha
 
 
-    @store_panel emp.ADD_CHA_VIEW, => new AddChaPanel(this)
-    @store_panel emp.ADD_COL_VIEW, => new AddColPanel(this)
+    @store_panel emp.ADD_CHA_VIEW, (parmas) => new AddChaPanel(this, parmas)
+    @store_panel emp.ADD_COL_VIEW, (parmas) => new AddColPanel(this, parmas)
 
     @emp_channel_list_view = new EmpChaListView(this)
     @emp_logo.after(@emp_channel_list_view)
@@ -128,7 +128,7 @@ class EmpChannelWizardView extends ScrollView
     #     $(editorElement).view().redraw()
     #   @active_panel.focus()
 
-  show_panel: (name) ->
+  show_panel: (name, extra_param) ->
     console.log "show panels:#{name}"
     # console.log @active_panel_name
     if @active_panel_name isnt name
@@ -136,7 +136,7 @@ class EmpChannelWizardView extends ScrollView
       if !tmp_pan
           unless !call_back = @createPanel[name]
             # console.log "d call"
-            tmp_pan = call_back()
+            tmp_pan = call_back(extra_param)
         @active_panel = tmp_pan
         @active_panel_name = tmp_pan.name
         @panels.children().hide()
@@ -183,9 +183,21 @@ class EmpChannelWizardView extends ScrollView
     @show_panel(@gen_info_view.name)
     if !cha_state
       @emp_channel_list_view.refresh_cha_panel(add_cha, @all_objs)
-      @gen_info_view.refresh_cha_panel(add_cha)
+      @gen_info_view.refresh_add_cha(add_cha)
+
   after_del_channel: (del_id_list)->
-    @emp_channel_list_view.refresh_cha_panel_re(del_id_list)
+    console.log @all_objs
+    console.log del_id_list
+    for cha_id in del_id_list
+      @all_objs.cha.delete(cha_id)
+    @emp_channel_list_view.refresh_cha_panel_re(del_id_list, @all_objs)
+
+  after_edit_channel: (tmp_cha_obj)->
+    @all_objs.cha.refresh(tmp_cha_obj)
+    @emp_channel_list_view.refresh_edit_cha(tmp_cha_obj, @all_objs)
+    # console.log "info view"
+    @gen_info_view.refresh_edit_cha(tmp_cha_obj, @all_objs)
+    @show_panel(@gen_info_view.name)
 
   after_add_col: (tmp_col_obj) ->
     col_state = false
@@ -195,12 +207,35 @@ class EmpChannelWizardView extends ScrollView
         if tmp_col_obj.type is obj.type
           col_state = true
 
+    if tmp_col_obj.type is emp.COL_CH_TYPE
+      @all_objs.child.put(tmp_col_obj)
+    else
+      @all_objs.root[tmp_col_obj.id] = tmp_col_obj
+    @all_objs.col[tmp_col_obj.id] = tmp_col_obj
+
     @show_panel(@gen_info_view.name)
     if !col_state
       # console.log "list view"
-      @emp_channel_list_view.refresh_col_panel(tmp_col_obj, @all_objs)
+      @emp_channel_list_view.refresh_add_col(tmp_col_obj, @all_objs)
       # console.log "info view"
-      @gen_info_view.refresh_col_panel(tmp_col_obj, @all_objs)
+      @gen_info_view.refresh_add_col(tmp_col_obj, @all_objs)
 
   after_del_col: (del_id_list) ->
-    @emp_channel_list_view.refresh_col_panel_re(del_id_list)
+    for col_id,col_type of del_id_list
+      if col_type is emp.COL_CH_TYPE
+        @all_objs.child.delete(col_id)
+      else
+        delete @all_objs.root[col_id]
+      delete @all_objs.col[col_id]
+    @emp_channel_list_view.refresh_col_panel_re(del_id_list, @all_objs)
+
+  after_edit_col:(tmp_col_obj) ->
+    if tmp_col_obj.type is emp.COL_CH_TYPE
+      @all_objs.child.refresh(tmp_col_obj)
+    else
+      @all_objs.root[tmp_col_obj.id] = tmp_col_obj
+    @all_objs.col[tmp_col_obj.id] = tmp_col_obj
+    @emp_channel_list_view.refresh_edit_col(tmp_col_obj, @all_objs)
+    # console.log "info view"
+    @gen_info_view.refresh_edit_col(tmp_col_obj, @all_objs)
+    @show_panel(@gen_info_view.name)

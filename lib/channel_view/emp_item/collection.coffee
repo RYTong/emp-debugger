@@ -1,6 +1,7 @@
 emp = require '../../exports/emp'
 path = require 'path'
 fs = require 'fs'
+conf_parser = require '../../emp_app/conf_parser'
 
 module.exports =
 class emp_collection
@@ -19,17 +20,21 @@ class emp_collection
 
   constructor: ->
     # console.log "this is a channel"
-    @item = {}
+    # @item = {}
 
   set_url:(val) ->
+    # console.log val
+    # console.log typeof(val)
     if val
-      @url = val
+      # console.log "??????"
+      @url = val.trim()
     else
       @url = 'undefined'
 
   set_uid:(val) ->
+    # console.log typeof(val)
     if val
-      @uid = val
+      @uid = val.trim()
     else
       @uid = 'undefined'
 
@@ -39,9 +44,9 @@ class emp_collection
     else
       @state = 0
 
-  add_item: (key, index) ->
+  add_item: (key, index, tmp_obj) ->
     tmp_temp = emp.DEFAULT_COL_ITEM
-    item_type = emp.ITEM_CHA_TYPE
+    item_type = tmp_obj.item_type
     tmp_item = tmp_temp.replace(/\$cha_id/ig, key)
     tmp_item = tmp_item.replace(/\$itype/ig,item_type)
     tmp_item = tmp_item.replace(/\$order/ig, index)
@@ -68,3 +73,20 @@ class emp_collection
       col_con = col_con +',\n'
     # console.log col_con
     fs.writeFileSync(atom.project.channel_conf, col_con, 'utf8')
+
+  edit_collection: ()->
+    # console.log col_objs
+    # console.log "do edit"
+    p_str = " -id #{@id} -app #{@app} -name #{@name} -type #{@type} "
+    p_str = p_str + " -url #{@url} -uid #{@uid} -state #{@state}"
+    console.log p_str
+    # console.log @item_param
+    # console.log @items
+
+    item_str = ""
+    for tmp_obj in @items
+      item_str = item_str + "|#{tmp_obj.item_id}|#{tmp_obj.item_type}|#{tmp_obj.menu_order}"
+
+    p_str = p_str + " -items \"#{item_str}\" "
+    # console.log p_str
+    conf_parser.edit_col(p_str)

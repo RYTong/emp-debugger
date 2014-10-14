@@ -8,7 +8,8 @@ module.exports =
 class ChannelItemPanel extends View
   select_entry:{}
   new_all_obj:null
-
+  edit_entry:null
+  
   @content: ->
     @div class: 'cha-list-panel', =>
       # @section class: 'config-section', =>
@@ -70,7 +71,14 @@ class ChannelItemPanel extends View
 
   edi_cha: (e, element)->
     console.log 'edi_cha'
-
+    last_id = null
+    for key, tmp_entry of @select_entry
+      last_id = key
+      @edit_entry = tmp_entry
+    console.log last_id
+    if last_id
+      tmp_obj = @fa_view.all_objs.cha.obj_list[last_id]
+      @fa_view.show_panel(emp.ADD_CHA_VIEW, tmp_obj)
 
   del_cha: (e, element)->
     # console.log 'del_cha'
@@ -88,3 +96,6 @@ class ChannelItemPanel extends View
   refresh_add_cha: (cha_obj)->
     tmp_item = new ChaItemView(cha_obj)
     @gen_cha_list.append(tmp_item)
+
+  refresh_edit_cha:(cha_obj) ->
+    @edit_entry.refresh_edit(tmp_col_obj)

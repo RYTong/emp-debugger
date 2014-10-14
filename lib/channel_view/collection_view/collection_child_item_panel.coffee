@@ -2,6 +2,7 @@
 EmpEditView = require '../item-editor-view'
 EmpSelView = require '../item-selector-view'
 ChaItemView = require '../item_view/channel-item-view'
+ColItemView = require '../item_view/collection-item-view'
 emp = require '../../exports/emp'
 os = require 'os'
 
@@ -49,17 +50,43 @@ class ItemsPanel extends View
 
 
   initialize: (all_objs, @col_obj)->
-    # console.log all_objs
+    console.log all_objs
     @unused_item = {}
     @used_item = {}
     @select_entry ={}
     @select_unentry = {}
     @cha_objs = all_objs.cha.obj_list
-    for n, obj of @cha_objs
-      tmp_item = new ChaItemView(obj)
-      # @cha_view_list[obj.id] = tmp_item
-      @unuse_cha_list.append(tmp_item)
-      @unused_item[obj.id] = tmp_item
+    @col_objs = all_objs.col
+
+    if @col_obj.items.length > 0
+      for obj in @col_obj.items
+        tmp_type = obj.item_type
+        tmp_id = obj.item_id
+        tmp_item = null
+        if tmp_type is emp.ITEM_CHA_TYPE
+          console.log "cha type"
+          tmp_cha_obj = @cha_objs[tmp_id]
+          tmp_item = new ChaItemView(tmp_cha_obj)
+        else
+          console.log "col type"
+          tmp_col_obj = @col_objs[tmp_id]
+          tmp_item = new ColItemView(tmp_col_obj)
+        tmp_item.set_used()
+        @use_cha_list.append(tmp_item)
+        @used_item[tmp_id] = tmp_item
+
+    for key, obj of @cha_objs
+      tmp_use_item = @used_item[key]
+      if tmp_use_item
+        if tmp_use_item.item_type isnt emp.ITEM_CHA_TYPE
+          tmp_item = new ChaItemView(obj)
+          # @cha_view_list[obj.id] = tmp_item
+          @unuse_cha_list.append(tmp_item)
+          @unused_item[obj.id] = tmp_item
+      else
+        tmp_item = new ChaItemView(obj)
+        @unuse_cha_list.append(tmp_item)
+        @unused_item[obj.id] = tmp_item
 
     # for n, obj of @cha_objs
     #   tmp_item = new ChaItemView(obj)
@@ -217,10 +244,11 @@ class ItemsPanel extends View
     @select_unentry = {}
 
   submit_detail: ->
-    # console.log "submit detail"
-    # console.log @used_item
+    console.log "submit detail"
+    console.log @used_item
     index = 1
     # tmp_list = []
+    @col_obj.items = []
     for key,tmp_obj of @used_item
-      @col_obj.add_item(key, index)
+      @col_obj.add_item(key, index, tmp_obj)
       index += 1

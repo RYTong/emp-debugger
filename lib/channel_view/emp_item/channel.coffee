@@ -119,8 +119,9 @@ class emp_channel
       f_con = fs.readFileSync(tmp_ch, 'utf8')
     else
       f_con = emp.DEFAULT_CHA_TMP
-    f_con = f_con.replace('${channel}', @id).replace('${name}', @name)
 
+
+    f_con = f_con.replace('${channel}', @id).replace('${name}', @name).replace('${entry}', @entry)
     f_con = f_con.replace(/\$\{views\}/ig, tmp_view).replace(/\$\{app\}/ig, @app)
     f_con = f_con.replace(/\$\{state\}/ig, parseInt(@state)).replace(/\$\{props\}/ig, tmp_props)
     if all_cha_len > 0

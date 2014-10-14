@@ -86,6 +86,7 @@ module.exports.remove_cha = (cha_str) ->
     if stderr
       console.error "compile:#{stderr}"
 
+
 module.exports.remove_col = (col_str) ->
   # console.log "~~---------------remove col ~~:#{col_str}"
   channel_conf = atom.project.channel_conf
@@ -94,6 +95,21 @@ module.exports.remove_col = (col_str) ->
   t_erl = t_erl+' -col_id'+col_str+' -sname testjs -run parse_json remove_col -noshell -s erlang halt'
   c_process.exec t_erl, (error, stdout, stderr) ->
     console.log "compile:#{stdout}"
+    if (error instanceof Error)
+      console.log error.message
+      emp.show_error(error.message)
+    if stderr
+      console.error "compile:#{stderr}"
+
+module.exports.edit_col = (col_str) ->
+  # console.log "~~---------------remove col ~~:#{col_str}"
+  channel_conf = atom.project.channel_conf
+  parse_beam_dir = atom.project.parse_beam_dir
+  t_erl = 'erl -pa '+parse_beam_dir+' -channel_conf '+channel_conf
+  t_erl = t_erl+col_str+' -sname testjs -run parse_json edit_col -noshell -s erlang halt'
+  # console.log t_erl
+  c_process.exec t_erl, (error, stdout, stderr) ->
+    # console.log "compile:#{stdout}"
     if (error instanceof Error)
       console.log error.message
       emp.show_error(error.message)

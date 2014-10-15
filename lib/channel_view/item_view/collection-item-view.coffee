@@ -8,6 +8,8 @@ class ColItemView extends View
   col_id: null
   col_name:null
   isSelected: false
+  item_type:emp.ITEM_COL_TYPE
+
   @content: (obj, type)->
     @col_obj = obj
     @col_name = obj.name
@@ -46,3 +48,17 @@ class ColItemView extends View
       @removeClass('selected')
       @colName.removeClass('text-highlight').addClass('text-info')
       @isSelected=false
+
+  refresh_edit: (new_obj)->
+    # console.log @colName.text()
+    # console.log new_obj.name
+    @col_name = new_obj.name
+    @colName.text(@col_name)
+    @col_obj = new_obj
+
+
+  set_used: ->
+    @use = true
+
+  set_unused: ->
+    @use = false

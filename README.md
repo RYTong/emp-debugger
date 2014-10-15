@@ -34,3 +34,7 @@ emp-debugger 是一个基于socket协议的简单的协调服务器，它主要�
 
 ### 日志显示
 我们可以通过在控制面板中打开日志显示界面，来查看交互的日志内容。
+
+## Some Else
+### collection
+collection-item-panel -> add_collection_view -> collection_child_item_panel

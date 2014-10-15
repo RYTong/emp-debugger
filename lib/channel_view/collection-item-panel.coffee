@@ -9,6 +9,7 @@ os = require 'os'
 module.exports =
 class SettingsPanel extends View
   select_entry:null
+  edit_entry:null
   @content: ->
     @div class: 'col-list-panel', =>
       # @section class: 'config-section', =>
@@ -21,14 +22,14 @@ class SettingsPanel extends View
             @div class: 'item_cbtn_div', =>
               @button class: 'item_btn btn btn-info inline-block-tight', click:'add_col', ' Add... '
             @div class: 'item_cbtn_div', =>
-              @button class: 'item_btn btn btn-info inline-block-tight', click:'edi_col','  Edit  '
+              @button class: 'item_btn btn btn-info inline-block-tight', click:'edit_col','  Edit  '
             @div class: 'item_cbtn_div', =>
               @button class: 'item_btn btn btn-info inline-block-tight', click:'del_col',' Delete '
 
 
 
   initialize: (@fa_view) ->
-    @select_entry = []
+    @select_entry = {}
     @on 'click', '.emp_col_item_tag', (e, element) =>
       @itemClicked(e, element)
 
@@ -45,11 +46,7 @@ class SettingsPanel extends View
       tmp_item = new ColItemView(obj)
       @gen_col_list.append(tmp_item)
 
-  refresh_col_panel: (tmp_col_obj, all_objs) ->
-    if tmp_col_obj.type is emp.COL_CH_TYPE
-      all_objs.child.put(tmp_col_obj)
-    else
-      all_objs.root[tmp_col_obj.id] = tmp_col_obj
+  refresh_add_col: (tmp_col_obj, all_objs) ->
     # console.log tmp_col_obj
     tmp_item = new ColItemView(tmp_col_obj)
     @gen_col_list.append(tmp_item)
@@ -87,19 +84,33 @@ class SettingsPanel extends View
     @fa_view.show_panel(emp.ADD_COL_VIEW)
     # console.log 'add_col'
 
-  edi_col: (e, element)->
-    console.log 'edi_col'
+  edit_col: (e, element)->
+    # console.log 'edi_col'
+    # console.log @select_entry
+    last_id = null
+
+    for key, tmp_entry of @select_entry
+      last_id = key
+      @edit_entry = tmp_entry
+    if last_id
+      tmp_obj = @fa_view.all_objs.col[last_id]
+      @fa_view.show_panel(emp.ADD_COL_VIEW, tmp_obj)
+
+  refresh_edit_col: (tmp_col_obj) ->
+    # console.log "refresh --------"
+    @edit_entry.refresh_edit(tmp_col_obj)
 
   del_col: (e, element)->
     # console.log 'del_col'
     tmp_col_str = " col_list  "
     # console.log @select_entry
     if @select_entry
-      tmp_id_list = []
+      tmp_id_list = {}
       for key, tmp_obj of @select_entry
-        tmp_id_list.push(key)
-        tmp_col_str = tmp_col_str+' '+key
-        # console.log "#{tmp_cha_str}, #{key}"
+        tmp_type = tmp_obj.col_type
+        tmp_id_list[key] = tmp_type
+        tmp_col_str = tmp_col_str+' '+key+' '+tmp_type
+        # console.log "#{tmp_col_str}, #{key}"
         tmp_obj.destroy()
       conf_parser.remove_col(tmp_col_str)
       @fa_view.after_del_col(tmp_id_list)

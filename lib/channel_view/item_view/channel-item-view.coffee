@@ -8,6 +8,7 @@ class ChaItemView extends View
   cha_id:null
   isSelected:false
   use:false
+  item_type: emp.ITEM_CHA_TYPE
 
   @content: (@cha_obj)->
     @cha_name = @cha_obj.name
@@ -32,6 +33,11 @@ class ChaItemView extends View
       @removeClass('selected')
       @chaName.removeClass('text-highlight').addClass('text-success')
       @isSelected=false
+
+  refresh_edit: (tmp_obj)->
+    @cha_obj = tmp_obj
+    @cha_name = @cha_obj.name
+    @chaName.text(@cha_name)
 
   destroy: ->
     @detach()

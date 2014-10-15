@@ -1,6 +1,7 @@
 emp = require '../../exports/emp'
 path = require 'path'
 fs = require 'fs'
+conf_parser = require '../../emp_app/conf_parser'
 
 module.exports =
 class emp_channel
@@ -8,6 +9,7 @@ class emp_channel
   name:null
   app:null
   entry:null
+  entry_dir:emp.CHANNEL_ADAPTER_DIR
   state:1
 
   use_cs:true
@@ -15,7 +17,6 @@ class emp_channel
   use_code:true
 
   off_detail:{}
-
   adapters:{}
   params:{}
 
@@ -23,7 +24,9 @@ class emp_channel
   constructor: ->
     # console.log "this is a channel"
     @adapters = {}
-    @params = {}
+    @params = {'method':'post', 'encrypt':'0'}
+
+  set_id: (@id) ->
 
   set_state:(tmp_state) ->
     if tmp_state
@@ -31,11 +34,15 @@ class emp_channel
     else
       @state = 0
 
+  # @doc 设置channel 的entry 类型，
+  # 并设置相关entry 类型的保存路径
   set_entry:(tmp_entry) ->
     if tmp_entry is emp.CHANNEL_ADAPTER
       @entry = emp.CHANNEL_ADAPTER
+      @entry_dir = emp.CHANNEL_ADAPTER_DIR
     else
       @entry = emp.CHANNEL_NEW_CALLBACK
+      @entry_dir = emp.CHANNEL_NEW_CALLBACK_DIR
 
   set_off_detail: (off_plat, off_res)->
     @off_detail.plat = off_plat
@@ -51,6 +58,7 @@ class emp_channel
   initial_adapter: ->
     @adapters={}
 
+  # @doc 保存adapter 的相关参数
   store_adapter: (a_obj) ->
     tmp_tran = a_obj.trancode
     # console.log a_obj
@@ -62,37 +70,60 @@ class emp_channel
   initial_param: ->
     @params = {}
 
+  get_param: ->
+    @params
+
+  # @doc 保存channel 类型中的props 字段
   store_param: (param) ->
     tmp_key = param.key
     tmp_val = param.value
     if !tmp_val
       tmp_val = 'undefined'
-
     if tmp_key
       @params[tmp_key] = tmp_val
 
+  # 编辑channel
+  edit_channel: ->
+    # console.log "edit channel"
+    @format_edit_channel()
+    @create_adapter_detail()
+
+  # @doc 拼接参数串，用于传递给erl 处理
+  format_edit_channel: ->
+    p_str = " -id #{@id} -app #{@app} -name #{@name} -entry #{@entry} "
+    p_str = p_str + " -state #{@state}"
+    # console.log p_str
+    # @doc 拼接 props 的相关字段
+    params_str = ""
+    for tmp_key,tmp_val of @params
+      params_str = params_str + "|#{tmp_key}|#{tmp_val}"
+    p_str = p_str + " -props \"#{params_str}\" "
+
+    # @doc 拼接 views 的相关参数字段
+    views_str = ""
+    for tmp_key,tmp_objs of @adapters
+      views_str = views_str + "|#{tmp_key}|#{tmp_objs.view}"
+    if views_str is ""
+      views_str = 'undefined'
+    p_str = p_str + " -views \"#{views_str}\" "
+    conf_parser.edit_cha(p_str)
 
   # 完成创建 channel
   create_channel: (all_cha_len)->
     # console.log "create_channel"
-    # console.log atom.project.channel_conf
     @format_channel(all_cha_len)
-    # console.log @entry
     # 根据channel 的实例类型不同，进行不同的处理
     if @entry is emp.CHANNEL_NEW_CALLBACK
       console.log "create new callback"
     else
-      console.log "create adapter"
       @create_adapter_detail()
 
   # 在channel.conf 中添加channel
   format_channel: (all_cha_len)->
-    entry_dir = null
     tmp_view = [] #'undefined'
     if @entry is emp.CHANNEL_NEW_CALLBACK
-      @entry_dir = emp.CHANNEL_NEW_CALLBACK_DIR
+      console.log "no this channel type temporarily~"
     else
-      @entry_dir = emp.CHANNEL_ADAPTER_DIR
       for key,objs of @adapters
         tmp_v = "{\"#{objs.trancode}\", \"#{objs.view}\"}"
         tmp_view.push(tmp_v)
@@ -101,7 +132,6 @@ class emp_channel
       tmp_view = 'undefined'
     else
       tmp_view = "[" +tmp_view.join(",")+"]"
-    # console.log tmp_view
 
     tmp_props = []
     for p_key, p_val of @params
@@ -119,14 +149,13 @@ class emp_channel
       f_con = fs.readFileSync(tmp_ch, 'utf8')
     else
       f_con = emp.DEFAULT_CHA_TMP
-    f_con = f_con.replace('${channel}', @id).replace('${name}', @name)
 
+    f_con = f_con.replace('${channel}', @id).replace('${name}', @name).replace('${entry}', @entry)
     f_con = f_con.replace(/\$\{views\}/ig, tmp_view).replace(/\$\{app\}/ig, @app)
     f_con = f_con.replace(/\$\{state\}/ig, parseInt(@state)).replace(/\$\{props\}/ig, tmp_props)
     if all_cha_len > 0
       f_con = f_con+',\n'
     # console.log f_con
-
     cha_con = fs.readFileSync(atom.project.channel_conf, 'utf8')
     cha_con = cha_con.replace(/(%+[^\n]*\n+)*[\s\r\n\t]*\{[\s\r\n\t]*([\s\r\t]*%+[^\n]*\n+)*[\s\r\t]*channels\W*,([\s\r\t]*%+[^\n]*\n+)*[^\[]*\[/ig, f_con)
     fs.writeFileSync(atom.project.channel_conf, cha_con, 'utf8')
@@ -138,8 +167,10 @@ class emp_channel
       project_path = atom.project.getPath()
       if @use_code
         @create_code(project_path)
+      # console.log '111'
       if @use_off
         @create_off(project_path)
+      # console.log '2222'
       if @use_cs
         @create_cs(project_path)
     catch err
@@ -150,7 +181,7 @@ class emp_channel
   create_code: (project_path)->
     src_dir = path.join project_path,emp.CHA_CODE_DIR
     cha_dir = path.join src_dir, emp.OFF_DEFAULT_BASE
-    code_dir = path.join(cha_dir,(@id+"."+emp.OFF_EXTENSION_ERL))
+    code_dir = path.join(cha_dir, (@id+"."+emp.OFF_EXTENSION_ERL))
     # console.log "code dir :#{code_dir}"
     emp.mkdir_sync(src_dir)
     emp.mkdir_sync(cha_dir)
@@ -165,32 +196,32 @@ class emp_channel
       if !exist_stat
         code_con = fs.readFileSync tmp_code_dir, 'utf8'
         code_con = code_con.replace('$module', @id)
-      fun_con = fs.readFileSync tmp_fun_dir, 'utf8'
-      # console.log @adapters
-      for key,obj of @adapters
-        tmp_con = fun_con.replace(/\$trancode/ig, obj.trancode)
+        fun_con = fs.readFileSync tmp_fun_dir, 'utf8'
+        # console.log @adapters
+        for key,obj of @adapters
+          tmp_con = fun_con.replace(/\$trancode/ig, obj.trancode)
 
-        if obj.adapter
-          param_con = ""
-          key_con = ""
-          tmp_con = tmp_con.replace(/\$adapter/ig, obj.adapter)
-          tmp_con = tmp_con.replace(/\$procedure/ig, obj.procedure)
-          key_list = @format_key_list(obj)
-          parm_con = key_list[0]
-          rkey_con = key_list[1]
-          tmp_con = tmp_con.replace(/\$params/ig, parm_con)
-          tmp_con = tmp_con.replace(/\$keylist/ig, rkey_con)
-          tmp_con = tmp_con.replace(/\$preadapter_region/ig, '')
-          tmp_con = tmp_con.replace(/\$noadapter_region[\s\S]*noadapter_region/ig, '')
-        else
-          tmp_con = tmp_con.replace(/\$params/ig, '')
-          tmp_con = tmp_con.replace(/\$noadapter_region/ig, '')
-          tmp_con = tmp_con.replace(/\$preadapter_region[\s\S]*preadapter_region/ig, '')
-        code_con = code_con+tmp_con
-      fs.appendFile code_dir, code_con, 'utf8', (err) =>
-        if err
-          console.error(err)
-          emp.show_error("创建辅助Erl代码失败~")
+          if obj.adapter
+            param_con = ""
+            key_con = ""
+            tmp_con = tmp_con.replace(/\$adapter/ig, obj.adapter)
+            tmp_con = tmp_con.replace(/\$procedure/ig, obj.procedure)
+            key_list = @format_key_list(obj)
+            parm_con = key_list[0]
+            rkey_con = key_list[1]
+            tmp_con = tmp_con.replace(/\$params/ig, parm_con)
+            tmp_con = tmp_con.replace(/\$keylist/ig, rkey_con)
+            tmp_con = tmp_con.replace(/\$preadapter_region/ig, '')
+            tmp_con = tmp_con.replace(/\$noadapter_region[\s\S]*noadapter_region/ig, '')
+          else
+            tmp_con = tmp_con.replace(/\$params/ig, '')
+            tmp_con = tmp_con.replace(/\$noadapter_region/ig, '')
+            tmp_con = tmp_con.replace(/\$preadapter_region[\s\S]*preadapter_region/ig, '')
+          code_con = code_con+tmp_con
+        fs.appendFile code_dir, code_con, 'utf8', (err) =>
+          if err
+            console.error(err)
+            emp.show_error("创建辅助Erl代码失败~")
 
   #@doc 处理adapter 中配置的参数
   format_key_list: (obj)->
@@ -256,7 +287,6 @@ class emp_channel
   # @doc 创建离线资源文件
   create_off: (project_path)->
     cha_dir = @initial_dir(project_path)
-
     pro_dir = path.join __dirname, '../../../', emp.STATIC_CHANNEL_TEMPLATE, @entry_dir
     tmp_xhtml_dir = path.join pro_dir,emp.STATIC_OFF_TEMPLATE
     tmp_json_dir = path.join pro_dir,emp.STATIC_CS_TEMPLATE

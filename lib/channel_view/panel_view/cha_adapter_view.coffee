@@ -68,11 +68,11 @@ class AdapterPanel extends View
             @text "json"
       @div outlet:'off_params', class: 'off_params_div',  =>
         @div class:'off_pb_div', =>
-          @button outlet:'addAda', class: 'off_btn_w btn btn-info inline-block-tight', click:'add_adpter_item',' Add a step... '
-        @div outlet:'adapter_item', class:'off_param_div', =>
+          @button outlet:'addAda', class: 'off_btn_w btn btn-info inline-block-tight', click:'add_adpter_item_btn',' Add a step... '
+        @div outlet:'adapter_item', class:'off_param_div'
 
 
-  initialize: (@cha_obj)->
+  initialize: (@cha_obj, edit_obj)->
     # console.log "adapter view initial"
     # @disable_off_detail()
     # tmp_view = new EmpSelView([{name:'1', value:'1'},{name:'2', value:'2'},{name:'3', value:'3'}])
@@ -81,6 +81,15 @@ class AdapterPanel extends View
     @ocode_flag=true
     @ocs_flag=true
     @ofile_flag=true
+    # console.log edit_obj
+    if edit_obj
+      if typeof(edit_obj.views) is 'object'
+        for tmp_key,tmp_val of edit_obj.views
+          @add_adpter_item(tmp_key, tmp_val)
+
+      else
+        for tmp_key,tmp_obj of edit_obj.adapters
+          @add_adpter_item(tmp_key, tmp_obj)
 
     @off_use_cs.on 'click', (e) =>
       @refresh_ocs_type()
@@ -137,7 +146,13 @@ class AdapterPanel extends View
     else
       @addAda.disable()
 
-  add_adpter_item: ->
+  add_adpter_item: (key, val)->
+    # console.log 'add_step'
+    tmp_item = new ItemView(@cha_obj, key, val)
+    @adapter_item.append(tmp_item)
+    @item_list.push(tmp_item)
+
+  add_adpter_item_btn: ->
     # console.log 'add_step'
     tmp_item = new ItemView(@cha_obj)
     @adapter_item.append(tmp_item)

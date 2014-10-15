@@ -8,21 +8,22 @@ OS_PATH = 'PATH'
 
 bash_path_key = 'emp-channel-wizard.path'
 
-rel_erl_dir = '../../erl_util/parse_json.erl'
+rel_erl_dir = '../../erl_util/atom_pl_parse_json.erl'
 rel_ebin_dir = '../../erl_util/'
-emp = '../exports/emp'
+emp = require '../exports/emp'
 
+# @doc 编译状态标示 编译步骤，最多2步，
+# 0标示未开始，1标示初始化path，2标示编译开始
 com_state = 0
 
 initial_parser = (callback)->
-  console.log "init"
-  console.log "state:#{com_state}"
+  # console.log "init"
+  # console.log "state:#{com_state}"
   if com_state is 0
     initial_path()
     compile_paser(callback)
   else if com_state is 1
     compile_paser(callback)
-
   return com_state
 
 initial_path = ->
@@ -60,16 +61,18 @@ compile_paser = (callback)->
         throw "No erl environment~"
 
       erl_dir = path.join(__dirname, rel_erl_dir)
-      # erl_beam = path.join(__dirname, '../util/parse_json.beam')
       ebin_dir = path.join(__dirname, rel_ebin_dir)
       erlc_str = 'erlc -o '+ebin_dir+' '+erl_dir+' -noshell -s erlang halt'
   #
       c_process.exec erlc_str, (error, stdout, stderr) ->
         if (error instanceof Error)
           console.warn error.message
+          console.log stderr
           emp.show_error("Compile erl error ~")
-        set_compile_state()
-        callback.add_new_panel_f()
+        else
+
+          set_compile_state()
+          callback.add_new_panel_f()
     catch err
       emp.show_error(err)
 
@@ -78,7 +81,7 @@ module.exports.remove_cha = (cha_str) ->
   channel_conf = atom.project.channel_conf
   parse_beam_dir = atom.project.parse_beam_dir
   t_erl = 'erl -pa '+parse_beam_dir+' -channel_conf '+channel_conf
-  t_erl = t_erl+' -cha_id'+cha_str+' -sname testjs -run parse_json remove_channel -noshell -s erlang halt'
+  t_erl = t_erl+' -cha_id'+cha_str+' -sname testjs -run atom_pl_parse_json remove_channel -noshell -s erlang halt'
   c_process.exec t_erl, (error, stdout, stderr) ->
     if (error instanceof Error)
       console.log error.message
@@ -86,14 +89,44 @@ module.exports.remove_cha = (cha_str) ->
     if stderr
       console.error "compile:#{stderr}"
 
+
 module.exports.remove_col = (col_str) ->
   # console.log "~~---------------remove col ~~:#{col_str}"
   channel_conf = atom.project.channel_conf
   parse_beam_dir = atom.project.parse_beam_dir
   t_erl = 'erl -pa '+parse_beam_dir+' -channel_conf '+channel_conf
-  t_erl = t_erl+' -col_id'+col_str+' -sname testjs -run parse_json remove_col -noshell -s erlang halt'
+  t_erl = t_erl+' -col_id'+col_str+' -sname testjs -run atom_pl_parse_json remove_col -noshell -s erlang halt'
   c_process.exec t_erl, (error, stdout, stderr) ->
-    console.log "compile:#{stdout}"
+    # console.log "compile:#{stdout}"
+    if (error instanceof Error)
+      console.log error.message
+      emp.show_error(error.message)
+    if stderr
+      console.error "compile:#{stderr}"
+
+module.exports.edit_col = (col_str) ->
+  # console.log "~~---------------remove col ~~:#{col_str}"
+  channel_conf = atom.project.channel_conf
+  parse_beam_dir = atom.project.parse_beam_dir
+  t_erl = 'erl -pa '+parse_beam_dir+' -channel_conf '+channel_conf
+  t_erl = t_erl+col_str+' -sname testjs -run atom_pl_parse_json edit_col -noshell -s erlang halt'
+  # console.log t_erl
+  c_process.exec t_erl, (error, stdout, stderr) ->
+    # console.log "compile:#{stdout}"
+    if (error instanceof Error)
+      console.log error.message
+      emp.show_error(error.message)
+    if stderr
+      console.error "compile:#{stderr}"
+
+module.exports.edit_cha = (cha_str) ->
+  channel_conf = atom.project.channel_conf
+  parse_beam_dir = atom.project.parse_beam_dir
+  t_erl = 'erl -pa '+parse_beam_dir+' -channel_conf '+channel_conf
+  t_erl = t_erl+cha_str+' -sname testjs -run atom_pl_parse_json edit_cha -noshell -s erlang halt'
+  # console.log t_erl
+  c_process.exec t_erl, (error, stdout, stderr) ->
+    # console.log "compile:#{stdout}"
     if (error instanceof Error)
       console.log error.message
       emp.show_error(error.message)

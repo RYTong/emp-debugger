@@ -2,7 +2,7 @@
 {channels,[[{id,"${channel}"},
             {app,"${app}"},
             {name,"${name}"},
-            {entry,channel_adapter},
+            {entry,"${entry}"},
             {views, ${views}},
             {props,${props}},
             {state,${state}}]

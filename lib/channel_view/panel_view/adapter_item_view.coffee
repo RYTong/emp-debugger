@@ -31,20 +31,32 @@ class AdapterItemPanel extends View
         @button class: 'off_ul_btn btn btn-info inline-block-tight', click:'destroy',' Delete '
 
 
-  initialize: (@cha_obj)->
+  initialize: (@cha_obj, key, val)->
     # console.log "new adapter item"
     @arg_list = []
     @trancode_detail = null
     @view_detail = null
     @ex_state = true
-
+    initial_flag = false
+    if typeof(val) is 'string'
+      initial_flag = true
+      @trancode.getEditor().setText(key)
+      @view_name.getEditor().setText(val)
+    else if typeof(val) is 'object'
+      initial_flag = true
+      @trancode.getEditor().setText(key)
+      @adapter.getEditor().setText(val.adapter)
+      @procedure.getEditor().setText(val.procedure)
+      @view_name.getEditor().setText(val.view)
 
     @trancode.getEditor().on 'contents-modified', =>
-      @trancode_detail = @trancode.getEditor().getText().trim()
-      # console.log tmp_host
-      if @trancode_detail
-        @view_detail = @cha_obj.id + '_' + @trancode_detail
-        @view_name.getEditor().setText(@view_detail)
+      if initial_flag
+        initial_flag = false
+      else
+        @trancode_detail = @trancode.getEditor().getText().trim()
+        if @trancode_detail
+          @view_detail = @cha_obj.id + '_' + @trancode_detail
+          @view_name.getEditor().setText(@view_detail)
 
   focus: ->
     @trancode.focus()

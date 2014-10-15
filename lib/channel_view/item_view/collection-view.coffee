@@ -28,7 +28,7 @@ class CollectionView extends View
     @set_col_text(obj)
 
     all_col = new_all_obj.child
-    @set_col_state(obj.type, all_col)
+    @set_col_state(obj, all_col)
 
     # if obj.items
     #   if obj.items.items > 0
@@ -83,9 +83,10 @@ class CollectionView extends View
     @colName.removeClass('text-info')
     @colName.addClass('text-error')
 
-  set_col_state: (type, all_obj) ->
-    if type is emp.COL_CH_TYPE
-      all_obj.set_used(@obj_id)
+  set_col_state: (obj, all_obj) ->
+    if obj.type is emp.COL_CH_TYPE
+      if !obj.unsed_flag
+        all_obj.set_used(@obj_id)
 
   set_cha_state: (id, all_obj) ->
     all_obj.set_used(id)

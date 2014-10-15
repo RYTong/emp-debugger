@@ -28,6 +28,21 @@ class GenObj
       @unused[obj.id] = obj
       @ulen += 1
 
+  refresh:(obj) ->
+    if @obj_list[obj.id]
+      @obj_list[obj.id] = obj
+    if @unused[obj.id]
+      @unused[obj.id] = obj
+
+  delete:(col_id) ->
+    if @obj_list[col_id]
+      delete @obj_list[col_id]
+      @len -= 1
+    if @unused[col_id]
+      delete @unused[col_id]
+      @ulen -= 1
+
+
   check_exist:(obj) ->
     if !@obj_list[obj.id]
       @obj_list[obj.id] = obj

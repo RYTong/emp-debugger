@@ -12,7 +12,7 @@ emp = require '../exports/emp'
 conf_parser = require '../emp_app/conf_parser'
 GenObj = require '../emp_app/emp_gen_obj'
 
-parser_beam_file = path.join(__dirname, '../../erl_util/parse_json.beam')
+parser_beam_file = path.join(__dirname, '../../erl_util/atom_pl_parse_json.beam')
 parser_beam_dir = path.join(__dirname, '../../erl_util/')
 test_conf = path.join(__dirname, '../../erl_util/channel.conf')
 test_conf1 = path.join(__dirname, '../../erl_util/channel0.conf')
@@ -72,23 +72,36 @@ class ChannelListView extends ScrollView
     else
       conf_parser.initial_path()
 
+  refresh_edit_cha:(tmp_obj, all_objs) ->
+    # console.log "refresh list"
+    @refresh_view_obj(all_objs)
+
+  refresh_edit_col:(tmp_obj, all_objs) ->
+    # console.log "refresh list"
+    @refresh_view_obj(all_objs)
 
 
-  refresh_cha_panel_re: (tmp_id_list) ->
-    for tmp_id in tmp_id_list
-      tmp_view = @unused_cha_map[tmp_id]
-      if tmp_view
-        tmp_view.destroy()
-        delete @unused_cha_map[tmp_id]
+  refresh_cha_panel_re: (tmp_id_list, new_all_objs) ->
+    # for tmp_id in tmp_id_list
+    #   tmp_view = @unused_cha_map[tmp_id]
+    #   if tmp_view
+    #     tmp_view.destroy()
+    #     delete @unused_cha_map[tmp_id]
+    @refresh_view_obj(new_all_objs)
 
-  refresh_col_panel_re: (tmp_id_list) ->
-    for tmp_id in tmp_id_list
-      tmp_view = @unused_col_map[tmp_id]
-      if tmp_view
-        tmp_view.destroy()
-        delete @unused_col_map[tmp_id]
 
-  refresh_col_panel: (add_col_obj, tmp_all_objs)->
+  refresh_col_panel_re: (tmp_id_list, new_all_objs) ->
+    # for tmp_id, tmp_type of tmp_id_list
+    #   tmp_view = @unused_col_map[tmp_id]
+    #   if tmp_view
+    #     if tmp_view.col_type is tmp_type
+    #       tmp_view.destroy()
+    #       delete @unused_col_map[tmp_id]
+    @refresh_view_obj(new_all_objs)
+
+  refresh_add_col: (add_col_obj, tmp_all_objs)->
+    # 不会被设为已用的标示
+    add_col_obj.unsed_flag = true
     tmp_col_views = new CollectionView(add_col_obj, tmp_all_objs)
     # console.log @unused_cha.isVisible()
     if @un_col.isHidden()
@@ -127,8 +140,17 @@ class ChannelListView extends ScrollView
       @add_unused_list(new_all_obj)
 
     fa_view.refresh_view(new_all_obj)
-    # fa_view.remove_loading()
 
+  refresh_view_obj: (new_all_obj)->
+    # console.log "do refresh ----"
+    root_col = new_all_obj.root
+    @entries.empty()
+    if root_col isnt {}
+      for key, obj of root_col
+        col_views = new CollectionView(obj, new_all_obj)
+        @entries.append(col_views)
+      @add_unused_list(new_all_obj)
+    # fa_view.refresh_view(new_all_obj)
 
   add_unused_list: (all_obj)->
     @add_unused_col(all_obj)
@@ -136,14 +158,18 @@ class ChannelListView extends ScrollView
 
   add_unused_col: (all_obj) ->
     # console.log "add unused collections"
+    # console.log all_obj
     col_child = all_obj.child
     ulen = col_child.ulen
     @col_entries.empty()
+    # console.log ulen
+    # console.log col_child
     if ulen isnt 0
       ucol_child = col_child.get_unused()
       # console.log ucol_child
       @un_col.show()
       for key, obj of ucol_child
+        obj.unsed_flag = true
         col_views = new CollectionView(obj, all_obj)
         @col_entries.append(col_views)
         @unused_col_map[obj.id] = col_views
@@ -203,18 +229,6 @@ class ChannelListView extends ScrollView
     unless !befor_select
       befor_select.deselect()
 
-# parse_channel_obj = (obj_list) ->
-#   uresult_obj_list = new GenObj()
-#   if obj_list
-#     result_obj_list = {}
-#
-#     for obj in obj_list
-#       result_obj_list[obj.id] = obj
-#       uresult_obj_list.put(obj)
-#     {cha:result_obj_list, uncha:uresult_obj_list}
-#   else
-#     {cha:{},uncha:uresult_obj_list}
-
 parse_col_obj = (obj_list) ->
   if obj_list
     result_obj_list = {}
@@ -229,26 +243,23 @@ parse_conf = (callback)->
   channel_conf = test_conf
   cha_conf_dir = atom.config.get(emp.ATOM_CONF_CHANNEL_DIR_KEY)
   # console.log cha_conf_dir
-
   project_path = atom.project.getPath()
   # console.log project_path
   channel_conf1 = path.join project_path, cha_conf_dir
   atom.project.channel_conf = channel_conf
   atom.project.parse_beam_dir = parser_beam_dir
 
-  # console.log "~~---------------~~"
-  # console.log parser_beam_file
-  # console.log atom.project.parse_beam_file
-  # console.log channel_conf1
 
-  t_erl = 'erl -pa '+parser_beam_dir+' -channel_conf '+channel_conf+' -sname testjs -run parse_json parse -noshell -s erlang halt'
+  t_erl = 'erl -pa '+parser_beam_dir+' -channel_conf '+channel_conf+' -sname testjs -run atom_pl_parse_json parse -noshell -s erlang halt'
   c_process.exec t_erl, (error, stdout, stderr) ->
+    # console.log error
     if (error instanceof Error)
-      # console.log error.message
-      emp.show_error(error.message)
+      console.error error.message
+      emp.show_error(stderr)
     # tmp_file = path.join(dir, 'tmp_channel_json.json');
     # console.log "compile:#{stdout}"
-    if stderr
+    else if stderr
       console.error "compile:#{stderr}"
+      emp.show_error(stderr)
     else
       callback.refresh_view(stdout)

@@ -7,7 +7,7 @@ class ParamsItemPanel extends View
   ex_state:true
   @content: ->
     @div class:'p_param_div', =>
-      @ul class:'off_ul', =>
+      @ul outlet:"item_ul", class:'off_ul', =>
         @li class:'off_li', =>
           @span "参数名称:"
           @subview "ekey", new EmpEditView(attributes: {id: 'key', type: 'string'},  placeholderText: 'Key')
@@ -16,9 +16,13 @@ class ParamsItemPanel extends View
           @subview "evalue", new EmpEditView(attributes: {id: 'value', type: 'string'},  placeholderText: 'Value')
         @button class: 'off_ul_btn btn btn-info inline-block-tight', click:'destroy',' Delete '
 
-  initialize: ->
-    # console.log "item arg view"
+  initialize: (key, val)->
     @ex_state = true
+    if key
+      @ekey.getEditor().setText(key)
+      @evalue.getEditor().setText(""+val)
+    this
+
 
   destroy: ->
     @ex_state = false

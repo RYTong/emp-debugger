@@ -50,7 +50,7 @@ class ItemsPanel extends View
 
 
   initialize: (all_objs, @col_obj)->
-    console.log all_objs
+    # console.log all_objs
     @unused_item = {}
     @used_item = {}
     @select_entry ={}
@@ -64,11 +64,11 @@ class ItemsPanel extends View
         tmp_id = obj.item_id
         tmp_item = null
         if tmp_type is emp.ITEM_CHA_TYPE
-          console.log "cha type"
+          # console.log "cha type"
           tmp_cha_obj = @cha_objs[tmp_id]
           tmp_item = new ChaItemView(tmp_cha_obj)
         else
-          console.log "col type"
+          # console.log "col type"
           tmp_col_obj = @col_objs[tmp_id]
           tmp_item = new ColItemView(tmp_col_obj)
         tmp_item.set_used()
@@ -99,33 +99,12 @@ class ItemsPanel extends View
     # tmp_view = new EmpSelView([{name:'1', value:'1'},{name:'2', value:'2'},{name:'3', value:'3'}])
     # @testt.after(tmp_view)
 
-    # @item_list = []
-    # @ocode_flag=true
-    # @ocs_flag=true
-    # @ofile_flag=true
-    #
-    # @off_use_cs.on 'click', (e) =>
-    #   @refresh_ocs_type()
-    #
-    # @off_use_code.on  'click', (e, el)=>
-    #   @refresh_ocode_type()
-    #
-    # @off_use_off.on  'click', (e, el)=>
-    #   @refresh_off_type(e, el)
-    # this
-
     @on 'click', '.emp_cha_item_tag', (e, element) =>
       @itemClicked(e, element)
     # @cha_view_list = {}
-    # @bindFormFields()
-    # @bindEditors()
-
 
   itemClicked:(e, element) ->
-    console.log "item click"
-    # console.log e
-    # console.log $(e.currentTarget).parent()
-    # console.log element
+    # console.log "item click"
     entry = $(e.currentTarget).view()
     shift_key = e.shiftKey
     ctrl_key = e.ctrlKey
@@ -136,7 +115,7 @@ class ItemsPanel extends View
       ctrl_key = e.metaKey
 
     # console.log entry
-    console.log entry.cha_id
+    # console.log entry.cha_id
     # console.log entry.use
 
     if ctrl_key
@@ -165,7 +144,7 @@ class ItemsPanel extends View
       @select_unentry
 
   add_item:->
-    console.log "add item"
+    # console.log "add item"
     # console.log @select_unentry
     for key,old_item of @select_unentry
       tmp_obj = old_item.cha_obj
@@ -180,7 +159,7 @@ class ItemsPanel extends View
       delete @unused_item[key]
 
   add_all:->
-    console.log "add all"
+    # console.log "add all"
     for key,old_item of @unused_item
       tmp_obj = old_item.cha_obj
       # console.log tmp_obj
@@ -194,7 +173,7 @@ class ItemsPanel extends View
     @select_unentry = {}
 
   remove_item:->
-    console.log "remove item"
+    # console.log "remove item"
     for key,old_item of @select_entry
       tmp_obj = old_item.cha_obj
       tmp_item = new ChaItemView(tmp_obj)
@@ -205,7 +184,7 @@ class ItemsPanel extends View
       delete @used_item[key]
 
   remove_all:->
-    console.log "remove all"
+    # console.log "remove all"
     for key,old_item of @used_item
       tmp_obj = old_item.cha_obj
       tmp_item = new ChaItemView(tmp_obj)
@@ -217,7 +196,7 @@ class ItemsPanel extends View
 
 
   swap_items:->
-    console.log "swap items"
+    # console.log "swap items"
     tmp_umap = {}
     tmp_unmap = @unused_item
     for key,val of @unused_item
@@ -244,8 +223,8 @@ class ItemsPanel extends View
     @select_unentry = {}
 
   submit_detail: ->
-    console.log "submit detail"
-    console.log @used_item
+    # console.log "submit detail"
+    # console.log @used_item
     index = 1
     # tmp_list = []
     @col_obj.items = []

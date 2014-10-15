@@ -129,7 +129,7 @@ class EmpChannelWizardView extends ScrollView
     #   @active_panel.focus()
 
   show_panel: (name, extra_param) ->
-    console.log "show panels:#{name}"
+    # console.log "show panels:#{name}"
     # console.log @active_panel_name
     if @active_panel_name isnt name
       tmp_pan = @panels_list[name]
@@ -186,8 +186,8 @@ class EmpChannelWizardView extends ScrollView
       @gen_info_view.refresh_add_cha(add_cha)
 
   after_del_channel: (del_id_list)->
-    console.log @all_objs
-    console.log del_id_list
+    # console.log @all_objs
+    # console.log del_id_list
     for cha_id in del_id_list
       @all_objs.cha.delete(cha_id)
     @emp_channel_list_view.refresh_cha_panel_re(del_id_list, @all_objs)
@@ -212,7 +212,6 @@ class EmpChannelWizardView extends ScrollView
     else
       @all_objs.root[tmp_col_obj.id] = tmp_col_obj
     @all_objs.col[tmp_col_obj.id] = tmp_col_obj
-
     @show_panel(@gen_info_view.name)
     if !col_state
       # console.log "list view"

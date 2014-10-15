@@ -122,7 +122,7 @@ class AddGenPanel extends View
     # console.log "s:#{tmp_state}, e:#{tmp_entry}"
 
     try
-
+      # console.log @fa_view.all_objs
       if !@is_edit
         unless tmp_id = @col_id.getEditor().getText().trim()
           throw("集合Id不能为空！")
@@ -163,12 +163,8 @@ class AddGenPanel extends View
         throw("Collection 已经存在~")
 
     @col_obj.create_collection(col_objs)
-    emp.show_info("添加 Collection 完成~")
-    # console.log __dirname
-    # path.join __dirname,
-    # console.log @all_objs
-    # console.log @fa_view.all_objs
-    # console.log @cha_obj
+    # emp.show_info("添加 Collection 完成~")
+    
 
   do_edit: ()->
     # console.log "do edit"
@@ -181,4 +177,4 @@ class AddGenPanel extends View
         throw("Collection 已经存在~")
 
     @col_obj.edit_collection()
-    emp.show_info("修改 Collection 完成~")
+    # emp.show_info("修改 Collection 完成~")

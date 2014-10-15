@@ -57,8 +57,9 @@ class AddGenPanel extends View
   initialize: (@fa_view, extra_param)->
     @cha_obj = new channel()
     if extra_param
-      console.log "edit channel"
-      console.log extra_param
+      # console.log "edit channel"
+      # console.log extra_param
+      @cha_obj.set_id(extra_param.id)
       @is_edit = true
       @cha_id.hide()
       @cha_id_title.after(@new_id_label(extra_param.id))
@@ -71,16 +72,16 @@ class AddGenPanel extends View
         @channel_entry.val(emp.CHANNEL_ADAPTER)
       if !extra_param.state
         @cha_state.prop('checked', false)
+    else
+      @cha_id.getEditor().on 'contents-modified', =>
+        @cha_obj.id = @cha_id.getEditor().getText().trim()
 
-    @adapter_view = new AdapterView(@cha_obj)
-    @params_view = new ParamView(@cha_obj)
+    @adapter_view = new AdapterView(@cha_obj, extra_param)
+    @params_view = new ParamView(@cha_obj, extra_param)
     @cha_state_info.after(@adapter_view)
     @cha_params.append(@params_view)
     @loadingElement.remove()
     @active_view = @adapter_view
-    @cha_id.getEditor().on 'contents-modified', =>
-      @cha_obj.id = @cha_id.getEditor().getText().trim()
-
 
   new_id_label: (tmp_id)->
     $$ ->
@@ -99,24 +100,18 @@ class AddGenPanel extends View
 
 
   do_submit: ->
-    tmp_id = @cha_id.getEditor().getText().trim()
-    tmp_name = @cha_name.getEditor().getText().trim()
-    tmp_app = @cha_app.getEditor().getText().trim()
-    # console.log "id:#{tmp_id}, name:#{tmp_name}, app:#{tmp_app}"
-    # console.log "s:#{tmp_state}, e:#{tmp_entry}"
-
     try
-
-
-      unless tmp_id
-        throw("频道Id不能为空！")
-      unless tmp_name
+      if !@is_edit
+        unless tmp_id = @cha_id.getEditor().getText().trim()
+          throw("频道Id不能为空！")
+        @cha_obj.id = tmp_id
+      unless tmp_name = @cha_name.getEditor().getText().trim()
         throw("频道Name不能为空！")
-      unless tmp_app
+      unless tmp_app = @cha_app.getEditor().getText().trim()
         throw("频道所属App不能为空！")
       tmp_entry = @channel_entry.val()
       tmp_state = @cha_state.prop('checked')
-      @cha_obj.id = tmp_id
+
       @cha_obj.app = tmp_app
       @cha_obj.name = tmp_name
       @cha_obj.set_entry(tmp_entry)
@@ -126,7 +121,6 @@ class AddGenPanel extends View
       @params_view.submit_detail()
 
       if !@is_edit
-
         @do_add()
         @fa_view.after_add_channel(@cha_obj)
       else
@@ -140,20 +134,15 @@ class AddGenPanel extends View
       emp.show_error(e)
 
   do_add: ->
-    console.log "do add"
+    # console.log "do add"
     cha_objs = @fa_view.all_objs.cha.obj_list
     tmp_id = @cha_obj.id
     if cha_objs[tmp_id]
       throw("该channel 已经存在~")
 
     @cha_obj.create_channel(@fa_view.all_objs.cha.len)
-    emp.show_info("添加 channel 完成~")
-    # console.log __dirname
-    # path.join __dirname,
-    # console.log @all_objs
-    # console.log @fa_view.all_objs
-    # console.log @cha_obj
+    # emp.show_info("添加 channel 完成~")
 
   do_edit: ->
     @cha_obj.edit_channel(@fa_view.all_objs.cha.len)
-    emp.show_info("修改 channel 完成~")
+    # emp.show_info("修改 channel 完成~")

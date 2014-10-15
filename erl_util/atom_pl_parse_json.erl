@@ -2,7 +2,7 @@
 %% @doc @todo Add description to test.
 
 
--module(parse_json).
+-module(atom_pl_parse_json).
 
 %% ====================================================================
 %% API functions
@@ -17,6 +17,9 @@
 -define(ID, 'id').
 -define(TYPE, 'type').
 -define(NAME, 'name').
+-define(ENTRY, 'entry').
+-define(PROPS, 'props').
+-define(VIEWS, 'views').
 -define(APP, 'app').
 -define(URL, 'url').
 -define(UID, 'uid').
@@ -24,6 +27,72 @@
 -define(ITEMS, 'items').
 -define(SEPRATOR, "|").
 -define(TMP_JSON, "tmp_channel_json.json").
+
+% @doc edit channel detail information
+edit_cha() ->
+  ConfFile = script_get_init_argument(?CHANNEL_CONF),
+  Id = script_get_init_argument_def(?ID),
+  Name = script_get_init_argument_def(?NAME),
+  App = script_get_init_argument_def(?APP),
+  Entry = script_get_init_argument_def(?ENTRY),
+  Views = script_get_init_argument_def(?VIEWS),
+  Props = script_get_init_argument_def(?PROPS),
+  States = script_get_init_argument_def(?STATE),
+
+  ChaViews = string:tokens(Views, ?SEPRATOR),
+  ChaProps = string:tokens(Props, ?SEPRATOR),
+  CChaViews = format_view(ChaViews),
+  CChaProps = format_params(ChaProps),
+  NewState = list_to_integer(States),
+  NewCha = new_channel(Id, App, Name, Entry, CChaViews, CChaProps, NewState),
+
+  check_conf_file(ConfFile),
+  ConfC = consult_file(ConfFile),
+  CollList = proplists:get_value(?COLL, ConfC),
+  ChaList = proplists:get_value(?CHA, ConfC),
+  NewChaList = do_remove_cha(ChaList, [Id]),
+
+  NewReCol = [{?CHA, [NewCha|NewChaList]}, {?COLL, CollList}],
+  New_con = lists:flatten(io_lib:format("~p.~n~p.",NewReCol)),
+  file:write_file(ConfFile, New_con).
+
+
+format_view("undefined") ->
+    undefined;
+format_view("") ->
+    undefined;
+format_view(Def)->
+    format_view(Def, []).
+
+format_view([TranCode, View|Next], Acc) ->
+  format_view(Next, [{TranCode, View}|Acc]);
+format_view(_, Acc) ->
+  Acc.
+
+format_params("undefined") ->
+    [];
+format_params("") ->
+    [];
+format_params(Def)->
+    format_params(Def, []).
+
+format_params(["method", Value|Next], Acc) ->
+  format_params(Next, [{'method', list_to_atom(Value)}|Acc]);
+format_params(["encrypt", Value|Next], Acc) ->
+  format_params(Next, [{'encrypt', to_integer(Value)}|Acc]);
+format_params([Key, Value|Next], Acc) ->
+  format_params(Next, [{Key, Value}|Acc]);
+format_params(_, Acc) ->
+  Acc.
+
+new_channel(Id, App, Name, Entry, Views, Params, State)->
+    [{id, Id},
+     {app, App},
+     {name, Name},
+     {entry, list_to_atom(Entry)},
+     {views, Views},
+     {props, Params},
+     {state, State}].
 
 % @doc edit collection detail information
 edit_col() ->
@@ -53,12 +122,12 @@ edit_col() ->
   ChaList = proplists:get_value(?CHA, ConfC),
   NewColList = do_remove_col(CollList, [ColId, NewType]),
 
-  NewReCol = [{?COLL, [NewCol|NewColList]}, {?CHA, ChaList}],
+  NewReCol = [{?CHA, ChaList}, {?COLL, [NewCol|NewColList]}],
   New_con = lists:flatten(io_lib:format("~p.~n~p.",NewReCol)),
   file:write_file(ConfFile, New_con).
 
 format_item(Items) ->
-  io:format("~p~n", [Items]),
+  % io:format("~p~n", [Items]),
   format_item(Items, []).
 
 format_item([ItemId, ItemType, ItemOrder|Next], Acc) ->
@@ -96,7 +165,7 @@ new_item(Id, Type, Index)->
 remove_col() ->
   ConfFile = script_get_init_argument(?CHANNEL_CONF),
   Col_ids = script_get_init_arguments(?CHANNEL_RPCOL),
-  io:format("~p~n", [Col_ids]),
+  % io:format("~p~n", [Col_ids]),
   [_|ACol_ids] = Col_ids,
   check_conf_file(ConfFile),
   ConfC = consult_file(ConfFile),
@@ -138,7 +207,7 @@ filter_col_id(_, Acc, AAcc) ->
 remove_channel() ->
   ConfFile = script_get_init_argument(?CHANNEL_CONF),
   Cha_ids = script_get_init_arguments(?CHANNEL_RPCHA),
-  io:format("~p", [Cha_ids]),
+  % io:format("~p", [Cha_ids]),
   [_|ACha_ids] = Cha_ids,
   check_conf_file(ConfFile),
   ConfC = consult_file(ConfFile),
@@ -164,14 +233,21 @@ do_remove_cha(ChaList, Id) ->
 
 % @doc 解析channel.conf
 parse() ->
-    ConfFile = script_get_init_argument(?CHANNEL_CONF),
-    check_conf_file(ConfFile),
-    ConfC = consult_file(ConfFile),
-    %%io:format("P---~p~n, ConfFile--~p~n", [Params, ConfFile]),
-    {_, Result, _} = decode(ConfC),
-    %%io:format("Result ~p~n", [Result]),
-    Result2 = encode(Result),
-    io:format("~s", [Result2]).
+    try
+      ConfFile = script_get_init_argument(?CHANNEL_CONF),
+      % io:format("~p~n",[ConfFile]),
+      check_conf_file(ConfFile),
+      ConfC = consult_file(ConfFile),
+      %%io:format("P---~p~n, ConfFile--~p~n", [Params, ConfFile]),
+      {_, Result, _} = decode(ConfC),
+      %%io:format("Result ~p~n", [Result]),
+      Result2 = encode(Result),
+      io:format("~s", [Result2])
+    catch
+      Type:Err ->
+        Err_re = hd(io_lib:format("~s~n", [Err])),
+        io:put_chars(standard_error, Err_re)
+    end.
 
 test() ->
     ConfFile = script_get_init_argument(?CHANNEL_CONF),
@@ -202,7 +278,6 @@ write_tmp_f(Path, C) ->
     % io:format("Name---~p~n", [Name]),
     file:write_file(Name, [C]).
 
-
 %% ====================================================================
 %% Internal functions
 %% ====================================================================
@@ -218,7 +293,7 @@ consult_file(ConfFile) ->
             C;
         _E ->
             % io:format("read file error:~p~n", [E]),
-            throw("the file isn't exist!")
+            throw("Read the channel conf file failed, please checked the file content!")
     end.
 
 %% @doc check if the channel config file is exists.

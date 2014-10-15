@@ -79,10 +79,7 @@ class emp_collection
     # console.log "do edit"
     p_str = " -id #{@id} -app #{@app} -name #{@name} -type #{@type} "
     p_str = p_str + " -url #{@url} -uid #{@uid} -state #{@state}"
-    console.log p_str
-    # console.log @item_param
-    # console.log @items
-
+    # console.log p_str
     item_str = ""
     for tmp_obj in @items
       item_str = item_str + "|#{tmp_obj.item_id}|#{tmp_obj.item_type}|#{tmp_obj.menu_order}"

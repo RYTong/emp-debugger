@@ -1,5 +1,4 @@
 {$, $$, View} = require 'atom'
-_ = require 'underscore-plus'
 ItemEditorView = require './item-editor-view'
 ColItemView = require './item_view/collection-item-view'
 emp = require '../exports/emp'

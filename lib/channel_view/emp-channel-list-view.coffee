@@ -1,14 +1,10 @@
 {$, $$, ScrollView} = require 'atom'
 path = require 'path'
 fs = require 'fs'
-os = require 'os'
 c_process = require 'child_process'
-_ = require 'underscore-plus'
 CollectionView = require './item_view/collection-view'
 ChannelView = require './item_view/channel-view'
-
 emp = require '../exports/emp'
-
 conf_parser = require '../emp_app/conf_parser'
 GenObj = require '../emp_app/emp_gen_obj'
 
@@ -246,10 +242,9 @@ parse_conf = (callback)->
   project_path = atom.project.getPath()
   # console.log project_path
   channel_conf = path.join project_path, cha_conf_dir
-  console.log channel_conf
+  # console.log channel_conf
   atom.project.channel_conf = channel_conf
   atom.project.parse_beam_dir = parser_beam_dir
-
 
   t_erl = 'erl -pa '+parser_beam_dir+' -channel_conf '+channel_conf+' -sname testjs -run atom_pl_parse_json parse -noshell -s erlang halt'
   c_process.exec t_erl, (error, stdout, stderr) ->

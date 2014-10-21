@@ -236,10 +236,10 @@ parse_col_obj = (obj_list) ->
 
 parse_conf = (callback)->
   ex_state = fs.existsSync(parser_beam_file)
-  channel_conf = test_conf
+  # channel_conf = test_conf
   cha_conf_dir = atom.config.get(emp.ATOM_CONF_CHANNEL_DIR_KEY)
   project_path = atom.project.getPath()
-  channel_conf1 = path.join project_path, cha_conf_dir
+  channel_conf = path.join project_path, cha_conf_dir
   atom.project.channel_conf = channel_conf
   atom.project.parse_beam_dir = parser_beam_dir
 

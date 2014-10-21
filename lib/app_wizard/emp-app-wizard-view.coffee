@@ -3,7 +3,6 @@ remote = require 'remote'
 dialog = remote.require 'dialog'
 fs = require 'fs'
 path = require 'path'
-
 EmpEditView = require '../channel_view/item-editor-view'
 emp = require '../exports/emp'
 
@@ -52,25 +51,16 @@ class EmpAppWizardView extends ScrollView
 
   initialize: ({@uri}={}) ->
     super
-    console.log "app wizard view"
+    # console.log "app wizard view"
     if @default_app_path = atom.config.get(emp.EMP_APP_WIZARD_APP_P)
-      console.log "exist"
+      # console.log "exist"
       @app_path.getEditor().setText(@default_app_path)
     if tmp_ewp_path = atom.config.get(emp.EMP_APP_WIZARD_EWP_P)
-      console.log "exist ewp"
+      # console.log "exist ewp"
       @default_ewp_path = tmp_ewp_path
       @ewp_path.getEditor().setText(@default_ewp_path)
     else
       @ewp_path.getEditor().setText(@default_ewp_path)
-
-    # @trancode.getEditor().on 'contents-modified', =>
-    #   if initial_flag
-    #     initial_flag = false
-    #   else
-    #     @trancode_detail = @trancode.getEditor().getText().trim()
-    #     if @trancode_detail
-    #       @view_detail = @cha_obj.id + '_' + @trancode_detail
-    #       @view_name.getEditor().setText(@view_detail)
 
   select_apath: (e, element)->
     tmp_path = @app_path.getEditor().getText()
@@ -83,13 +73,9 @@ class EmpAppWizardView extends ScrollView
   promptForPath: (fa_view, def_path) ->
     if def_path
       dialog.showOpenDialog title: 'Select', defaultPath:def_path, properties: ['openDirectory', 'createDirectory'], (pathsToOpen) =>
-        # @openPaths({pathsToOpen, devMode, safeMode})
-        # console.log pathsToOpen
         @refresh_path( pathsToOpen, fa_view)
-
     else
       dialog.showOpenDialog title: 'Select', properties: ['openDirectory', 'createDirectory'], (pathsToOpen) =>
-        # @openPaths({pathsToOpen, devMode, safeMode})
         @refresh_path( pathsToOpen, fa_view)
 
   refresh_path: (new_path, fa_view)->
@@ -100,19 +86,6 @@ class EmpAppWizardView extends ScrollView
 
   show_dialog: ->
     dialog.showMessageBox title:'test', message:"asdasda"
-
-
-  promptForPath1: ({type, devMode, safeMode}={}) ->
-    type ?= 'all'
-    properties =
-      switch type
-        when 'file' then ['openFile']
-        when 'folder' then ['openDirectory']
-        when 'all' then ['openFile', 'openDirectory']
-        else throw new Error("#{type} is an invalid type for promptForPath")
-    dialog.showOpenDialog title: 'Open', properties: properties.concat(['createDirectory']), (pathsToOpen) =>
-      # @openPaths({pathsToOpen, devMode, safeMode})
-      console.log pathsToOpen
 
   redrawEditors: ->
     $(element).view().redraw() for element in @find('.editor')
@@ -138,16 +111,7 @@ class EmpAppWizardView extends ScrollView
       # @parse_conf()
   focus: ->
     super
-    # Pass focus to panel that is currently visible
-
-    # for panel in @panels.children()
-    #   child = $(panel)
-    #   if child.isVisible()
-    #     if view = child.view()
-    #       view.focus()
-    #     else
-    #       child.focus()
-    #     return
+    @app_name.focus()
 
   getUri: ->
     @uri
@@ -165,33 +129,29 @@ class EmpAppWizardView extends ScrollView
     @loadingElement.remove()
 
   do_cancel: ->
-    console.log "do_submit "
-    # @destroy()
+    # console.log "do_submit "
     atom.workspaceView.trigger 'core:close'
 
   do_submit: ->
-    console.log "do cancel"
-
+    # console.log "do cancel"
     try
-      # console.log @fa_view.all_objs
       unless @app_name = @app_name.getEditor().getText().trim()
         throw("工程名称不能为空！")
       unless @app_dir = @app_path.getEditor().getText().trim()
         throw("工程路径不能为空！")
-
-
       atom.config.set(emp.EMP_APP_WIZARD_APP_P, @app_dir)
       if @ewp_dir = @ewp_path.getEditor().getText().trim()
         atom.config.set(emp.EMP_APP_WIZARD_EWP_P, @ewp_dir)
 
       @mk_app_dir(@app_dir, @app_name)
       emp.show_info("创建app 完成~")
+      atom.open options =
+        pathsToOpen: [@app_dir]
+        devMode: true
 
       atom.workspaceView.trigger 'core:close'
-      # atom.project.open(@app_dir)
-
     catch e
-      console.log e
+      console.error e
       emp.show_error(e)
 
   mk_app_dir:(app_path, app_name) ->
@@ -200,13 +160,14 @@ class EmpAppWizardView extends ScrollView
     if base_name is app_name
       emp.mk_dirs_sync(app_path)
       to_path = app_path
+      @app_dir = to_path
     else
       to_path = path.join(app_path, app_name)
       emp.mk_dirs_sync(to_path)
+      @app_dir = to_path
 
     # console.log re
     basic_dir = path.join __dirname, '../../', emp.STATIC_APP_TEMPLATE, @app_version
-
     @copy_template(to_path, basic_dir)
 
   copy_template: (to_path, basic_dir)->
@@ -214,11 +175,8 @@ class EmpAppWizardView extends ScrollView
     # console.log to_path
     # console.log basic_dir
     files = fs.readdirSync(basic_dir)
-    # console.log files
     for template in files
-      # console.log template
       f_path = path.join basic_dir, template
-      # console.log @string_replace(template)
       t_path = path.join to_path, @string_replace(template)
       if fs.lstatSync(f_path).isDirectory()
         emp.mkdir_sync(t_path)
@@ -229,16 +187,12 @@ class EmpAppWizardView extends ScrollView
 
   string_replace: (str) ->
     map = [{'k':/\$\{app\}/ig,'v':@app_name}, {'k':/\$\{ecl_ewp\}/ig,'v':@ewp_dir}]
-    # console.log "string replace:#{str}"
-    # console.log map
     for o in map
       if o.v
         str = str.replace(o.k, o.v)
     str
 
   copy_content: (t_path, f_path)->
-    # console.log "copuy file =========="
-
     f_name = path.basename f_path
     f_con = fs.readFileSync f_path, 'utf8'
     nf_con = @string_replace(f_con)

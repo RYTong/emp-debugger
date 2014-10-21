@@ -3,11 +3,18 @@ fs = require 'fs'
 path = require 'path'
 
 module.exports =
+
+  EMP_APP_WIZARD_APP_P :'emp-debugger.Default-App-Wizard-App-Path'
+  EMP_APP_WIZARD_EWP_P :'emp-debugger.Default-App-Wizard-Ewp-Path'
+  bash_path_key:'emp-debugger.path'
+
   OS_DARWIN:'darwin'
+  OS_LINUX:'linux'
   OS_PATH:'PATH'
   COL_KEY:"collections"
   CHA_KEY:"channels"
-  bash_path_key:'emp-debugger.path'
+
+
   COL_ROOT_TYPE:1
   COL_CH_TYPE:0
   ITEM_CHA_TYPE:1
@@ -17,6 +24,11 @@ module.exports =
   CHANNEL_NEW_CALLBACK: 'new_callback'
   CHANNEL_CALLBACK: 'channel_callback'
   CHANNEL_PROXY: 'channel_proxy'
+  EMP_CHANNEL_URI : 'emp://wizard'
+  EMP_APP_URI : 'emp://app_wizard'
+
+  CHA_WIZARD_VIEW: 'EmpView'
+  APP_WIZARD_VIEW: 'EmpAppView'
 
   CHA_CODE_DIR:'test/src'
   CHA_PUBLIC_DIR:'test/public'
@@ -49,7 +61,9 @@ module.exports =
   ATOM_CONF_CHANNEL_DIR_DEFAULT:'/config/channel.conf'
 
   # adapter template
-  STATIC_COLLECTION_TEMPLATE:"/templates/"
+  STATIC_TEMPLATE_DIR:"/templates/"
+  STATIC_APP_TEMPLATE:"/templates/app/"
+  STATIC_DEF_APP_TEMPLATE:"/templates/app/5.3"
   STATIC_CHANNEL_TEMPLATE:"/templates/channel/"
   CHANNEL_ADAPTER_DIR:'adapter'
   CHANNEL_NEW_CALLBACK_DIR: 'new_callback'
@@ -114,3 +128,37 @@ module.exports.mkdirs_sync = (root_dir, dir_list) ->
     tmp_dir = root_dir+dir
     if !fs.existsSync(tmp_dir)
       fs.mkdirSync(tmp_dir);
+
+
+mk_dirs_sync = (p, made) ->
+  # default mode is 0777
+
+  # mask = ~process.umask()
+  #
+  # mode = 0777 & (~process.umask()) unless mode
+  made = null unless made
+  # mode = parseInt(mode, 8) unless typeof mode isnt 'string'
+  p = path.resolve(p)
+  try
+      fs.mkdirSync(p)
+      made = made || p
+  catch err0
+    switch err0.code
+        when 'ENOENT'
+          made = mk_dirs_sync(path.dirname(p), made)
+          mk_dirs_sync(p, made)
+
+        # // In the case of any other error, just see if there's a dir
+        # // there already.  If so, then hooray!  If not, then something
+        # // is borked.
+        else
+          stat = null
+          try
+              stat = fs.statSync(p)
+          catch err1
+              throw err0
+          unless stat.isDirectory()
+            throw err0
+  made
+
+module.exports.mk_dirs_sync = mk_dirs_sync

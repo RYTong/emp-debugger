@@ -1,14 +1,10 @@
 {$, $$, ScrollView} = require 'atom'
 path = require 'path'
 fs = require 'fs'
-os = require 'os'
 c_process = require 'child_process'
-_ = require 'underscore-plus'
 CollectionView = require './item_view/collection-view'
 ChannelView = require './item_view/channel-view'
-
 emp = require '../exports/emp'
-
 conf_parser = require '../emp_app/conf_parser'
 GenObj = require '../emp_app/emp_gen_obj'
 
@@ -240,15 +236,12 @@ parse_col_obj = (obj_list) ->
 
 parse_conf = (callback)->
   ex_state = fs.existsSync(parser_beam_file)
-  channel_conf = test_conf
+  # channel_conf = test_conf
   cha_conf_dir = atom.config.get(emp.ATOM_CONF_CHANNEL_DIR_KEY)
-  # console.log cha_conf_dir
   project_path = atom.project.getPath()
-  # console.log project_path
-  channel_conf1 = path.join project_path, cha_conf_dir
+  channel_conf = path.join project_path, cha_conf_dir
   atom.project.channel_conf = channel_conf
   atom.project.parse_beam_dir = parser_beam_dir
-
 
   t_erl = 'erl -pa '+parser_beam_dir+' -channel_conf '+channel_conf+' -sname testjs -run atom_pl_parse_json parse -noshell -s erlang halt'
   c_process.exec t_erl, (error, stdout, stderr) ->
@@ -256,7 +249,6 @@ parse_conf = (callback)->
     if (error instanceof Error)
       console.error error.message
       emp.show_error(stderr)
-    # tmp_file = path.join(dir, 'tmp_channel_json.json');
     # console.log "compile:#{stdout}"
     else if stderr
       console.error "compile:#{stderr}"

@@ -6,7 +6,6 @@ AddChaPanel = require './panel_view/add_channel_view'
 AddColPanel = require './collection_view/add_collection_view'
 EmpEditView = require '../view/emp-edit-view'
 EmpChaListView = require './emp-channel-list-view'
-s_name = 'EmpView'
 emp = require '../exports/emp'
 
 module.exports =
@@ -97,9 +96,9 @@ class EmpChannelWizardView extends ScrollView
 
   # Returns an object that can be retrieved when package is activated
   serialize: ->
-    deserializer: 'EmpView'
+    deserializer: emp.CHA_WIZARD_VIEW
     version: 1
-    activePanelName: @activePanelName ? s_name
+    activePanelName: @activePanelName ? emp.CHA_WIZARD_VIEW
     uri: @uri
 
   # Tear down any state and detach

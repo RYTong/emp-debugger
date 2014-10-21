@@ -58,7 +58,7 @@ class emp_collection
 
 
   create_collection: (col_objs)->
-    tmp_col = path.join __dirname, '../../../', emp.STATIC_COLLECTION_TEMPLATE,'/collection.txt'
+    tmp_col = path.join __dirname, '../../../', emp.STATIC_TEMPLATE_DIR,'/collection.txt'
     f_con = fs.readFileSync(tmp_col, 'utf8')
     f_con = f_con.replace('${collection}', @id).replace('${name}', @name)
     f_con = f_con.replace('${app}', @app).replace('${type}', @type)

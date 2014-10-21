@@ -302,7 +302,7 @@ check_conf_file(ConfFile) ->
         true ->
             go_on;
         _ ->
-            throw("the file isn't exist!")
+            throw("There's no Channel.conf file, this project maybe not a emp project!")
     end.
 
 %% @doc get the argument form the initial arg list

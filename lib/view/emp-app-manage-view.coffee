@@ -2,12 +2,14 @@
 EmpEditView = require './emp-edit-view'
 EmpChaManaView = require '../channel_view/emp-channel-manage-view'
 EmpAppMan = require '../emp_app/emp_app_manage'
+EmpAppWizardView = require '../app_wizard/emp-debugger-app-wizard-view'
 os = require 'os'
-OS_DARWIN = 'darwin'
+emp = require '../exports/emp'
 
 module.exports =
 class EmpAppManaView extends View
   emp_app_manage: null
+  emp_app_wizard:null
   app_state_show: "#66FF33"
   app_state_close: "#FF1919"
   app_state_dis: "#FF6600"
@@ -45,7 +47,9 @@ class EmpAppManaView extends View
     # unless os.platform().toLowerCase() isnt OS_DARWIN
     @emp_app_manage = new EmpAppMan(this)
     @emp_cha_manage = new EmpChaManaView(this)
+    @emp_app_wizard = new EmpAppWizardView(this)
     @app_detail.after(@emp_cha_manage)
+    @app_detail.after(@emp_app_wizard)
     this
 
   focus: ->
@@ -53,9 +57,10 @@ class EmpAppManaView extends View
 
   check_os: ->
     # add linux type
-    unless os.platform().toLowerCase() is OS_DARWIN
+    tmp_os = os.platform().toLowerCase()
+    if tmp_os isnt emp.OS_DARWIN and tmp_os isnt emp.OS_LINUX
       unless @emp_app_erl.isDisabled()
-        # console.log "1--------"
+        console.log "1--------"
         @emp_app_erl.disable()
       unless @emp_app_btns.isDisabled()
         @emp_app_btns.disable()

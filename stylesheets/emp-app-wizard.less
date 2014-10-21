@@ -1,0 +1,268 @@
+// The ui-variables file is provided by base themes provided by Atom.
+//
+// See https://github.com/atom/atom-dark-ui/blob/master/stylesheets/ui-variables.less
+// for a full listing of what's available.
+@import "ui-variables";
+
+@text-color: #333;
+@text-color-subtle: #666;
+
+.emp-app-wizard {
+  display: -webkit-flex;
+  -webkit-flex:1;
+  // position:relative;
+
+  .wizard-panels {
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    display:-webkit-flex;
+    -webkit-flex-flow: column;
+    -webkit-flex: 1;
+
+
+    .wizard-logo {
+      // display: -webkit-flex;
+      // -webkit-flex: 1;
+      display: block;
+      min-height: 64px;
+      max-height: 80px;
+      left:0;
+      right:0;
+      // -webkit-flex-direction: column;
+      box-shadow: -1px 0px 1px -1px #aeaeae inset;
+      background-color: #e7e7e7;
+      // -webkit-user-select: none;
+
+
+      .atom-banner {
+        // -webkit-flex: 0.8;
+        // top:0px;
+        left:0;
+        right:0;
+        margin-left: 20px;
+        margin-right: 20px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        min-height: 64px;
+        max-height: 64px;
+        background-size: contain;
+        background-position: left left;
+        background-image: url(atom://emp-debugger/images/emp.png);
+        background-repeat: no-repeat;
+        border-bottom: 1px solid #ccc;
+      }
+
+      .icon:before {
+        text-align: center;
+      }
+    }
+
+    .detail-panels {
+      display: -webkit-flex;
+      -webkit-flex: 1;
+      position: relative;
+      background-color: #e7e7e7;
+      // -webkit-flex-flow: column;
+
+      // top:100px;
+      left:0;
+      right:0;
+      bottom:0;
+
+      overflow-y: auto;
+      padding: @component-padding;
+      background-color: #f2f2f2;
+      .detail-ch-panels {
+        margin: 5px;
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        bottom:0;
+        display: -webkit-flex;
+        -webkit-flex-flow: column;
+
+        .panels-heading {
+          padding-top: @component-padding;
+          padding-bottom: @component-padding;
+          border-bottom: 1px solid #858585;
+          color: #262626;
+          font-size: 16px;
+          font-weight:bold;
+
+          margin: 0;
+          -webkit-user-select: none;
+          cursor: default;
+
+        }
+
+        .detail-body {
+          display: -webkit-flex;
+          -webkit-flex:1;
+          overflow:auto;
+          position:relative;
+          .detail-con {
+            margin: 5px;
+            position: absolute;
+            top: 0;
+            right: 0;
+            left: 0;
+            display: -webkit-flex;
+            -webkit-flex-flow: column;
+
+            .info-div {
+              position: relative;
+              font-family: 'Lucida Grande', 'Segoe UI', sans-serif;
+              font-size: 1em;
+              color: @text-color;
+              font-size: 13px;
+              margin:@component-padding/2;
+              .editor.mini,
+              .editor.mini.is-focused {
+                // color: @text-color;
+                color: #333333;
+                background-color: #FAFFFF;
+                // padding: 6px 12px;
+
+                .cursor {
+                  border-color: #000;
+                }
+
+                .selection .region {
+                  background-color: rgba(0, 0, 0, .2)
+                }
+
+                .placeholder-text {
+                  color: #888;
+                }
+              }
+
+              .info-label {
+                color: @text-color;
+                font-size: 13px;
+                font-weight: bold;
+                margin-right:@component-padding/2;
+              }
+              .info-font {
+                color: @text-color;
+                font-size: 13px;
+              }
+              .path-btn {
+                margin: @component-padding;
+                margin: @component-padding/2 @component-padding 0 @component-padding/2;
+                min-width:6em;
+              }
+            }
+
+
+          }
+
+        }
+
+        .footer-div {
+          bottom:0;
+          left:0;
+          right:0;
+          display:block;
+
+          .footer-detail {
+            position: relative;
+            font-family: 'Lucida Grande', 'Segoe UI', sans-serif;
+            font-size: 1em;
+            margin-top:@component-padding/2;
+            margin-bottom:@component-padding/2;
+
+            .footer-btn{
+              margin: 0 @component-padding/2 0 @component-padding;
+              min-width:6em;
+            }
+          }
+        }
+
+      }
+
+
+
+
+
+    }
+
+
+  }
+
+
+  .btn-default,
+  .btn-group > .btn-default {
+    background: #fff;
+    color: @text-color;
+    border: 1px solid #ccc;
+
+    &:hover {
+      color: @text-color;
+      background: #ddd;
+    }
+  }
+
+  .btn {
+    box-shadow: none;
+  }
+
+  .text {
+    color: @text-color;
+  }
+
+  .text-subtle {
+    color: @text-color-subtle;
+  }
+
+  .error-message {
+    .alert {
+      margin-bottom: 0;
+    }
+
+    .error-details {
+      background: #F7F7F9;
+      border: 1px solid #E1E1E8;
+    }
+
+    .error-link {
+      margin-left: @component-padding/2;
+    }
+  }
+
+
+
+
+  .editor-container {
+    margin-bottom: @component-padding;
+
+    .editor.mini,
+    .editor.mini.is-focused {
+      color: @text-color;
+      background-color: #fff;
+      padding: 6px 12px;
+
+      .cursor {
+        border-color: #000;
+      }
+
+      .selection .region {
+        background-color: rgba(0, 0, 0, .2);
+      }
+
+      .placeholder-text {
+        color: #888;
+      }
+    }
+  }
+
+
+
+
+
+
+
+}

@@ -2,9 +2,7 @@ path = require 'path'
 fs = require 'fs'
 c_process = require 'child_process'
 os = require 'os'
-
-OS_DARWIN = 'darwin'
-OS_PATH = 'PATH'
+emp = require '../exports/emp'
 
 bash_path_key = 'emp-channel-wizard.path'
 
@@ -29,7 +27,7 @@ initial_parser = (callback)->
 initial_path = ->
   os_platform = os.platform().toLowerCase()
   console.log os_platform
-  unless os_platform isnt OS_DARWIN
+  if os_platform is emp.OS_DARWIN or os_platform is emp.OS_LINUX
 
     bash_path = atom.config.get(bash_path_key)
     # console.log bash_path
@@ -43,12 +41,12 @@ initial_path = ->
           [key, value] = definition.split('=', 2)
           key = key.trim().split(" ").pop()
           # console.log "key:#{key}, value:#{value}"
-          unless key isnt OS_PATH
+          unless key isnt emp.OS_PATH
             process.env[key] = value
             atom.config.set(bash_path_key, value)
             set_path_state()
     else
-      process.env[OS_PATH] = bash_path
+      process.env[emp.OS_PATH] = bash_path
       set_path_state()
 
 

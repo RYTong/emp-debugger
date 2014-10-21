@@ -236,13 +236,10 @@ parse_col_obj = (obj_list) ->
 
 parse_conf = (callback)->
   ex_state = fs.existsSync(parser_beam_file)
-  # channel_conf = test_conf
+  channel_conf = test_conf
   cha_conf_dir = atom.config.get(emp.ATOM_CONF_CHANNEL_DIR_KEY)
-  # console.log cha_conf_dir
   project_path = atom.project.getPath()
-  # console.log project_path
-  channel_conf = path.join project_path, cha_conf_dir
-  # console.log channel_conf
+  channel_conf1 = path.join project_path, cha_conf_dir
   atom.project.channel_conf = channel_conf
   atom.project.parse_beam_dir = parser_beam_dir
 
@@ -252,7 +249,6 @@ parse_conf = (callback)->
     if (error instanceof Error)
       console.error error.message
       emp.show_error(stderr)
-    # tmp_file = path.join(dir, 'tmp_channel_json.json');
     # console.log "compile:#{stdout}"
     else if stderr
       console.error "compile:#{stderr}"

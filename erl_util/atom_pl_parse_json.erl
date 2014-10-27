@@ -249,6 +249,23 @@ parse() ->
         io:put_chars(standard_error, Err_re)
     end.
 
+parse(ConfFile, Re_file) ->
+    try
+      check_conf_file(ConfFile),
+      ConfC = consult_file(ConfFile),
+      %%io:format("P---~p~n, ConfFile--~p~n", [Params, ConfFile]),
+      {_, Result, _} = decode(ConfC),
+      %%io:format("Result ~p~n", [Result]),
+      Result2 = encode(Result),
+      file:write_file(Re_file, Result2)
+      % io:put_chars(Result2),
+      % io:format("~s", [Result2])
+    catch
+      Type:Err ->
+        Err_re = hd(io_lib:format("~s~n", [Err])),
+        io:put_chars(Err_re)
+    end.
+
 test() ->
     ConfFile = script_get_init_argument(?CHANNEL_CONF),
     check_conf_file(ConfFile),

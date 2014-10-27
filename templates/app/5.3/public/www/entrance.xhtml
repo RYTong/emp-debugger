@@ -3,14 +3,14 @@
   <head>
     <script type="text/x-lua" src="RYTL.lua"></script>
     <!-- 离线资源-->
-    <script type="text/x-lua" src="unit_fun.lua" ></script>
+    <!-- <script type="text/x-lua" src="unit_fun.lua" ></script> -->
     <!-- 服务端资源-->
-    <!-- <script type="text/x-lua" src="//${app}/resource_dev/common/lua/unit_fun.lua"></script> -->
+    <script type="text/x-lua" src="//${app}/resource_dev/common/lua/unit_fun.lua"></script>
     <script type="text/x-lua">
       <![CDATA[
 
-        local first_cha_id = "";
-        local first_tran_code = "";
+        local first_cha_id = "${first_cha_id}";
+        local first_tran_code = "${first_tran_code}";
 
         local globalData = nil;
         local Content = nil;

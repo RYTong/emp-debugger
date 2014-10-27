@@ -31,7 +31,7 @@ class EmpAppWizardView extends ScrollView
               @div class:'detail-con', =>
                 @div class:'info-div', =>
                   @label class: 'info-label', 'App名称*:'
-                  @subview "app_name", new EmpEditView(attributes: {id: 'app_name', type: 'string'},  placeholderText: 'Application Name')
+                  @subview "app_name_editor", new EmpEditView(attributes: {id: 'app_name', type: 'string'},  placeholderText: 'Application Name')
 
                 @div class:'info-div', =>
                   @label class: 'info-label', 'App 路径*:'
@@ -80,7 +80,7 @@ class EmpAppWizardView extends ScrollView
 
   refresh_path: (new_path, fa_view)->
     if new_path
-      console.log new_path
+      # console.log new_path
       fa_view.getEditor().setText(new_path[0])
 
 
@@ -111,7 +111,7 @@ class EmpAppWizardView extends ScrollView
       # @parse_conf()
   focus: ->
     super
-    @app_name.focus()
+    @app_name_editor.focus()
 
   getUri: ->
     @uri
@@ -133,15 +133,16 @@ class EmpAppWizardView extends ScrollView
     atom.workspaceView.trigger 'core:close'
 
   do_submit: ->
-    # console.log "do cancel"
+    # console.log "do do_submit"
     try
-      unless @app_name = @app_name.getEditor().getText().trim()
+      unless @app_name = @app_name_editor.getEditor().getText().trim()
         throw("工程名称不能为空！")
       unless @app_dir = @app_path.getEditor().getText().trim()
         throw("工程路径不能为空！")
       atom.config.set(emp.EMP_APP_WIZARD_APP_P, @app_dir)
       if @ewp_dir = @ewp_path.getEditor().getText().trim()
         atom.config.set(emp.EMP_APP_WIZARD_EWP_P, @ewp_dir)
+      atom.config.set(emp.EMP_TMPORARY_APP_NAME, @app_name)
 
       @mk_app_dir(@app_dir, @app_name)
       emp.show_info("创建app 完成~")

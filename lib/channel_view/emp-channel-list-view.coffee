@@ -9,9 +9,12 @@ conf_parser = require '../emp_app/conf_parser'
 GenObj = require '../emp_app/emp_gen_obj'
 
 parser_beam_file = path.join(__dirname, '../../erl_util/atom_pl_parse_json.beam')
+parser_beam_file_ne = path.join(__dirname, '../../erl_util/atom_pl_parse_json')
 parser_beam_dir = path.join(__dirname, '../../erl_util/')
 test_conf = path.join(__dirname, '../../erl_util/channel.conf')
 test_conf1 = path.join(__dirname, '../../erl_util/channel0.conf')
+tmp_json_dir = 'tmp/'
+tmp_json_file = 'atom_channel_json.json'
 befor_select = null
 cha_conf_dir = null
 
@@ -236,6 +239,9 @@ parse_col_obj = (obj_list) ->
 
 parse_conf = (callback)->
   ex_state = fs.existsSync(parser_beam_file)
+  console.log parser_beam_file
+  console.log atom.project.emp_app_state
+  # console.log atom.project.emp_app_pid
   # channel_conf = test_conf
   cha_conf_dir = atom.config.get(emp.ATOM_CONF_CHANNEL_DIR_KEY)
   project_path = atom.project.getPath()
@@ -243,15 +249,70 @@ parse_conf = (callback)->
   atom.project.channel_conf = channel_conf
   atom.project.parse_beam_dir = parser_beam_dir
 
-  t_erl = 'erl -pa '+parser_beam_dir+' -channel_conf '+channel_conf+' -sname testjs -run atom_pl_parse_json parse -noshell -s erlang halt'
-  c_process.exec t_erl, (error, stdout, stderr) ->
-    # console.log error
-    if (error instanceof Error)
-      console.error error.message
-      emp.show_error(stderr)
-    # console.log "compile:#{stdout}"
-    else if stderr
-      console.error "compile:#{stderr}"
-      emp.show_error(stderr)
-    else
-      callback.refresh_view(stdout)
+  if !atom.project.emp_app_state
+
+    t_erl = 'erl -pa '+parser_beam_dir+' -channel_conf '+channel_conf+' -sname testjs -run atom_pl_parse_json parse -noshell -s erlang halt'
+    c_process.exec t_erl, (error, stdout, stderr) ->
+      # console.log error
+      if (error instanceof Error)
+        console.error error.message
+        emp.show_error(stderr)
+      # console.log "compile:#{stdout}"
+      else if stderr
+        console.error "compile:#{stderr}"
+        emp.show_error(stderr)
+      else
+        callback.refresh_view(stdout)
+  else
+    result_json_dir = path.join project_path,tmp_json_dir
+    emp.mkdir_sync(result_json_dir)
+    result_json_file = path.join result_json_dir,tmp_json_file
+
+    erl_str = "code:load_abs(\"#{parser_beam_file_ne}\"),"
+    erl_str = erl_str + "atom_pl_parse_json:parse(\"#{channel_conf}\", \"#{result_json_file}\")."
+    # console.log "erl:#{erl_str}"
+    re_flag = true
+    tmp_fs_watcher = fs.watch result_json_dir, {persistent: true, interval: 5000}, (event, filename) ->
+      console.log('event is: ' + event)
+      if (filename)
+        if filename is tmp_json_file and re_flag
+          channel_json = fs.readFileSync(result_json_file, 'utf8')
+          callback.refresh_view(channel_json)
+          console.log('filename provided: ' + filename)
+          tmp_fs_watcher.close()
+
+      else
+        console.log('filename not ·')
+
+    tmp_pid = atom.project.emp_app_pid
+    tmp_pid.stdin.write(erl_str+'\r\n')
+
+    # fs.watchFile result_json_file, { persistent: true, interval: 3000 }, (curr, prev) ->
+    #   console.log('the current mtime is: ' + curr.mtime)
+    #   console.log('the previous mtime was: ' + prev.mtime)
+
+
+
+    # if fs.existsSync(result_json_file)
+    #   if (re_flag)
+    #     channel_json = fs.readFileSync(result_json_file, 'utf8')
+    #     callback.refresh_view(channel_json)
+    #
+    #
+    # else
+    #   emp.show_error("解析channel.conf 失败，请查看日志")
+
+
+
+    # if fs.existsSync(result_json_file)
+    #   channel_json = fs.readFileSync(result_json_file, 'utf8')
+    #   callback.refresh_view(channel_json)
+    # else
+    #   emp.show_error("解析channel.conf 失败，请查看日志")
+      # if app_state
+      #   if pid
+      #     pid.stdin.write(erl_str+'\r\n')
+      #   else
+      #     show_error("no Pid ~")
+      # else
+      #   show_error("The app is not running ~")

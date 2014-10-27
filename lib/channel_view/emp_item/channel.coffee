@@ -293,10 +293,11 @@ class emp_channel
     xhtml_template = fs.readFileSync tmp_xhtml_dir, 'utf8'
     json_template = fs.readFileSync tmp_json_dir, 'utf8'
     json_template = json_template.replace(/\$channel/ig, @id)
+    xhtml_template = xhtml_template.replace(/\$\{app\}/ig, @app)
 
     for key,obj of @adapters
       tmp_tran = key
-      tmp_view = obj.trancode
+      # tmp_view = obj.trancode
       ext_xhtml = emp.OFF_EXTENSION_XHTML
       tmp_xhtml_file = path.join cha_dir, ext_xhtml, (tmp_tran+'.'+ext_xhtml)
 

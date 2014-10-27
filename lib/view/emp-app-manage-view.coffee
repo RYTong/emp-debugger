@@ -34,14 +34,15 @@ class EmpAppManaView extends View
           @div class: 'controls', =>
             @div class: 'setting-editor-container', =>
               @subview "emp_app_erl", new EmpEditView(attributes: {id: 'emp_erl', type: 'string'},  placeholderText: 'Erlang Source') #fr
-          @button outlet:"btn_r", class: 'btn btn-default ', click: 'run_erl', "Run Erl"
+          @button outlet:"btn_run", class: 'btn btn-else btn-info inline-block-tight', click: 'run_erl', "Run Erl Term"
 
 
-        @div outlet:"emp_app_btns", class: "emp-setting-con panel-body padded",  =>
-          @button class: 'btn btn-default ', click: 'run_app', "Run App"
-          @button class: 'btn btn-default ', click: 'stop_app', "Stop App"
-          @button class: 'btn btn-default ', click: 'conf_app', "Config App"
-          @button class: 'btn btn-default ', click: 'make_app', "Make App"
+        @div outlet:"emp_app_btns", class: "emp-setting-btn-else ",  =>
+          @button class: 'btn btn-else btn-success inline-block-tight', click: 'run_app', "Start App"
+          @button class: 'btn btn-else btn-error inline-block-tight', click: 'stop_app', "Stop App"
+          @button class: 'btn btn-else btn-warning inline-block-tight', click: 'conf_app', "Config App"
+          @button class: 'btn btn-else btn-warning inline-block-tight', click: 'make_app', "Make App"
+          @button outlet:"btn_import_app", class: 'btn btn-else btn-info inline-block-tight',click: 'import_menu', "Import Menu"
 
   initialize: ->
     # unless os.platform().toLowerCase() isnt OS_DARWIN
@@ -50,6 +51,8 @@ class EmpAppManaView extends View
     @emp_app_wizard = new EmpAppWizardView(this)
     @app_detail.after(@emp_cha_manage)
     @app_detail.after(@emp_app_wizard)
+    @btn_import_app.disable()
+    @btn_run.disable()
     this
 
   focus: ->
@@ -60,12 +63,12 @@ class EmpAppManaView extends View
     tmp_os = os.platform().toLowerCase()
     if tmp_os isnt emp.OS_DARWIN and tmp_os isnt emp.OS_LINUX
       unless @emp_app_erl.isDisabled()
-        console.log "1--------"
+        # console.log "1--------"
         @emp_app_erl.disable()
       unless @emp_app_btns.isDisabled()
         @emp_app_btns.disable()
-      unless @btn_r.isDisabled()
-        @btn_r.disable()
+      unless @btn_run.isDisabled()
+        @btn_run.disable()
         for btn in @emp_app_btns.children()
           child = $(btn)
           child.disable()
@@ -76,8 +79,8 @@ class EmpAppManaView extends View
 
   run_erl: ->
     erl_str = @emp_app_erl.getEditor().getText()
-
     @emp_app_manage.run_erl(erl_str)
+
 
   run_app: ->
     # @show_loading()
@@ -101,19 +104,28 @@ class EmpAppManaView extends View
     @emp_app_manage.make_app()
     # @hide_loading()
 
+  import_menu: ->
+    @emp_app_manage.import_menu()
+
+
   refresh_app_st: (app_st)->
     # console.log "refresh_app_st -- "
     # console.log @emp_app_manage.get_app_state()
-    app_st ?= @emp_app_manage.get_app_state()
-    # console.log "refresh_app_st --#{app_st}"
+    app_st ?= atom.project.emp_app_state
+    # console.log atom.project.emp_app_state
+    console.log "refresh_app_st --#{app_st}"
     app_st_str = null
     app_css = null
     if app_st
       app_st_str =  "Running"
       app_css_style = @app_state_show
+      @btn_import_app.enable()
+      @btn_run.enable()
     else
       app_st_str =  "Closed"
       app_css_style = @app_state_close
+      @btn_import_app.disable()
+      @btn_run.disable()
     @emp_app_st.context.innerHTML = app_st_str
     @emp_app_st.css('color', app_css_style)
 

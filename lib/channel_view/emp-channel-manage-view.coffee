@@ -16,7 +16,7 @@ class EmpChannelManaView extends View
       @div class: "emp-setting-con panel-body padded", =>
         @div class: "block conf-heading icon icon-gear", "Channel Management"
       @div outlet:"emp_cha_btns", class: "emp-setting-con panel-body padded",  =>
-        @button class: 'btn btn-default ', click: 'show_channel', "Show Channel"
+        @button class: 'btn btn-else btn-info inline-block-tight', click: 'show_channel', "Show Channel"
 
   initialize: ->
     # unless os.platform().toLowerCase() isnt OS_DARWIN

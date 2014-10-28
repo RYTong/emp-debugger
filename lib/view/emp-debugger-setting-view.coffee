@@ -36,16 +36,8 @@ class EmpDebuggerSettingView extends View
   @content: ->
     # console.log 'constructor'
     @div class: 'emp-setting tool-panel pannel panel-right padding', =>
-      # @div class: 'emp-setting-bar panel-heading padded', =>
-      # @subview "emp-setting-bar", new EmpBarView(this)
-
       @div outlet:"emp_setting_panel", class:'emp-setting-panel', =>
-        # @subview "emp_app_view", new EmpAppManaView(this)
-
-
         @div outlet:"emp_setting_view", class:'emp-setting-server',  =>
-          # @div outlet: 'emp_lineNumber', class: 'line-numbers'
-
           # ------------------------ server setting pane ------------------------
           @div outlet: 'conf_detail', class: 'emp-setting-row', =>
             @div class: "emp-setting-con panel-body padded", =>
@@ -61,7 +53,7 @@ class EmpDebuggerSettingView extends View
               @div class: 'controls', =>
                 @div class: 'setting-editor-container', =>
                   @subview "emp_set_port", new EmpEditView(attributes: {id: 'emp_port', type: 'string'}, placeholderText: '同Client交互的端口')
-              @button class: 'btn btn-default ', click: 'start_server', "Start Server"
+              @button class: 'btn btn-else btn-success inline-block-tight ', click: 'start_server', "Start Server"
 
             # ------------------------ server state pane ------------------------
             @div outlet:"emp_state_pane", class: "emp-setting-con panel-body padded", style:"display:none;", =>
@@ -72,7 +64,11 @@ class EmpDebuggerSettingView extends View
               @div class: "emp-set-div-content", =>
                 @label class: "emp-setting-label", "Client Number: "
                 @label outlet:"emp_cl_no", class: "emp-label-content", ""
-              @button class: 'btn btn-default ', click: 'stop_server', "Stop Server"
+              @button class: 'btn btn-else btn-error inline-block-tight', click: 'stop_server', "Stop Server"
+              @div class: "emp-btn-group" ,=>
+                @button class: 'btn btn-else btn-info inline-block-tight', click: 'live_preview', "Live Preview"
+                @button class: 'btn btn-else btn-info inline-block-tight', click: 'show_enable_views', "Enable Views"
+                @button class: 'btn btn-else btn-info inline-block-tight', click: 'show_enable_lua', "Enable Lua"
 
           # ------------------------ log config pane ------------------------
           @div outlet: 'log_detail', class: 'emp-setting-row', =>
@@ -84,11 +80,11 @@ class EmpDebuggerSettingView extends View
                 @label class: "emp-setting-label", "Log State   : "
                 @label outlet:"emp_log_st", class: "emp-label-content", style: "color:#FF1919;", "Close"
               @div class: "emp-set-div-content", =>
-                @div class: "btn-group", =>
-                  @button outlet: "emp_showlog", class: 'btn btn-default icon icon-link-external', click: 'show_log', "Show  Log"
-                  @button outlet: "emp_clearlog", class: 'btn btn-default icon icon-trashcan', click: 'clear_log', "Clear Log"
-                  @button outlet: "emp_pauselog", class: 'btn btn-default icon icon-playback-pause', click: 'pause_log', "Pause Log"
-                  @button outlet: "emp_closelog", class: 'btn btn-default icon icon-squirrel', click: 'close_log', "Close Log"
+                # @div class: "btn-group", =>
+                @button outlet: "emp_showlog", class: 'btn btn-else btn-info inline-block-tight icon icon-link-external', click: 'show_log', "Show  Log"
+                @button outlet: "emp_clearlog", class: 'btn btn-else btn-info inline-block-tight icon icon-trashcan', click: 'clear_log', "Clear Log"
+                @button outlet: "emp_pauselog", class: 'btn btn-else btn-info inline-block-tight icon icon-playback-pause', click: 'pause_log', "Pause Log"
+                @button outlet: "emp_closelog", class: 'btn btn-else btn-info inline-block-tight icon icon-squirrel', click: 'close_log', "Close Log"
               @div class: "emp-set-div-content", =>
                 @label class: "emp-setting-label", "ClientID: "
                 @select outlet: "emp_client_list", class: "form-control", =>
@@ -106,10 +102,7 @@ class EmpDebuggerSettingView extends View
                   @option value: "#990099", "紫"
                   @option value: "#000033", "黑"
 
-              # @div class: "emp-set-div-content", =>
-              #   @button outlet: "emp_test_btn", class: 'btn btn-default icon icon-link-external', click: 'emp_test_fun', "test remove"
-
-  initialize: (serializeState, @emp_socket_server, @empDebuggerLogView) ->
+  initialize: (serializeState, @emp_socket_server, @empDebuggerLogView, @fa_view) ->
     # console.log 'server state view initial'
     bar_view = new EmpBarView(this)
     @emp_setting_panel.before(bar_view)
@@ -335,6 +328,19 @@ class EmpDebuggerSettingView extends View
     @hide_state_pane()
 
   # -------------------------------------------------------------------------
+  live_preview: ->
+    console.log "live preview"
+    @fa_view.live_preview()
+
+  show_enable_views: ->
+    console.log "show enable preview"
+    @fa_view.show_enable_view()
+
+  show_enable_lua: ->
+    console.log "show enbale lua"
+    @fa_view.show_enable_lua()
+
+
   # btn callback for log setting
   show_log: ->
     # console.log "show_log"
@@ -374,9 +380,6 @@ class EmpDebuggerSettingView extends View
     @emp_log_st.context.innerHTML = log_st_str
     @emp_log_st.css('color', css_style)
   # -------------------------------------------------------------------------
-
-
-
 
   valueToString: (value) ->
     if _.isArray(value)

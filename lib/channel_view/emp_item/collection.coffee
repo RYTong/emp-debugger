@@ -75,6 +75,12 @@ class emp_collection
     fs.writeFileSync(atom.project.channel_conf, col_con, 'utf8')
 
   edit_collection: ()->
+    if !atom.project.emp_app_state
+      @do_edit_collection()
+    else
+      @do_edit_collection_rt()
+
+  do_edit_collection: ()->
     # console.log col_objs
     # console.log "do edit"
     p_str = " -id #{@id} -app #{@app} -name #{@name} -type #{@type} "
@@ -87,3 +93,26 @@ class emp_collection
     p_str = p_str + " -items \"#{item_str}\" "
     # console.log p_str
     conf_parser.edit_col(p_str)
+
+  do_edit_collection_rt: () ->
+    # console.log " do "
+    tmp_conf = atom.project.channel_conf
+    item_str = []
+    for tmp_obj in @items
+      item_str.push("{item_id, \"#{tmp_obj.item_id}\"},{item_type, #{tmp_obj.item_type}}, {menu_order, #{tmp_obj.menu_order}}")
+    if item_str.length is 0
+      item_str = "[]"
+    else
+      item_str = "[" + item_str.join(",") + "]"
+    erl_str = "#{emp.parser_beam_file_mod}:edit_col(\"#{tmp_conf}\",
+                \"#{@id}\", \"#{@name}\", \"#{@app}\", #{@type} , \"#{@url}\",
+            \"#{@uid}\", #{@state}, #{item_str}). "
+    # console.log erl_str
+    tmp_pid = atom.project.emp_app_pid
+    tmp_pid.stdin.write(erl_str+'\r\n')
+
+  refresh_channel: ->
+    if atom.project.emp_app_state
+      tmp_pid = atom.project.emp_app_pid
+      if erl_str = atom.config.get(emp.EMP_IMPORT_MENU_KEY)
+        tmp_pid.stdin.write(erl_str+'\r\n')

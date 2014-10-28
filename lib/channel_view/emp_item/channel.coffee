@@ -85,7 +85,10 @@ class emp_channel
   # 编辑channel
   edit_channel: ->
     # console.log "edit channel"
-    @format_edit_channel()
+    if !atom.project.emp_app_state
+      @format_edit_channel()
+    else
+      @format_edit_channel_fun()
     @create_adapter_detail()
 
   # @doc 拼接参数串，用于传递给erl 处理
@@ -108,6 +111,38 @@ class emp_channel
     p_str = p_str + " -views \"#{views_str}\" "
     conf_parser.edit_cha(p_str)
 
+  # @doc 拼接参数串，用于传递给emp app 处理
+  format_edit_channel_fun: ->
+    console.log "edit channel "
+    tmp_conf = atom.project.channel_conf
+
+    # console.log p_str
+    # @doc 拼接 props 的相关字段
+    params_str = []
+    for tmp_key,tmp_val of @params
+      params_str.push("{#{tmp_key},#{tmp_val}}")
+
+    if params_str.length is 0
+      params_str = 'undefined'
+    else
+      params_str = "["+params_str.join(",")+"]"
+
+    # @doc 拼接 views 的相关参数字段
+    views_str = []
+    for tmp_key,tmp_objs of @adapters
+      views_str.push("{\"#{tmp_key}\",\"#{tmp_objs.view}\"}")
+    if views_str.length is 0
+      views_str = 'undefined'
+    else
+      views_str = "["+views_str.join(",")+"]"
+
+    erl_str = "#{emp.parser_beam_file_mod}:edit_cha(\"#{tmp_conf}\",
+                \"#{@id}\", \"#{@name}\", \"#{@app}\", \"#{@entry}\", #{views_str}, #{params_str}, #{@state})."
+    # console.log erl_str
+    tmp_pid = atom.project.emp_app_pid
+    tmp_pid.stdin.write(erl_str+'\r\n')
+
+  # ---------------------------------------------------------------------------
   # 完成创建 channel
   create_channel: (all_cha_len)->
     # console.log "create_channel"
@@ -117,6 +152,24 @@ class emp_channel
       console.log "create new callback"
     else
       @create_adapter_detail()
+
+    # @refresh_channel_menu()
+
+  # @doc 编译erl 模块
+  recompile_channel_mod: ->
+    # console.log "refresh mod"
+    if atom.project.emp_app_state
+      tmp_pid = atom.project.emp_app_pid
+      if erl_cstr = atom.config.get(emp.EMP_CMAKE_KEY)
+        tmp_pid.stdin.write(erl_cstr+'\r\n')
+
+  refresh_channel_menu: ->
+    # @doc 添加channel 之后自动同步
+    if atom.project.emp_app_state
+      tmp_pid = atom.project.emp_app_pid
+      if erl_str = atom.config.get(emp.EMP_IMPORT_MENU_KEY)
+        tmp_pid.stdin.write(erl_str+'\r\n')
+
 
   # 在channel.conf 中添加channel
   format_channel: (all_cha_len)->
@@ -222,6 +275,7 @@ class emp_channel
           if err
             console.error(err)
             emp.show_error("创建辅助Erl代码失败~")
+          @recompile_channel_mod()
 
   #@doc 处理adapter 中配置的参数
   format_key_list: (obj)->
@@ -293,10 +347,11 @@ class emp_channel
     xhtml_template = fs.readFileSync tmp_xhtml_dir, 'utf8'
     json_template = fs.readFileSync tmp_json_dir, 'utf8'
     json_template = json_template.replace(/\$channel/ig, @id)
+    xhtml_template = xhtml_template.replace(/\$\{app\}/ig, @app)
 
     for key,obj of @adapters
       tmp_tran = key
-      tmp_view = obj.trancode
+      # tmp_view = obj.trancode
       ext_xhtml = emp.OFF_EXTENSION_XHTML
       tmp_xhtml_file = path.join cha_dir, ext_xhtml, (tmp_tran+'.'+ext_xhtml)
 

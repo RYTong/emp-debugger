@@ -18,7 +18,7 @@
   'ctrl-alt-s': 'emp-debugger:setting-view'
   'ctrl-alt-p': 'emp-debugger:enable-lua'
   'ctrl-alt-q': 'emp-debugger:show-channel'
-  'ctrl-alt-w': 'emp-debugger:show-app'
+  'ctrl-alt-w': 'emp-debugger:create-app'
 
 
 

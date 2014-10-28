@@ -1,10 +1,10 @@
-EmpDebuggerInitView = require './view/emp-debugger-view'
-EmpDebuggerStateView = require './view/emp-state-view'
+{EditorView} = require 'atom'
+# EmpDebuggerInitView = require './view/emp-debugger-view'
+# EmpDebuggerStateView = require './view/emp-state-view'
 EmpEnableView = require './view/emp-enable-view'
 EmpEnableLuaView = require './view/emp-enable-lua-view'
 EmpDebuggerLogView = require './view/emp-log-view.coffee'
 EmpDebuggerSettingView = require './view/emp-debugger-setting-view.coffee'
-{EditorView} = require 'atom'
 EmpSocketServer = require './debugger/emp_socket'
 # EmpChaWizard = require './channel_view/emp-channel-wizard'
 EmpViewManage = require './view/emp-views-entrance'
@@ -34,11 +34,11 @@ module.exports =
     # @empDebuggerInitView = new empDebuggerInitView(state.empDebuggerInitViewState)
     @empDebuggerLogView = new EmpDebuggerLogView(n_state.empDebuggerLogViewState)
     @emp_socket_server = new EmpSocketServer(@empDebuggerLogView)
-    @empDebuggerInitView = new EmpDebuggerInitView(n_state.empDebuggerInitViewState, @emp_socket_server)
-    @empDebuggerStateView = new EmpDebuggerStateView(n_state.empDebuggerStateViewState, @emp_socket_server, @empDebuggerLogView)
+    # @empDebuggerInitView = new EmpDebuggerInitView(n_state.empDebuggerInitViewState, @emp_socket_server)
+    # @empDebuggerStateView = new EmpDebuggerStateView(n_state.empDebuggerStateViewState, @emp_socket_server, @empDebuggerLogView)
     @empEnableView = new EmpEnableView(n_state.empEnableViewState, @emp_socket_server)
     @empEnableLuaView = new EmpEnableLuaView(n_state.empEnableLuaViewState, @emp_socket_server)
-    @empDebuggerSettingView = new EmpDebuggerSettingView(n_state.empDebuggerSettingViewState, @emp_socket_server, @empDebuggerLogView)
+    @empDebuggerSettingView = new EmpDebuggerSettingView(n_state.empDebuggerSettingViewState, @emp_socket_server, @empDebuggerLogView, this)
     EmpViewManage.activate()
 
   # convert: ->
@@ -68,8 +68,8 @@ module.exports =
 
 
   deactivate: ->
-    @empDebuggerInitView.destroy()
-    @empDebuggerStateView.destroy()
+    # @empDebuggerInitView.destroy()
+    # @empDebuggerStateView.destroy()
     @empDebuggerErrView.destroy()
     @empEnableView.destroy()
     @empEnableLuaView.destroy()
@@ -78,10 +78,10 @@ module.exports =
     @empDebuggerSettingView.destroy()
 
   serialize: ->
-    empDebuggerStateViewState: @empDebuggerStateView.serialize()
+    # empDebuggerStateViewState: @empDebuggerStateView.serialize()
     empEnableViewState: @empEnableView.serialize()
     empEnableLuaViewState: @empEnableLuaView.serialize()
-    empDebuggerInitViewState: @empDebuggerInitView.serialize()
+    # empDebuggerInitViewState: @empDebuggerInitView.serialize()
     empDebuggerLogViewState: @empDebuggerLogView.serialize()
     empDebuggerSettingViewState: @empDebuggerSettingView.serialize()
 
@@ -122,3 +122,9 @@ module.exports =
       atom.confirm
         message:"Error"
         detailedMessage:"There's no editors~"
+
+  show_enable_view: ->
+    @empEnableView.enable_view()
+
+  show_enable_lua: ->
+    @empEnableLuaView.enable_lua()

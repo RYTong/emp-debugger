@@ -1,5 +1,6 @@
 {$, $$, View} = require 'atom'
 path = require 'path'
+fs = require 'fs'
 EmpEditView = require '../../view/emp-edit-view'
 emp = require '../../exports/emp'
 AdapterView = require './cha_adapter_view'
@@ -44,9 +45,7 @@ class AddGenPanel extends View
               # @div class: 'checkbox', =>
               @input outlet:'cha_state', type: 'checkbox', checked:'true'
               @text "开启"
-
             # @div outlet:'entry_params', class:'entry_div'
-
             @div outlet:'cha_params', class:'cha_parma_div'
 
         @div class: 'item_div', =>
@@ -75,6 +74,10 @@ class AddGenPanel extends View
     else
       @cha_id.getEditor().on 'contents-modified', =>
         @cha_obj.id = @cha_id.getEditor().getText().trim()
+
+
+      if tmp_app_name = atom.config.get(emp.EMP_TMPORARY_APP_NAME)
+        @cha_app.getEditor().setText(tmp_app_name)
 
     @adapter_view = new AdapterView(@cha_obj, extra_param)
     @params_view = new ParamView(@cha_obj, extra_param)
@@ -111,6 +114,7 @@ class AddGenPanel extends View
         throw("频道所属App不能为空！")
       tmp_entry = @channel_entry.val()
       tmp_state = @cha_state.prop('checked')
+      atom.config.set(emp.EMP_TMPORARY_APP_NAME, tmp_app)
 
       @cha_obj.app = tmp_app
       @cha_obj.name = tmp_name
@@ -123,10 +127,11 @@ class AddGenPanel extends View
       if !@is_edit
         @do_add()
         @fa_view.after_add_channel(@cha_obj)
+        @check_if_the_first_page()
       else
         @do_edit()
         @fa_view.after_edit_channel(@cha_obj)
-
+      @cha_obj.refresh_channel_menu()
       @destroy()
 
     catch e
@@ -146,3 +151,20 @@ class AddGenPanel extends View
   do_edit: ->
     @cha_obj.edit_channel(@fa_view.all_objs.cha.len)
     # emp.show_info("修改 channel 完成~")
+
+  check_if_the_first_page: ->
+    tmp_cha_obj = @cha_obj
+    if !atom.project.emp_first_cha_flag
+      project_path = atom.project.getPath()
+      entrance_page = path.join project_path, emp.ATOM_EMP_APGE_ENTRANCE
+      fs.exists entrance_page, (exist_state) ->
+        if exist_state
+          tmp_tran = null
+          for key,obj of tmp_cha_obj.adapters
+            tmp_tran = key
+          if tmp_tran
+            entrance_con = fs.readFileSync entrance_page, 'utf8'
+            entrance_con = entrance_con.replace(emp.EMP_ENTRANCE_FIRST_ID, tmp_cha_obj.id)
+            entrance_con = entrance_con.replace(emp.EMP_ENTRANCE_FIRST_TRANCODE, tmp_tran)
+            fs.writeFileSync entrance_page, entrance_con, 'utf8'
+            atom.project.emp_first_cha_flag = true

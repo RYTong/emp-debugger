@@ -21,7 +21,7 @@
     "emp-debugger:setting-view",
     "emp-debugger:enable-lua",
     "emp-debugger:show-channel",
-    "emp-debugger:show-app"
+    "emp-debugger:create-app"
   ],
   "repository": "https://github.com/RYTong/emp-debugger",
   "license": "MIT",

@@ -6,14 +6,15 @@
             .title {left:3px;top:5px;color:#FF3300;font-size:18px;}
             .title_div{left:0px;top:0px;width:320px;height:51px;}
             .label_title{left:123px;top:11px;font-size:19px;font-weight:bold;color:#000000;}
-            .button_main{left:260px;top:6px;width:54px;height:32px;background-image:url(main_but.png);}
-            .button_back{left:8px;top:6px;width:54px;height:32px;background-image:url(back_but.png);}
+            .button_main{left:260px;top:6px;width:54px;height:32px;background-color:#99FFFF;color:#000000;}
+            .button_back{left:8px;top:6px;width:54px;height:32px;background-color:#99FFFF;color:#000000;}
+            .button_next {left:8px; top:100px; width:304px; height: 60px;background-color:#3300FF; color:#FFFFFF;}
             .acc_div{left:0px;top:51px;width:320px;}
 
         </style>
         <script type="text/x-lua" src="RYTL.lua"></script>
-        <script type="text/x-lua" src="/unit_fun.lua"></script>
-        <!--<script type="text/x-lua" src="//ebank/resource_dev/common/lua/unit_fun.lua"></script> -->
+        <!-- <script type="text/x-lua" src="/unit_fun.lua"></script> -->
+        <script type="text/x-lua" src="//${app}/resource_dev/common/lua/unit_fun.lua"></script>
         <script type="text/x-lua">
             <![CDATA[
 
@@ -48,7 +49,7 @@
 
             --[[Next Page]]--
             function common_req()
-                invoke_trancode(next_channelId, next_trancode, {}, callback_channel, {});
+                invoke_trancode(next_channelId, next_trancode, {id=next_channelId,tranCode= next_trancode}, callback_channel, {trancode=next_trancode});
             end;
 
             ]]>
@@ -60,11 +61,12 @@
         <!--Title-->
         <div class="title_div" border="0">
             <label class="label_title">标题</label>
-            <input type="button" class="button_back" name="back_but" onclick="back_fun()"/>
-            <input type="button" class="button_main" name="main_but" onclick="main_page()"/>
+            <input type="button" class="button_back" name="back_but" onclick="back_fun()" value="Back" />
+            <input type="button" class="button_main" name="main_but" onclick="main_page()" value="Home" />
         </div>
         <div class="acc_div" name="div_acc" border="0">
-            <label>此处填页面内容．</label>
+            <label>此处填页面内容.</label>
         </div>
+        <input type="button" class="button_next" name="next_page" onclick="common_req()" value="Next Page" />
     </body>
 </content>

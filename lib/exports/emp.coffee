@@ -3,10 +3,19 @@ fs = require 'fs'
 path = require 'path'
 
 module.exports =
+  parser_beam_file_mod : 'atom_pl_parse_json'
 
   EMP_APP_WIZARD_APP_P :'emp-debugger.Default-App-Wizard-App-Path'
   EMP_APP_WIZARD_EWP_P :'emp-debugger.Default-App-Wizard-Ewp-Path'
   bash_path_key:'emp-debugger.path'
+
+  EMP_MAKE_CMD_KEY: 'emp-debugger.emp-make'
+  EMP_STAET_SCRIPT_KEY: 'emp-debugger.emp-start-script'
+  EMP_CONFIG_KEY: 'emp-debugger.emp-config'
+  EMP_CONFIG_ARG_KEY: 'emp-debugger.emp-config-arg'
+  EMP_IMPORT_MENU_KEY : 'emp-debugger.emp-import-menu'
+  EMP_TMPORARY_APP_NAME:'emp-debugger.emp-tmp-app-name'
+  EMP_CMAKE_KEY : 'emp-debugger.emp-c_app'
 
   OS_DARWIN:'darwin'
   OS_LINUX:'linux'
@@ -30,8 +39,8 @@ module.exports =
   CHA_WIZARD_VIEW: 'EmpView'
   APP_WIZARD_VIEW: 'EmpAppView'
 
-  CHA_CODE_DIR:'test/src'
-  CHA_PUBLIC_DIR:'test/public'
+  CHA_CODE_DIR:'src'
+  CHA_PUBLIC_DIR:'public'
 
   # channel adapter 代码生成过程中的取值类型，
   # 分别为 params， arg， session
@@ -59,6 +68,9 @@ module.exports =
 
   ATOM_CONF_CHANNEL_DIR_KEY:'emp-debugger.Channel-config-file'
   ATOM_CONF_CHANNEL_DIR_DEFAULT:'/config/channel.conf'
+  ATOM_EMP_APGE_ENTRANCE:'/public/www/entrance.xhtml'
+  EMP_ENTRANCE_FIRST_ID: '${first_cha_id}'
+  EMP_ENTRANCE_FIRST_TRANCODE: '${first_tran_code}'
 
   # adapter template
   STATIC_TEMPLATE_DIR:"/templates/"

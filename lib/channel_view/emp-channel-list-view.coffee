@@ -10,6 +10,7 @@ GenObj = require '../emp_app/emp_gen_obj'
 
 parser_beam_file = path.join(__dirname, '../../erl_util/atom_pl_parse_json.beam')
 parser_beam_file_ne = path.join(__dirname, '../../erl_util/atom_pl_parse_json')
+
 parser_beam_dir = path.join(__dirname, '../../erl_util/')
 test_conf = path.join(__dirname, '../../erl_util/channel.conf')
 test_conf1 = path.join(__dirname, '../../erl_util/channel0.conf')
@@ -239,8 +240,8 @@ parse_col_obj = (obj_list) ->
 
 parse_conf = (callback)->
   ex_state = fs.existsSync(parser_beam_file)
-  console.log parser_beam_file
-  console.log atom.project.emp_app_state
+  # console.log parser_beam_file
+  # console.log atom.project.emp_app_state
   # console.log atom.project.emp_app_pid
   # channel_conf = test_conf
   cha_conf_dir = atom.config.get(emp.ATOM_CONF_CHANNEL_DIR_KEY)
@@ -268,21 +269,30 @@ parse_conf = (callback)->
     emp.mkdir_sync(result_json_dir)
     result_json_file = path.join result_json_dir,tmp_json_file
 
-    erl_str = "code:load_abs(\"#{parser_beam_file_ne}\"),"
-    erl_str = erl_str + "atom_pl_parse_json:parse(\"#{channel_conf}\", \"#{result_json_file}\")."
+    erl_str = "f(), Fun = fun(Mod, Conf) ->
+                     case code:is_loaded(#{emp.parser_beam_file_mod}) of \n
+                       false ->code:load_abs(Mod);
+                       _ -> go_on
+                     end,
+                     #{emp.parser_beam_file_mod}:parse(Conf, \"#{result_json_file}\")
+                     end,
+                     Fun(\"#{parser_beam_file_ne}\", \"#{channel_conf}\")."
+
+    # erl_str = "code:load_abs(\"#{parser_beam_file_ne}\"),"
+    # erl_str = erl_str + "atom_pl_parse_json:parse(\"#{channel_conf}\", \"#{result_json_file}\")."
     # console.log "erl:#{erl_str}"
     re_flag = true
     tmp_fs_watcher = fs.watch result_json_dir, {persistent: true, interval: 5000}, (event, filename) ->
-      console.log('event is: ' + event)
+      # console.log('event is: ' + event)
       if (filename)
         if filename is tmp_json_file and re_flag
           channel_json = fs.readFileSync(result_json_file, 'utf8')
           callback.refresh_view(channel_json)
-          console.log('filename provided: ' + filename)
+          # console.log('filename provided: ' + filename)
           tmp_fs_watcher.close()
 
-      else
-        console.log('filename not ·')
+      # else
+      #   console.log('filename not ·')
 
     tmp_pid = atom.project.emp_app_pid
     tmp_pid.stdin.write(erl_str+'\r\n')

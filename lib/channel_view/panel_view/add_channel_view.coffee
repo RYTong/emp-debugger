@@ -131,7 +131,7 @@ class AddGenPanel extends View
       else
         @do_edit()
         @fa_view.after_edit_channel(@cha_obj)
-
+      @cha_obj.refresh_channel_menu()
       @destroy()
 
     catch e

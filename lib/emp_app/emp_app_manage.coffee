@@ -14,6 +14,7 @@ emp_app_make_cmd='make'
 emp_app_config_cmd='configure'
 emp_app_config_arg= ['--with-debug', '--with-mysql']
 emp_import_menu = '[{App_name, _}|_]=ewp_app_manager:all_apps(),ewp_channel_util:import_menu(App_name).'
+emp_c_make = '[{App_name, _}|_]=ewp_app_manager:all_apps(), ewp:c_app(App_name).'
 emp_get_app_name = '[{A, _}|_]=ewp_app_manager:all_apps(), A.'
 
 # 定义编译文件到 atom conf 中
@@ -51,9 +52,11 @@ class emp_app
     unless atom.config.get(emp.EMP_CONFIG_ARG_KEY)
       atom.config.set(emp.EMP_CONFIG_ARG_KEY, emp_app_config_arg)
 
-    # unless atom.config.get(emp.EMP_IMPORT_MENU_KEY)
-    atom.config.set(emp.EMP_IMPORT_MENU_KEY, emp_import_menu)
+    unless atom.config.get(emp.EMP_IMPORT_MENU_KEY)
+      atom.config.set(emp.EMP_IMPORT_MENU_KEY, emp_import_menu)
 
+    unless atom.config.get(emp.EMP_CMAKE_KEY)
+      atom.config.set(emp.EMP_CMAKE_KEY, emp_c_make)
     # console.log "project_path:#{@project_path}"
     @initial_path()
 
@@ -154,16 +157,15 @@ class emp_app
     else
       show_error("The app is not running ~")
 
+  make_app_runtime: ->
+    @run_from_conf(emp.EMP_CMAKE_KEY)
 
   import_menu: ->
-    erl_str = atom.config.get(emp.EMP_IMPORT_MENU_KEY)
-    console.log erl_str
-    # app_name = @get_app_name()
-    # app_name = atom.project.emp_app_name
-    # if !app_name
-    #   app_name = @get_app_name()
-    #   atom.project.emp_app_name = app_name
-    # console.log app_name
+    @run_from_conf(emp.EMP_IMPORT_MENU_KEY)
+
+  run_from_conf: (key)->
+    erl_str = atom.config.get(key)
+    # console.log erl_str
     if app_state
       if pid
         pid.stdin.write(erl_str+'\r\n')

@@ -3,6 +3,7 @@ fs = require 'fs'
 path = require 'path'
 
 module.exports =
+  parser_beam_file_mod : 'atom_pl_parse_json'
 
   EMP_APP_WIZARD_APP_P :'emp-debugger.Default-App-Wizard-App-Path'
   EMP_APP_WIZARD_EWP_P :'emp-debugger.Default-App-Wizard-Ewp-Path'
@@ -14,6 +15,7 @@ module.exports =
   EMP_CONFIG_ARG_KEY: 'emp-debugger.emp-config-arg'
   EMP_IMPORT_MENU_KEY : 'emp-debugger.emp-import-menu'
   EMP_TMPORARY_APP_NAME:'emp-debugger.emp-tmp-app-name'
+  EMP_CMAKE_KEY : 'emp-debugger.emp-c_app'
 
   OS_DARWIN:'darwin'
   OS_LINUX:'linux'

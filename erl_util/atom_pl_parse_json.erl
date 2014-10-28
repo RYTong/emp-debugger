@@ -56,6 +56,26 @@ edit_cha() ->
   New_con = lists:flatten(io_lib:format("~p.~n~p.",NewReCol)),
   file:write_file(ConfFile, New_con).
 
+% @doc edit channel detail information
+edit_cha(ConfFile, Id, Name, App, Entry, CChaViews, ChaProps, NewState) ->
+
+  % ChaViews = string:tokens(Views, ?SEPRATOR),
+  % ChaProps = string:tokens(Props, ?SEPRATOR),
+  % CChaViews = format_view(ChaViews),
+  CChaProps = format_params_else(ChaProps),
+
+  NewCha = new_channel(Id, App, Name, Entry, CChaViews, CChaProps, NewState),
+
+  check_conf_file(ConfFile),
+  ConfC = consult_file(ConfFile),
+  CollList = proplists:get_value(?COLL, ConfC),
+  ChaList = proplists:get_value(?CHA, ConfC),
+  NewChaList = do_remove_cha(ChaList, [Id]),
+
+  NewReCol = [{?CHA, [NewCha|NewChaList]}, {?COLL, CollList}],
+  New_con = lists:flatten(io_lib:format("~p.~n~p.",NewReCol)),
+  file:write_file(ConfFile, New_con).
+
 
 format_view("undefined") ->
     undefined;
@@ -83,6 +103,20 @@ format_params(["encrypt", Value|Next], Acc) ->
 format_params([Key, Value|Next], Acc) ->
   format_params(Next, [{Key, Value}|Acc]);
 format_params(_, Acc) ->
+  Acc.
+
+format_params_else(undefined) ->
+  [];
+format_params_else(List) ->
+  format_params_else(List, []).
+
+format_params_else([{"entry", Val}|Next], Acc) ->
+  format_params_else(Next, [{'method', list_to_atom(Val)}|Acc]);
+format_params_else([{"encrypt", Val}|Next], Acc) ->
+  format_params_else(Next, [{'encrypt', to_integer(Val)}|Acc]);
+format_params_else([{Key, Val}|Next], Acc) ->
+  format_params_else(Next, [{Key, Val}|Acc]);
+format_params_else(_, Acc) ->
   Acc.
 
 new_channel(Id, App, Name, Entry, Views, Params, State)->
@@ -114,6 +148,24 @@ edit_col() ->
   NewState = list_to_integer(ColState),
   %% new_item(Id, Type, order)
   Items = format_item(ColItems),
+  NewCol = new_collection(ColId, ColApp, ColName, NewUrl, NewUid, NewType, NewState, Items),
+
+  check_conf_file(ConfFile),
+  ConfC = consult_file(ConfFile),
+  CollList = proplists:get_value(?COLL, ConfC),
+  ChaList = proplists:get_value(?CHA, ConfC),
+  NewColList = do_remove_col(CollList, [ColId, NewType]),
+
+  NewReCol = [{?CHA, ChaList}, {?COLL, [NewCol|NewColList]}],
+  New_con = lists:flatten(io_lib:format("~p.~n~p.",NewReCol)),
+  file:write_file(ConfFile, New_con).
+
+edit_col(ConfFile, ColId, ColName, ColApp, NewType, ColUrl,
+        ColUid, NewState, Items) ->
+  % io:format("asdasdads-------~n", []),
+  % NewApp = check_coll_app(ColApp),
+  NewUrl = check_coll_default(ColUrl),
+  NewUid = check_coll_default(ColUid),
   NewCol = new_collection(ColId, ColApp, ColName, NewUrl, NewUid, NewType, NewState, Items),
 
   check_conf_file(ConfFile),
@@ -263,7 +315,7 @@ parse(ConfFile, Re_file) ->
     catch
       Type:Err ->
         Err_re = hd(io_lib:format("~s~n", [Err])),
-        io:put_chars(Err_re)
+        io:put_chars(standard_error, Err_re)
     end.
 
 test() ->

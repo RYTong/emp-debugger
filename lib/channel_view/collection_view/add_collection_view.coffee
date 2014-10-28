@@ -90,6 +90,8 @@ class AddGenPanel extends View
       @col_id.disable()
       @items_panel = new ItemsPanel(@fa_view.all_objs, @col_obj)
     else
+      if tmp_app_name = atom.config.get(emp.EMP_TMPORARY_APP_NAME)
+        @col_app.getEditor().setText(tmp_app_name)
 
       @items_panel = new ItemsPanel(@fa_view.all_objs, @col_obj)
       # @params_view = new ParamView(@cha_obj)
@@ -140,10 +142,12 @@ class AddGenPanel extends View
       @col_obj.set_state(@col_state.prop('checked'))
       # console.log "bbbbdo sumbmit "
       @items_panel.submit_detail()
+      atom.config.set(emp.EMP_TMPORARY_APP_NAME, tmp_app)
       # console.log "do sumbmit "
       if !@is_edit
         @do_add()
         @fa_view.after_add_col(@col_obj)
+        @col_obj.refresh_channel()
       else
         @do_edit()
         @fa_view.after_edit_col(@col_obj)
@@ -164,7 +168,7 @@ class AddGenPanel extends View
 
     @col_obj.create_collection(col_objs)
     # emp.show_info("添加 Collection 完成~")
-    
+
 
   do_edit: ()->
     # console.log "do edit"

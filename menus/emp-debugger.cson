@@ -7,9 +7,13 @@
   {
     'label': 'Packages'
     'submenu': [
-      'label': 'emp-debugger'
+      'label': 'Emp Debugger'
       'submenu': [
-        { 'label': 'Toggle', 'command': 'emp-debugger:toggle' }
+        { 'label': 'Setting View', 'command': 'emp-debugger:setting-view' }
+        {type: 'separator'}
+        { 'label': 'Create App', 'command': 'emp-debugger:create-app' }
+        { 'label': 'Show Channel', 'command': 'emp-debugger:show-channel' }
+
       ]
     ]
   }

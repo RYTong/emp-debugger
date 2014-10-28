@@ -58,7 +58,7 @@ module.exports =
     atom.workspaceView.command "emp-debugger:show-channel", ->
       # console.log "open emp view"
       open_cha_wizard_panel()
-    atom.workspaceView.command "emp-debugger:show-app", ->
+    atom.workspaceView.command "emp-debugger:create-app", ->
       # console.log "open emp view"
       open_app_wizard_panel()
 

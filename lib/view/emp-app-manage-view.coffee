@@ -42,6 +42,7 @@ class EmpAppManaView extends View
           @button class: 'btn btn-else btn-error inline-block-tight', click: 'stop_app', "Stop App"
           @button class: 'btn btn-else btn-warning inline-block-tight', click: 'conf_app', "Config App"
           @button class: 'btn btn-else btn-warning inline-block-tight', click: 'make_app', "Make App"
+          @button outlet:"btn_c_make", class: 'btn btn-else btn-warning inline-block-tight', click: 'make_app_runtime', "C_App"
           @button outlet:"btn_import_app", class: 'btn btn-else btn-info inline-block-tight',click: 'import_menu', "Import Menu"
 
   initialize: ->
@@ -53,6 +54,7 @@ class EmpAppManaView extends View
     @app_detail.after(@emp_app_wizard)
     @btn_import_app.disable()
     @btn_run.disable()
+    @btn_c_make.disable()
     this
 
   focus: ->
@@ -104,6 +106,9 @@ class EmpAppManaView extends View
     @emp_app_manage.make_app()
     # @hide_loading()
 
+  make_app_runtime: ->
+    @emp_app_manage.make_app_runtime()
+
   import_menu: ->
     @emp_app_manage.import_menu()
 
@@ -113,18 +118,20 @@ class EmpAppManaView extends View
     # console.log @emp_app_manage.get_app_state()
     app_st ?= atom.project.emp_app_state
     # console.log atom.project.emp_app_state
-    console.log "refresh_app_st --#{app_st}"
+    # console.log "refresh_app_st --#{app_st}"
     app_st_str = null
     app_css = null
     if app_st
       app_st_str =  "Running"
       app_css_style = @app_state_show
       @btn_import_app.enable()
+      @btn_c_make.enable()
       @btn_run.enable()
     else
       app_st_str =  "Closed"
       app_css_style = @app_state_close
       @btn_import_app.disable()
+      @btn_c_make.disable()
       @btn_run.disable()
     @emp_app_st.context.innerHTML = app_st_str
     @emp_app_st.css('color', app_css_style)

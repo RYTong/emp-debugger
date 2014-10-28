@@ -253,7 +253,7 @@ show_error = (err_msg) ->
     detailedMessage:err_msg
 
 set_app_stat = (state)->
-  console.log "set stat :#{state}"
+  # console.log "set stat :#{state}"
   if state
     atom.project.emp_app_pid = pid
   else

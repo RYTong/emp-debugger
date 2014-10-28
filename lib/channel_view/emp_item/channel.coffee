@@ -113,7 +113,7 @@ class emp_channel
 
   # @doc 拼接参数串，用于传递给emp app 处理
   format_edit_channel_fun: ->
-    console.log "edit channel "
+    # console.log "edit channel "
     tmp_conf = atom.project.channel_conf
 
     # console.log p_str

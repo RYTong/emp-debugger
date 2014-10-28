@@ -27,6 +27,11 @@
 -define(ITEMS, 'items').
 -define(SEPRATOR, "|").
 -define(TMP_JSON, "tmp_channel_json.json").
+%% Collection type.
+-define(COLLECTION_TYPE, 0).
+-define(CHANNEL_TYPE, 1).
+-define(ROOT_NODE, 1).
+-define(NORMAL_NODE, 0).
 
 % @doc edit channel detail information
 edit_cha() ->
@@ -65,7 +70,7 @@ edit_cha(ConfFile, Id, Name, App, Entry, CChaViews, ChaProps, NewState) ->
   CChaProps = format_params_else(ChaProps),
 
   NewCha = new_channel(Id, App, Name, Entry, CChaViews, CChaProps, NewState),
-
+  do_refresh_edit_channel(NewCha, Id),
   check_conf_file(ConfFile),
   ConfC = consult_file(ConfFile),
   CollList = proplists:get_value(?COLL, ConfC),
@@ -75,6 +80,16 @@ edit_cha(ConfFile, Id, Name, App, Entry, CChaViews, ChaProps, NewState) ->
   NewReCol = [{?CHA, [NewCha|NewChaList]}, {?COLL, CollList}],
   New_con = lists:flatten(io_lib:format("~p.~n~p.",NewReCol)),
   file:write_file(ConfFile, New_con).
+
+do_refresh_edit_channel(Channel, Id) ->
+  try
+    ewp_channel_store:update(channels, Channel, {id, '=', Id}, get_store_type())
+  catch
+    _:Err ->
+      error_logger:error_msg("Error msg: ~p~n", [Err]),
+      Err_re = hd(io_lib:format("~s~n", [Err])),
+      io:put_chars(standard_error, Err_re)
+  end.
 
 
 format_view("undefined") ->
@@ -167,6 +182,7 @@ edit_col(ConfFile, ColId, ColName, ColApp, NewType, ColUrl,
   NewUrl = check_coll_default(ColUrl),
   NewUid = check_coll_default(ColUid),
   NewCol = new_collection(ColId, ColApp, ColName, NewUrl, NewUid, NewType, NewState, Items),
+  do_edit_collection(NewCol, ColId, ColApp, Items),
 
   check_conf_file(ConfFile),
   ConfC = consult_file(ConfFile),
@@ -177,6 +193,64 @@ edit_col(ConfFile, ColId, ColName, ColApp, NewType, ColUrl,
   NewReCol = [{?CHA, ChaList}, {?COLL, [NewCol|NewColList]}],
   New_con = lists:flatten(io_lib:format("~p.~n~p.",NewReCol)),
   file:write_file(ConfFile, New_con).
+
+do_edit_collection(Collection, Id, App, Items) ->
+  try
+    case ewp_channel_store:select(collections,
+          {'and', [{app, '=', App}, {id, '=', Id}]}) of
+        [] ->
+          io:format("Edit:there is no this collection!~n", []);
+        _  ->
+          OldItems = ewp_channel_store:select(collection_items, {id, '=', Id}),
+          {AddItems, DelItems, ModItems} =
+              lists:foldl(
+                  fun(X, {Add, Del, Mod}) ->
+                      ItemId = o(X, item_id),
+                      ItemType = o(X, item_type),
+                      MenuOrder = o(X, menu_order),
+                      case check_item(ItemId, ItemType, MenuOrder, Add) of
+                          {equal, NewAdd} ->
+                              {NewAdd, Del, Mod};
+                          {modify, NewMenuOrder, NewAdd} ->
+                              {NewAdd, Del, [{ItemId, ItemType, NewMenuOrder}|Mod]};
+                          delete ->
+                              {Add, [{ItemId, ItemType, MenuOrder}|Del], Mod}
+                      end
+                  end, {Items, [], []}, OldItems),
+          ewp_channel_store:update(collections, Collection, {id, '=', Id}, get_store_type()),
+          lists:map(
+            fun(Item) ->
+                ewp_channel_store:insert(collection_items, [{id, Id}|Item], get_store_type()),
+                check_collection(o(Item, item_id), ?NORMAL_NODE, App),
+            end, AddItems),
+          lists:map(
+              fun({ItemId, ItemType, _MenuOrder}) ->
+                  ewp_channel_store:delete(collection_items, {'and', [
+                      {id, '=', Id},
+                      {item_type, '=', ItemType},
+                      {item_id, '=', ItemId}]}, get_store_type()),
+                  check_collection(ItemId, ?NORMAL_NODE, App)
+              end, DelItems),
+          lists:map(
+              fun({ItemId, ItemType, MenuOrder}) ->
+                  ewp_channel_store:update(collection_items,
+                      [{id, Id}, {item_id, ItemId}, {item_type, ItemType}, {menu_order, MenuOrder}],
+                      {'and', [
+                          {id, '=', Id},
+                          {item_type, '=', ItemType},
+                          {item_id, '=', ItemId}]}, get_store_type())
+              end, ModItems),
+          NodeType = proplists:get_value(type, Collection),
+          check_collection(Id, NodeType, App)
+
+    end
+  catch
+    _:Err ->
+      error_logger:error_msg("Error msg: ~p~n", [Err]),
+      Err_re = hd(io_lib:format("~s~n", [Err])),
+      io:put_chars(standard_error, Err_re)
+  end.
+
 
 format_item(Items) ->
   % io:format("~p~n", [Items]),
@@ -229,28 +303,71 @@ remove_col() ->
   New_con = lists:flatten(io_lib:format("~p.~n~p.",NewCol)),
   file:write_file(ConfFile, New_con).
 
+
+%  @doc 同步删除 emp collection
+remove_col(ConfFile, ACol_ids) ->
+  % io:format("~p~n", [Col_ids]),
+  % [_|ACol_ids] = Col_ids,
+  check_conf_file(ConfFile),
+  ConfC = consult_file(ConfFile),
+  CollList = proplists:get_value(?COLL, ConfC),
+  ChaList = proplists:get_value(?CHA, ConfC),
+  NewColList = do_remove_col(CollList, ACol_ids),
+  {TmpIdList, _DList} = filter_col_id(ACol_ids),
+  [{App_name, _}|_]=ewp_app_manager:all_apps(),
+  App_Str = to_list(App_name),
+
+  [delete_collection(App_Str, CId) || CId<- TmpIdList],
+  NewCol = [{?COLL, NewColList}, {?CHA, ChaList}],
+  New_con = lists:flatten(io_lib:format("~p.~n~p.",NewCol)),
+  file:write_file(ConfFile, New_con).
+
 do_remove_col(CollList, ReList) ->
     {IdList, DList} = filter_col_id(ReList),
     lists:foldr(fun(Col, Acc) ->
-                        ItemId = proplists:get_value(?ID, Col),
-                        case lists:member(ItemId, IdList) of
-                            true ->
-                              ItemType = proplists:get_value(?TYPE, Col),
-                              TmpType = proplists:get_value(ItemId, DList),
-                              case ItemType of
-                                TmpType ->
-                                  Acc;
-                                _ ->
-                                  [Col|Acc]
-                              end;
-                            _ -> [Col|Acc]
-                        end
+                    ItemId = proplists:get_value(?ID, Col),
+                    case lists:member(ItemId, IdList) of
+                        true ->
+                          ItemType = proplists:get_value(?TYPE, Col),
+                          TmpType = proplists:get_value(ItemId, DList),
+                          case ItemType of
+                            TmpType ->
+                              Acc;
+                            _ ->
+                              [Col|Acc]
+                          end;
+                        _ -> [Col|Acc]
+                    end
                 end,
                 [], CollList).
+
+% @doc 同步emp app 删除collection
+delete_collection(App, Id) ->
+  try
+    case ewp_channel_store:select(collections,
+          {'and', [{app, '=', App}, {id, '=', Id}]}) of
+        [] ->
+          io:format("Delete:there is no this collection!~n", []);
+        _  ->
+          ewp_channel_store:delete(collections, {id, '=', Id}, get_store_type()),
+          Items = ewp_channel_store:select(collection_items, {id, '=', Id}),
+          ewp_channel_store:delete(collection_items, {id, '=', Id}, get_store_type()),
+          [check_collection(o(X, item_id), ?NORMAL_NODE, App) || X <- Items],
+          ewp_channel_store:delete(collection_items,
+            {'and', [{item_id, '=', Id}, {item_type, '=', ?COLLECTION_TYPE}]}, get_store_type())
+    end
+  catch
+    _:Err ->
+      error_logger:error_msg("Error msg: ~p~n", [Err]),
+      Err_re = hd(io_lib:format("~s~n", [Err])),
+      io:put_chars(standard_error, Err_re)
+  end.
 
 filter_col_id(IdList) ->
   filter_col_id(IdList,[], []).
 filter_col_id([Id, Key|Next], Acc, AAcc) ->
+  filter_col_id(Next, [Id|Acc], [{Id, to_integer(Key)}|AAcc]);
+filter_col_id([{Id, Key}|Next], Acc, AAcc) ->
   filter_col_id(Next, [Id|Acc], [{Id, to_integer(Key)}|AAcc]);
 filter_col_id(_, Acc, AAcc) ->
   {Acc, AAcc}.
@@ -271,6 +388,48 @@ remove_channel() ->
   New_con = lists:flatten(io_lib:format("~p.~n~p.",NewCha)),
   file:write_file(ConfFile, New_con).
 
+remove_channel(ConfFile, ACha_ids) ->
+  % io:format("~p", [Cha_ids]),
+
+  check_conf_file(ConfFile),
+  ConfC = consult_file(ConfFile),
+  CollList = proplists:get_value(?COLL, ConfC),
+  ChaList = proplists:get_value(?CHA, ConfC),
+  [{App_name, _}|_]=ewp_app_manager:all_apps(),
+  App_Str = to_list(App_name),
+  NewChaList =
+    lists:foldr(fun(Cha, Acc) ->
+                        ItemId = proplists:get_value(?ID, Cha),
+                        case lists:member(ItemId, ACha_ids) of
+                            true ->
+                              delete_channel_by_id(App_Str, ItemId),
+                              Acc;
+                            _ -> [Cha|Acc]
+                        end
+                end,
+                [], ChaList),
+  NewCha = [{?COLL, CollList}, {?CHA, NewChaList}],
+  New_con = lists:flatten(io_lib:format("~p.~n~p.",NewCha)),
+  file:write_file(ConfFile, New_con).
+
+delete_channel_by_id(App, Id) ->
+  try
+    % io:format("~p,~p~n", [App, Id]),
+    case ewp_channel_store:select(channels,
+          {'and', [{app, '=', App}, {id, '=', Id}]}) of
+        [] ->
+          io:format("Delete:there is no this channel!~n", []);
+        _  ->
+          ewp_channel_store:delete(channels, {id, '=', Id}, get_store_type()),
+          ewp_channel_store:delete(collection_items,
+              {'and', [{item_id, '=', Id}, {item_type, '=', ?CHANNEL_TYPE}]}, get_store_type())
+    end
+  catch
+    _:Err ->
+      error_logger:error_msg("Error msg: ~p~n", [Err]),
+      Err_re = hd(io_lib:format("~s~n", [Err])),
+      io:put_chars(standard_error, Err_re)
+  end.
 
 do_remove_cha(ChaList, Id) ->
     lists:foldr(fun(Cha, Acc) ->
@@ -296,7 +455,8 @@ parse() ->
       Result2 = encode(Result),
       io:format("~s", [Result2])
     catch
-      Type:Err ->
+      _Type:Err ->
+        error_logger:error_msg("Error msg: ~p~n", [Err]),
         Err_re = hd(io_lib:format("~s~n", [Err])),
         io:put_chars(standard_error, Err_re)
     end.
@@ -313,7 +473,8 @@ parse(ConfFile, Re_file) ->
       % io:put_chars(Result2),
       % io:format("~s", [Result2])
     catch
-      Type:Err ->
+      _Type:Err ->
+        error_logger:error_msg("Error msg: ~p~n", [Err]),
         Err_re = hd(io_lib:format("~s~n", [Err])),
         io:put_chars(standard_error, Err_re)
     end.
@@ -686,12 +847,107 @@ hex_digit(13) -> $D;
 hex_digit(14) -> $E;
 hex_digit(15) -> $F.
 
+
+% @doc copy from admin channel
+check_item_id(Id, Id) ->
+    throw({error, "Item id does dead circulation."});
+check_item_id(Id, ItemId) ->
+    case ewp_channel_store:select(collection_items, {'and', [
+        {item_type, '=', ?COLLECTION_TYPE},
+        {id, '=', ItemId}]}) of
+        [] ->
+            go_on;
+        Items ->
+            [check_item_id(Id, o(X, item_id)) || X <- Items]
+    end.
+
+check_item(ItemId, ItemType, MenuOrder, Items) ->
+    check_item(ItemId, ItemType, MenuOrder, Items, []).
+
+check_item(_ItemId, _ItemType, _MenuOrder, [], _) ->
+    delete;
+check_item(ItemId, ItemType, MenuOrder, [H|L], Acc) ->
+    NewItemId = o(H, item_id),
+    NewItemType = o(H, item_type),
+    NewMenuOrder = o(H, menu_order),
+    case {ItemId, ItemType, MenuOrder} of
+        {NewItemId, NewItemType, NewMenuOrder} ->
+            {equal, Acc ++ L};
+        {NewItemId, NewItemType, _} ->
+            {modify, NewMenuOrder, Acc ++ L};
+        _ ->
+            check_item(ItemId, ItemType, MenuOrder, L, [H|Acc])
+    end.
+
+%% Virtual root collection node.
+-define(VIRTUAL_COLLECTION, "virtual_collection").
+
+check_collection(Id, IsRoot, App) ->
+    case ewp_channel_store:select(collections, {id, '=', Id}) of
+        [] ->
+            channel_go_on;
+        _ ->
+            VirtualCollectionId = lists:concat([App, "_", ?VIRTUAL_COLLECTION]),
+            check_collection(Id, IsRoot, App, VirtualCollectionId)
+    end.
+
+check_collection(Id, ?ROOT_NODE, _App, VirtualCollectionId) ->
+    ewp_channel_store:delete(collection_items, {'and', [
+        {item_id, '=', Id},
+        {id, '=', VirtualCollectionId}]}, get_store_type());
+check_collection(Id, ?NORMAL_NODE, App, VirtualCollectionId) ->
+    case ewp_channel_store:select(collection_items,
+        {'and', [{item_id, '=', Id}, {item_type, '=', ?COLLECTION_TYPE}]}) of
+        [] ->
+            new_virtual_collection(App, VirtualCollectionId),
+            ewp_channel_store:insert(collection_items, [
+                {id, VirtualCollectionId},
+                {item_id, Id},
+                {item_type, ?COLLECTION_TYPE}], get_store_type()),
+            Items = ewp_channel_store:select(collection_items,
+                {'and', [{id, '=', Id}, {item_type, '=', ?COLLECTION_TYPE}]}),
+            ewp_channel_store:delete(collection_items,
+                {'and', [{id, '=', Id}, {item_type, '=', ?COLLECTION_TYPE}]}, get_store_type()),
+            [check_collection(o(X, item_id), ?NORMAL_NODE, App) || X <- Items];
+        [Item] ->
+            case o(Item, id) of
+                VirtualCollectionId ->
+                    Items = ewp_channel_store:select(collection_items,
+                        {'and', [{id, '=', Id}, {item_type, '=', ?COLLECTION_TYPE}]}),
+                    ewp_channel_store:delete(collection_items,
+                        {'and', [{id, '=', Id}, {item_type, '=', ?COLLECTION_TYPE}]}, get_store_type()),
+                    [check_collection(o(X, item_id), ?NORMAL_NODE, App) || X <- Items];
+                _ ->
+                    go_on
+            end;
+        _ ->
+            ewp_channel_store:delete(collection_items, {'and', [
+                {item_id, '=', Id},
+                {id, '=', VirtualCollectionId}]}, get_store_type())
+    end.
+
+new_virtual_collection(App, Id) ->
+    case ewp_channel_store:lookup(collections, Id) of
+        [] ->
+            ewp_channel_store:insert(collections,
+                [{id, Id}, {app, App}, {name, Id}, {type, 1}, {state, 0}], get_store_type());
+        _ ->
+            go_on
+    end.
+
+-define(channel_type, channel_storagre_type).
+
+get_store_type() ->
+    [{App, _}|_]=ewp_app_manager:all_apps(),
+    ewp_conf_util:get_app_conf_value(App, ?channel_type).
+
+
 to_integer(P) ->
     case P of
-        L when is_list(L) ->
-            list_to_integer(L);
         I when is_integer(I) ->
             I;
+        L when is_list(L) ->
+            list_to_integer(L);
         B when is_binary(B) ->
             list_to_integer(binary_to_list(B));
         A when is_atom(A) ->
@@ -699,3 +955,11 @@ to_integer(P) ->
         true ->
             P
     end.
+
+to_list(A) when is_atom(A)    -> atom_to_list(A);
+to_list(I) when is_integer(I) -> integer_to_list(I);
+to_list(B) when is_binary(B)  -> binary_to_list(B);
+to_list(L) when is_list(L)    -> L.
+
+o(Prop, Key) ->
+  evo:o(Prop, Key).

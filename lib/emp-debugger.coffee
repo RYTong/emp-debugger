@@ -8,6 +8,7 @@ EmpDebuggerSettingView = require './view/emp-debugger-setting-view.coffee'
 EmpSocketServer = require './debugger/emp_socket'
 # EmpChaWizard = require './channel_view/emp-channel-wizard'
 EmpViewManage = require './view/emp-views-entrance'
+conf_parser = require './emp_app/conf_parser'
 n_state = null
 path = require 'path'
 DEFAULT_EXT_LUA = '.lua'
@@ -40,6 +41,7 @@ module.exports =
     @empEnableLuaView = new EmpEnableLuaView(n_state.empEnableLuaViewState, @emp_socket_server)
     @empDebuggerSettingView = new EmpDebuggerSettingView(n_state.empDebuggerSettingViewState, @emp_socket_server, @empDebuggerLogView, this)
     EmpViewManage.activate()
+    conf_parser.initial_parser()
 
   # convert: ->
     # @empDebuggerInitView.start_listen(@empDebuggerInitView)

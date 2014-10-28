@@ -99,7 +99,7 @@ class emp_collection
     tmp_conf = atom.project.channel_conf
     item_str = []
     for tmp_obj in @items
-      item_str.push("{item_id, \"#{tmp_obj.item_id}\"},{item_type, #{tmp_obj.item_type}}, {menu_order, #{tmp_obj.menu_order}}")
+      item_str.push("[{item_id, \"#{tmp_obj.item_id}\"},{item_type, #{tmp_obj.item_type}}, {menu_order, #{tmp_obj.menu_order}}]")
     if item_str.length is 0
       item_str = "[]"
     else

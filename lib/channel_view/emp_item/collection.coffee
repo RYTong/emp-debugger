@@ -58,6 +58,12 @@ class emp_collection
 
 
   create_collection: (col_objs)->
+    if atom.project.emp_app_state
+      @sync_create_collection()
+    else
+      @do_create_collection(col_objs)
+
+  do_create_collection: (col_objs)->
     tmp_col = path.join __dirname, '../../../', emp.STATIC_TEMPLATE_DIR,'/collection.txt'
     f_con = fs.readFileSync(tmp_col, 'utf8')
     f_con = f_con.replace('${collection}', @id).replace('${name}', @name)
@@ -73,6 +79,23 @@ class emp_collection
       col_con = col_con +',\n'
     # console.log col_con
     fs.writeFileSync(atom.project.channel_conf, col_con, 'utf8')
+
+  sync_create_collection: ->
+    tmp_conf = atom.project.channel_conf
+    item_str = []
+    for tmp_obj in @items
+      item_str.push("[{item_id, \"#{tmp_obj.item_id}\"},{item_type, #{tmp_obj.item_type}}, {menu_order, #{tmp_obj.menu_order}}]")
+    if item_str.length is 0
+      item_str = "[]"
+    else
+      item_str = "[" + item_str.join(",") + "]"
+
+    tmp_pid = atom.project.emp_app_pid
+    erl_str = "#{emp.parser_beam_file_mod}:add_col(\"#{tmp_conf}\",
+                \"#{@id}\", \"#{@name}\", \"#{@app}\", #{@type} , \"#{@url}\",
+            \"#{@uid}\", #{@state}, #{item_str}). "
+    if erl_str = atom.config.get(emp.EMP_IMPORT_MENU_KEY)
+      tmp_pid.stdin.write(erl_str+'\r\n')
 
   edit_collection: ()->
     if !atom.project.emp_app_state
@@ -110,9 +133,3 @@ class emp_collection
     # console.log erl_str
     tmp_pid = atom.project.emp_app_pid
     tmp_pid.stdin.write(erl_str+'\r\n')
-
-  refresh_channel: ->
-    if atom.project.emp_app_state
-      tmp_pid = atom.project.emp_app_pid
-      if erl_str = atom.config.get(emp.EMP_IMPORT_MENU_KEY)
-        tmp_pid.stdin.write(erl_str+'\r\n')

@@ -39,7 +39,7 @@ class EmpAppWizardView extends ScrollView
                   @button class: 'path-btn btn btn-info inline-block-tight', click:'select_apath',' Chose Path '
 
                 @div class:'info-div', =>
-                  @label class: 'info-label', 'EWP Path:'
+                  @label class: 'info-label', 'EWP Path: (建议不要为空否则需要手动修改configure,iewp,yaws.conf 文件)'
                   @subview "ewp_path", new EmpEditView(attributes: {id: 'ewp_path', type: 'string'},  placeholderText: 'Ewp Path')
                   @button class: 'path-btn btn btn-info inline-block-tight', click:'select_epath',' Chose Path '
 
@@ -142,6 +142,9 @@ class EmpAppWizardView extends ScrollView
       atom.config.set(emp.EMP_APP_WIZARD_APP_P, @app_dir)
       if @ewp_dir = @ewp_path.getEditor().getText().trim()
         atom.config.set(emp.EMP_APP_WIZARD_EWP_P, @ewp_dir)
+      else
+        @ewp_dir = ""
+
       atom.config.set(emp.EMP_TMPORARY_APP_NAME, @app_name)
 
       @mk_app_dir(@app_dir, @app_name)
@@ -189,8 +192,7 @@ class EmpAppWizardView extends ScrollView
   string_replace: (str) ->
     map = [{'k':/\$\{app\}/ig,'v':@app_name}, {'k':/\$\{ecl_ewp\}/ig,'v':@ewp_dir}]
     for o in map
-      if o.v
-        str = str.replace(o.k, o.v)
+      str = str.replace(o.k, o.v)
     str
 
   copy_content: (t_path, f_path)->

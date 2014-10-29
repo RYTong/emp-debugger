@@ -147,7 +147,7 @@ class AddGenPanel extends View
       if !@is_edit
         @do_add()
         @fa_view.after_add_col(@col_obj)
-        @col_obj.refresh_channel()
+        # @col_obj.refresh_channel()
       else
         @do_edit()
         @fa_view.after_edit_col(@col_obj)

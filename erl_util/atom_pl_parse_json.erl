@@ -33,6 +33,26 @@
 -define(ROOT_NODE, 1).
 -define(NORMAL_NODE, 0).
 
+
+%% @doc add collection
+add_col(ConfFile, ColId, ColName, ColApp, NewType, ColUrl,
+        ColUid, NewState, Items) ->
+  % io:format("asdasdads-------~n", []),
+  % NewApp = check_coll_app(ColApp),
+  NewUrl = check_coll_default(ColUrl),
+  NewUid = check_coll_default(ColUid),
+  NewCol = new_collection(ColId, ColApp, ColName, NewUrl, NewUid, NewType, NewState, Items),
+  do_edit_collection(NewCol, ColId, ColApp, Items, false),
+
+  check_conf_file(ConfFile),
+  ConfC = consult_file(ConfFile),
+  CollList = proplists:get_value(?COLL, ConfC),
+  ChaList = proplists:get_value(?CHA, ConfC),
+
+  NewReCol = [{?CHA, ChaList}, {?COLL, [NewCol|CollList]}],
+  New_con = lists:flatten(io_lib:format("~p.~n~p.",NewReCol)),
+  file:write_file(ConfFile, New_con).
+
 % @doc edit channel detail information
 edit_cha() ->
   ConfFile = script_get_init_argument(?CHANNEL_CONF),
@@ -182,7 +202,7 @@ edit_col(ConfFile, ColId, ColName, ColApp, NewType, ColUrl,
   NewUrl = check_coll_default(ColUrl),
   NewUid = check_coll_default(ColUid),
   NewCol = new_collection(ColId, ColApp, ColName, NewUrl, NewUid, NewType, NewState, Items),
-  do_edit_collection(NewCol, ColId, ColApp, Items),
+  do_edit_collection(NewCol, ColId, ColApp, Items, true),
 
   check_conf_file(ConfFile),
   ConfC = consult_file(ConfFile),
@@ -194,56 +214,64 @@ edit_col(ConfFile, ColId, ColName, ColApp, NewType, ColUrl,
   New_con = lists:flatten(io_lib:format("~p.~n~p.",NewReCol)),
   file:write_file(ConfFile, New_con).
 
-do_edit_collection(Collection, Id, App, Items) ->
-  try
-    case ewp_channel_store:select(collections,
-          {'and', [{app, '=', App}, {id, '=', Id}]}) of
-        [] ->
-          io:format("Edit:there is no this collection!~n", []);
-        _  ->
-          OldItems = ewp_channel_store:select(collection_items, {id, '=', Id}),
-          {AddItems, DelItems, ModItems} =
-              lists:foldl(
-                  fun(X, {Add, Del, Mod}) ->
-                      ItemId = o(X, item_id),
-                      ItemType = o(X, item_type),
-                      MenuOrder = o(X, menu_order),
-                      case check_item(ItemId, ItemType, MenuOrder, Add) of
-                          {equal, NewAdd} ->
-                              {NewAdd, Del, Mod};
-                          {modify, NewMenuOrder, NewAdd} ->
-                              {NewAdd, Del, [{ItemId, ItemType, NewMenuOrder}|Mod]};
-                          delete ->
-                              {Add, [{ItemId, ItemType, MenuOrder}|Del], Mod}
-                      end
-                  end, {Items, [], []}, OldItems),
-          ewp_channel_store:update(collections, Collection, {id, '=', Id}, get_store_type()),
-          lists:map(
-            fun(Item) ->
-                ewp_channel_store:insert(collection_items, [{id, Id}|Item], get_store_type()),
-                check_collection(o(Item, item_id), ?NORMAL_NODE, App),
-            end, AddItems),
-          lists:map(
-              fun({ItemId, ItemType, _MenuOrder}) ->
-                  ewp_channel_store:delete(collection_items, {'and', [
-                      {id, '=', Id},
-                      {item_type, '=', ItemType},
-                      {item_id, '=', ItemId}]}, get_store_type()),
-                  check_collection(ItemId, ?NORMAL_NODE, App)
-              end, DelItems),
-          lists:map(
-              fun({ItemId, ItemType, MenuOrder}) ->
-                  ewp_channel_store:update(collection_items,
-                      [{id, Id}, {item_id, ItemId}, {item_type, ItemType}, {menu_order, MenuOrder}],
-                      {'and', [
-                          {id, '=', Id},
-                          {item_type, '=', ItemType},
-                          {item_id, '=', ItemId}]}, get_store_type())
-              end, ModItems),
-          NodeType = proplists:get_value(type, Collection),
-          check_collection(Id, NodeType, App)
+do_check_exist(Table, App, Id, Exist) ->
+  case {Exist, ewp_channel_store:select(Table,
+          {'and', [{app, '=', App}, {id, '=', Id}]})} of
+    {true, []} ->
+      throw("Col Id is not exist!~n");
+    {false, []} ->
+      go_on;
+    {false, _} ->
+      throw("Col Id is exist!~n");
+    _ ->
+      go_on
+  end.
 
-    end
+
+do_edit_collection(Collection, Id, App, Items, Exist) ->
+  try
+    do_check_exist(collections, App, Id, Exist),
+    OldItems = ewp_channel_store:select(collection_items, {id, '=', Id}),
+    {AddItems, DelItems, ModItems} =
+        lists:foldl(
+            fun(X, {Add, Del, Mod}) ->
+                ItemId = o(X, item_id),
+                ItemType = o(X, item_type),
+                MenuOrder = o(X, menu_order),
+                case check_item(ItemId, ItemType, MenuOrder, Add) of
+                    {equal, NewAdd} ->
+                        {NewAdd, Del, Mod};
+                    {modify, NewMenuOrder, NewAdd} ->
+                        {NewAdd, Del, [{ItemId, ItemType, NewMenuOrder}|Mod]};
+                    delete ->
+                        {Add, [{ItemId, ItemType, MenuOrder}|Del], Mod}
+                end
+            end, {Items, [], []}, OldItems),
+    ewp_channel_store:update(collections, Collection, {id, '=', Id}, get_store_type()),
+    lists:map(
+      fun(Item) ->
+          ewp_channel_store:insert(collection_items, [{id, Id}|Item], get_store_type()),
+          check_collection(o(Item, item_id), ?NORMAL_NODE, App)
+      end, AddItems),
+    lists:map(
+        fun({ItemId, ItemType, _MenuOrder}) ->
+            ewp_channel_store:delete(collection_items, {'and', [
+                {id, '=', Id},
+                {item_type, '=', ItemType},
+                {item_id, '=', ItemId}]}, get_store_type()),
+            check_collection(ItemId, ?NORMAL_NODE, App)
+        end, DelItems),
+    lists:map(
+        fun({ItemId, ItemType, MenuOrder}) ->
+            ewp_channel_store:update(collection_items,
+                [{id, Id}, {item_id, ItemId}, {item_type, ItemType}, {menu_order, MenuOrder}],
+                {'and', [
+                    {id, '=', Id},
+                    {item_type, '=', ItemType},
+                    {item_id, '=', ItemId}]}, get_store_type())
+        end, ModItems),
+    NodeType = proplists:get_value(type, Collection),
+    check_collection(Id, NodeType, App)
   catch
     _:Err ->
       error_logger:error_msg("Error msg: ~p~n", [Err]),

@@ -93,12 +93,12 @@ class emp_app
         if (error instanceof Error)
           # throw error
           console.warn error.message
-          show_error("Compile erl error ~")
+          emp.show_error("Compile erl error ~")
         format_stdout(stdout)
         format_stderr(stderr)
         emp_app_view.hide_loading()
     else
-      show_error("Configure app error ~")
+      emp.show_error("Configure app error ~")
 
 
 
@@ -132,7 +132,7 @@ class emp_app
         emp_app_view.refresh_app_st(app_state)
         console.warn "close over:#{code}"
     else
-      show_error("Run app error ~")
+      emp.show_error("Run app error ~")
 
   stop_app: ->
     # console.log "stop"
@@ -143,9 +143,9 @@ class emp_app
         pid.stdin.write('q().\r\n')
         pid.kill()
       else
-        show_error("no Pid ~")
+        emp.show_error("no Pid ~")
     else
-      show_error("The app is not running ~")
+      emp.show_error("The app is not running ~")
 
   run_erl: (erl_str) ->
     # console.log "erl:#{erl_str}"
@@ -153,9 +153,9 @@ class emp_app
       if pid
         pid.stdin.write(erl_str+'\r\n')
       else
-        show_error("no Pid ~")
+        emp.show_error("no Pid ~")
     else
-      show_error("The app is not running ~")
+      emp.show_error("The app is not running ~")
 
   make_app_runtime: ->
     @run_from_conf(emp.EMP_CMAKE_KEY)
@@ -170,9 +170,9 @@ class emp_app
       if pid
         pid.stdin.write(erl_str+'\r\n')
       else
-        show_error("no Pid ~")
+        emp.show_error("no Pid ~")
     else
-      show_error("The app is not running ~")
+      emp.show_error("The app is not running ~")
 
   get_app_name: ->
     # ewp_app_manager:all_apps().
@@ -180,9 +180,9 @@ class emp_app
       if pid
         pid.stdin.write(emp_get_app_name+'\r\n')
       else
-        show_error("no Pid ~")
+        emp.show_error("no Pid ~")
     else
-      show_error("The app is not running ~")
+      emp.show_error("The app is not running ~")
 
   get_app_state: ->
     return app_state
@@ -246,14 +246,8 @@ format_stderr = (stdout)->
     for log in stdout.trim().split('\n')
       console.error log
 
-
-show_error = (err_msg) ->
-  atom.confirm
-    message:"Error"
-    detailedMessage:err_msg
-
 set_app_stat = (state)->
-  console.log "set stat :#{state}"
+  # console.log "set stat :#{state}"
   if state
     atom.project.emp_app_pid = pid
   else

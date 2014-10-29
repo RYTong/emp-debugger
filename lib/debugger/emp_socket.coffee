@@ -1,6 +1,7 @@
 net = require("net")
 emp_clients_map = require './emp_clients'
 emp_client = require './emp_client'
+emp = require '../exports/emp'
 emp_server = null
 emp_server_error = null
 # emp_socket_map = {}
@@ -79,9 +80,7 @@ class emp_socket
         emp_server_state = false
         emp_server = null
         emp_server_error = 'EADDRINUSE'
-        atom.confirm
-          message:"Error"
-          detailedMessage:"Address or Port in use, retrying..."
+        emp.show_error("Address or Port in use, retrying...")
         emp_conf_view.hide_state_pane() unless !emp_conf_view
       emp_client_map.remove_all_client_socket()
 
@@ -136,14 +135,10 @@ class emp_socket
 
   # alert a no active client warnning~
   no_client_err: ->
-    atom.confirm
-      message:"Error"
-      detailedMessage:"There's no active client~"
+    emp.show_error("There's no active client~")
 
   no_server_err: ->
-    atom.confirm
-      message:"Error"
-      detailedMessage:"There's no socket server~"
+    emp.show_error("There's no socket server~")
 
   # alert a no socket server warnning~
   close: () ->

@@ -1,5 +1,5 @@
 {$, $$, View} = require 'atom'
-ItemEditorView = require './item-editor-view'
+# ItemEditorView = require './item-editor-view'
 ColItemView = require './item_view/collection-item-view'
 emp = require '../exports/emp'
 conf_parser = require '../emp_app/conf_parser'
@@ -105,11 +105,13 @@ class SettingsPanel extends View
     # console.log @select_entry
     if @select_entry
       tmp_id_list = {}
+      tmp_col_list = []
       for key, tmp_obj of @select_entry
         tmp_type = tmp_obj.col_type
         tmp_id_list[key] = tmp_type
         tmp_col_str = tmp_col_str+' '+key+' '+tmp_type
+        tmp_col_list.push('{\"'+key+'\",'+tmp_type+'}')
         # console.log "#{tmp_col_str}, #{key}"
         tmp_obj.destroy()
-      conf_parser.remove_col(tmp_col_str)
+      conf_parser.remove_col(tmp_col_str, tmp_col_list)
       @fa_view.after_del_col(tmp_id_list)

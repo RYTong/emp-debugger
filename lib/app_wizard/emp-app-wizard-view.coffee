@@ -1,9 +1,9 @@
-{$, $$, ScrollView} = require 'atom'
+{$, $$, ScrollView, TextEditorView} = require 'atom'
 remote = require 'remote'
 dialog = remote.require 'dialog'
 fs = require 'fs'
 path = require 'path'
-EmpEditView = require '../channel_view/item-editor-view'
+# EmpEditView = require '../channel_view/item-editor-view'
 emp = require '../exports/emp'
 
 module.exports =
@@ -31,16 +31,16 @@ class EmpAppWizardView extends ScrollView
               @div class:'detail-con', =>
                 @div class:'info-div', =>
                   @label class: 'info-label', 'App名称*:'
-                  @subview "app_name_editor", new EmpEditView(attributes: {id: 'app_name', type: 'string'},  placeholderText: 'Application Name')
+                  @subview "app_name_editor", new TextEditorView(mini: true,attributes: {id: 'app_name', type: 'string'},  placeholderText: 'Application Name')
 
                 @div class:'info-div', =>
                   @label class: 'info-label', 'App 路径*:'
-                  @subview "app_path", new EmpEditView(attributes: {id: 'app_path', type: 'string'},  placeholderText: 'Application Path')
+                  @subview "app_path", new TextEditorView(mini: true,attributes: {id: 'app_path', type: 'string'},  placeholderText: 'Application Path')
                   @button class: 'path-btn btn btn-info inline-block-tight', click:'select_apath',' Chose Path '
 
                 @div class:'info-div', =>
-                  @label class: 'info-label', 'EWP Path:'
-                  @subview "ewp_path", new EmpEditView(attributes: {id: 'ewp_path', type: 'string'},  placeholderText: 'Ewp Path')
+                  @label class: 'info-label', 'EWP Path: (建议不要为空否则需要手动修改configure,iewp,yaws.conf 文件)'
+                  @subview "ewp_path", new TextEditorView(mini: true,attributes: {id: 'ewp_path', type: 'string'},  placeholderText: 'Ewp Path')
                   @button class: 'path-btn btn btn-info inline-block-tight', click:'select_epath',' Chose Path '
 
             @div class: 'footer-div', =>
@@ -61,6 +61,8 @@ class EmpAppWizardView extends ScrollView
       @ewp_path.getEditor().setText(@default_ewp_path)
     else
       @ewp_path.getEditor().setText(@default_ewp_path)
+    # @focus()
+
 
   select_apath: (e, element)->
     tmp_path = @app_path.getEditor().getText()
@@ -110,7 +112,7 @@ class EmpAppWizardView extends ScrollView
       # @add_new_panel()
       # @parse_conf()
   focus: ->
-    super
+    # super
     @app_name_editor.focus()
 
   getUri: ->
@@ -142,13 +144,18 @@ class EmpAppWizardView extends ScrollView
       atom.config.set(emp.EMP_APP_WIZARD_APP_P, @app_dir)
       if @ewp_dir = @ewp_path.getEditor().getText().trim()
         atom.config.set(emp.EMP_APP_WIZARD_EWP_P, @ewp_dir)
+      else
+        @ewp_dir = ""
+      console.log  @app_name
       atom.config.set(emp.EMP_TMPORARY_APP_NAME, @app_name)
 
       @mk_app_dir(@app_dir, @app_name)
-      emp.show_info("创建app 完成~")
+      # console.log  "111111"
+      # emp.show_info("创建app 完成~")
+      # console.log  "222222"
       atom.open options =
         pathsToOpen: [@app_dir]
-        devMode: true
+        devMode: false
 
       atom.workspaceView.trigger 'core:close'
     catch e
@@ -189,8 +196,7 @@ class EmpAppWizardView extends ScrollView
   string_replace: (str) ->
     map = [{'k':/\$\{app\}/ig,'v':@app_name}, {'k':/\$\{ecl_ewp\}/ig,'v':@ewp_dir}]
     for o in map
-      if o.v
-        str = str.replace(o.k, o.v)
+      str = str.replace(o.k, o.v)
     str
 
   copy_content: (t_path, f_path)->
@@ -198,5 +204,5 @@ class EmpAppWizardView extends ScrollView
     f_con = fs.readFileSync f_path, 'utf8'
     nf_con = @string_replace(f_con)
     fs.writeFileSync(t_path, nf_con, 'utf8')
-    if f_name is 'iewp' or f_name is 'configure'
-      fs.chmodSync(t_path, 493);
+    # if f_name is 'iewp' or f_name is 'configure'
+    #   fs.chmodSync(t_path, 493);

@@ -1,4 +1,4 @@
-'.text.html':
+'.text.xhtml':
   # content
   'EMP Content':
     'prefix': 'xml'

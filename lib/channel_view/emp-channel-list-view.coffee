@@ -23,7 +23,6 @@ fa_view = null
 
 module.exports =
 class ChannelListView extends ScrollView
-  com_state :0
 
   unused_cha_map:{}
   unused_col_map:{}
@@ -66,9 +65,9 @@ class ChannelListView extends ScrollView
       @entryClicked(e)
     # @root_dir.command 'emp-debugger:copy', => @copySelectedEntries()
     @fex_state = fs.existsSync(parser_beam_file)
-    # console.log ex_state
+    # console.log @fex_state
     if !@fex_state
-      @com_state = conf_parser.initial_parser(fa_view)
+      conf_parser.initial_parser(fa_view)
     else
       conf_parser.initial_path()
 

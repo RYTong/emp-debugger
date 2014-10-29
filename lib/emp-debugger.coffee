@@ -8,6 +8,8 @@ EmpDebuggerSettingView = require './view/emp-debugger-setting-view.coffee'
 EmpSocketServer = require './debugger/emp_socket'
 # EmpChaWizard = require './channel_view/emp-channel-wizard'
 EmpViewManage = require './view/emp-views-entrance'
+conf_parser = require './emp_app/conf_parser'
+emp = require './exports/emp'
 n_state = null
 path = require 'path'
 DEFAULT_EXT_LUA = '.lua'
@@ -40,6 +42,7 @@ module.exports =
     @empEnableLuaView = new EmpEnableLuaView(n_state.empEnableLuaViewState, @emp_socket_server)
     @empDebuggerSettingView = new EmpDebuggerSettingView(n_state.empDebuggerSettingViewState, @emp_socket_server, @empDebuggerLogView, this)
     EmpViewManage.activate()
+    conf_parser.initial_parser()
 
   # convert: ->
     # @empDebuggerInitView.start_listen(@empDebuggerInitView)
@@ -99,9 +102,7 @@ module.exports =
       else if text_ext is DEFAULT_EXT_XHTML # live preview xhtml file
         @emp_socket_server.live_preview_view(debug_text)
       else if text_ext
-        atom.confirm
-          message:"Warnning"
-          detailedMessage:"Unrecognise file type, unable live preview~"
+        emp.self_info("Warnning", "Unrecognise file type, unable live preview~")
       else
         debug_view = editor["emp_live_view"]
         debug_script_name = editor["emp_live_script_name"]
@@ -115,13 +116,9 @@ module.exports =
           debug_view.view = debug_text
           @emp_socket_server.live_preview_view(debug_text)
         else
-          atom.confirm
-            message:"Error"
-            detailedMessage:"No Content to live preview~"
+          emp.show_error("No Content to live preview~")
     else
-      atom.confirm
-        message:"Error"
-        detailedMessage:"There's no editors~"
+      emp.show_error("There's no editors~")
 
   show_enable_view: ->
     @empEnableView.enable_view()

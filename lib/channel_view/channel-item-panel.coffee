@@ -89,7 +89,7 @@ class ChannelItemPanel extends View
         tmp_id_list.push(key)
         tmp_cha_str = tmp_cha_str+' '+key
         tmp_obj.destroy()
-      conf_parser.remove_cha(tmp_cha_str)
+      conf_parser.remove_cha(tmp_cha_str, tmp_id_list)
       @fa_view.after_del_channel(tmp_id_list)
 
 

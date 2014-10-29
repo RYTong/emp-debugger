@@ -29,5 +29,5 @@ class EmpChannelManaView extends View
     this
 
   show_channel: ->
-    console.log "show channel"
+    # console.log "show channel"
     EmpViewManage.open_cha_wizard()

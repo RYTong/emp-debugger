@@ -1,5 +1,5 @@
-{$, $$, View} = require 'atom'
-EmpEditView = require '../../view/emp-edit-view'
+{$, $$, View, TextEditorView} = require 'atom'
+# EmpEditView = require '../../view/emp-edit-view'
 emp = require '../../exports/emp'
 
 module.exports =
@@ -10,10 +10,10 @@ class ParamsItemPanel extends View
       @ul outlet:"item_ul", class:'off_ul', =>
         @li class:'off_li', =>
           @span "参数名称:"
-          @subview "ekey", new EmpEditView(attributes: {id: 'key', type: 'string'},  placeholderText: 'Key')
+          @subview "ekey", new TextEditorView(mini: true, attributes: {id: 'key', type: 'string'},  placeholderText: 'Key')
         @li class:'off_li', =>
           @span "参数值:"
-          @subview "evalue", new EmpEditView(attributes: {id: 'value', type: 'string'},  placeholderText: 'Value')
+          @subview "evalue", new TextEditorView(mini: true, attributes: {id: 'value', type: 'string'},  placeholderText: 'Value')
         @button class: 'off_ul_btn btn btn-info inline-block-tight', click:'destroy',' Delete '
 
   initialize: (key, val)->

@@ -4,7 +4,7 @@
 GeneralPanel = require './general-panel'
 AddChaPanel = require './panel_view/add_channel_view'
 AddColPanel = require './collection_view/add_collection_view'
-EmpEditView = require '../view/emp-edit-view'
+# EmpEditView = require '../view/emp-edit-view'
 EmpChaListView = require './emp-channel-list-view'
 emp = require '../exports/emp'
 

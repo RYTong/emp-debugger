@@ -1,5 +1,5 @@
 {$, $$, View} = require 'atom'
-ItemEditorView = require './item-editor-view'
+# ItemEditorView = require './item-editor-view'
 ColItemView = require './item_view/collection-item-view'
 emp = require '../exports/emp'
 conf_parser = require '../emp_app/conf_parser'

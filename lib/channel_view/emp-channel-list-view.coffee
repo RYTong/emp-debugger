@@ -65,7 +65,7 @@ class ChannelListView extends ScrollView
       @entryClicked(e)
     # @root_dir.command 'emp-debugger:copy', => @copySelectedEntries()
     @fex_state = fs.existsSync(parser_beam_file)
-    console.log @fex_state
+    # console.log @fex_state
     if !@fex_state
       conf_parser.initial_parser(fa_view)
     else

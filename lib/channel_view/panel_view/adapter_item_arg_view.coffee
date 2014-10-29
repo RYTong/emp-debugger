@@ -1,5 +1,5 @@
-{$, $$, View} = require 'atom'
-EmpEditView = require '../../view/emp-edit-view'
+{$, $$, View, TextEditorView} = require 'atom'
+# EmpEditView = require '../../view/emp-edit-view'
 emp = require '../../exports/emp'
 item_obj = require '../emp_item/channel_adapter_param'
 
@@ -13,10 +13,10 @@ class AdapterArgPanel extends View
       @ul class:'off_pul', =>
         @li class:'off_pli', =>
           @span "取值参数名:"
-          @subview "arg_key", new EmpEditView(attributes: {id: 'arg_key', type: 'string'},  placeholderText: 'Param Key')
+          @subview "arg_key", new TextEditorView(mini: true, attributes: {id: 'arg_key', type: 'string'},  placeholderText: 'Param Key')
         @li class:'off_pli', =>
           @span "请求参数名:"
-          @subview "ra_key", new EmpEditView(attributes: {id: 'ra_key', type: 'string'},  placeholderText: 'Rquest Param Key')
+          @subview "ra_key", new TextEditorView(mini: true, attributes: {id: 'ra_key', type: 'string'},  placeholderText: 'Rquest Param Key')
         @li class:'off_pli', =>
           @span "取值方式:"
           @select outlet: "off_param", class: "form-control", =>

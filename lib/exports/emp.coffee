@@ -117,11 +117,20 @@ module.exports.show_error = (err_msg) ->
   atom.confirm
     message:"Error"
     detailedMessage:err_msg
+    buttons:["Ok"]
 
 module.exports.show_info = (info_msg) ->
   atom.confirm
     message:"Info"
     detailedMessage:info_msg
+    buttons:["Ok"]
+
+module.exports.self_info = (title_msg, detail_msg) ->
+  atom.confirm
+    message:title_msg
+    detailedMessage:detail_msg
+    buttons:["Ok"]
+
 
 module.exports.isEmpty = (obj) ->
     for key,name of obj

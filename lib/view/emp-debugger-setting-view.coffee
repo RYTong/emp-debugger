@@ -1,5 +1,5 @@
-{$, $$, View} = require 'atom'
-EmpEditView = require './emp-edit-view'
+{$, $$, View, TextEditorView} = require 'atom'
+# EmpEditView = require './emp-edit-view'
 EmpAppMan = require '../emp_app/emp_app_manage'
 EmpBarView = require './emp-setting-bar'
 EmpAppManaView = require './emp-app-manage-view'
@@ -48,11 +48,11 @@ class EmpDebuggerSettingView extends View
               @label class: "emp-setting-label", "Host "
               @div class: 'controls', =>
                 @div class: 'setting-editor-container', =>
-                  @subview "emp_set_host", new EmpEditView(attributes: {id: 'emp_host', type: 'string'},  placeholderText: 'Editor Server 监听的地址') #from editor view class
+                  @subview "emp_set_host", new TextEditorView(mini: true, attributes: {id: 'emp_host', type: 'string'},  placeholderText: 'Editor Server 监听的地址') #from editor view class
               @label class: "emp-setting-label", "Port "
               @div class: 'controls', =>
                 @div class: 'setting-editor-container', =>
-                  @subview "emp_set_port", new EmpEditView(attributes: {id: 'emp_port', type: 'string'}, placeholderText: '同Client交互的端口')
+                  @subview "emp_set_port", new TextEditorView(mini: true, attributes: {id: 'emp_port', type: 'string'}, placeholderText: '同Client交互的端口')
               @button class: 'btn btn-else btn-success inline-block-tight ', click: 'start_server', "Start Server"
 
             # ------------------------ server state pane ------------------------

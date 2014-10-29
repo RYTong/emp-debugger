@@ -1,6 +1,6 @@
-{$, $$, View} = require 'atom'
+{$, $$, View, TextEditorView} = require 'atom'
 path = require 'path'
-EmpEditView = require '../item-editor-view'
+# EmpEditView = require '../item-editor-view'
 emp = require '../../exports/emp'
 ItemsPanel = require './collection_child_item_panel'
 # ParamView = require './cha_params_view'
@@ -29,19 +29,19 @@ class AddGenPanel extends View
                 @label outlet:"id_info_label", class: 'info-label', '集合ID*'
 
                 # @input type:"text", name:'test_in', class:'native-key-bindings',outlet:'col_id'
-                @subview "col_id", new EmpEditView(attributes: {id: 'col_id', type: 'string'},  placeholderText: 'Collection ID') #from editor view class
+                @subview "col_id", new TextEditorView(mini: true, attributes: {id: 'col_id', type: 'string'},  placeholderText: 'Collection ID') #from editor view class
               @div class: 'info-div', =>
                 @label class: 'info-label', '集合名称*'
-                @subview "col_name", new EmpEditView(attributes: {id: 'col_name', type: 'string'},  placeholderText: 'Collection Name') #from editor view class
+                @subview "col_name", new TextEditorView(mini: true, attributes: {id: 'col_name', type: 'string'},  placeholderText: 'Collection Name') #from editor view class
               @div class: 'info-div', =>
                 @label class: 'info-label', '所属App*'
-                @subview "col_app", new EmpEditView(attributes: {id: 'col_app', type: 'string'},  placeholderText: 'App') #from editor view class
+                @subview "col_app", new TextEditorView(mini: true, attributes: {id: 'col_app', type: 'string'},  placeholderText: 'App') #from editor view class
               @div class: 'info-div', =>
                 @label class: 'info-label', 'Url'
-                @subview "col_url", new EmpEditView(attributes: {id: 'col_url', type: 'string'},  placeholderText: 'Url') #from editor view class
+                @subview "col_url", new TextEditorView(mini: true, attributes: {id: 'col_url', type: 'string'},  placeholderText: 'Url') #from editor view class
               @div class: 'info-div', =>
                 @label class: 'info-label', 'User Id*'
-                @subview "col_uid", new EmpEditView(attributes: {id: 'col_uid', type: 'string'},  placeholderText: 'User Id') #from editor view class
+                @subview "col_uid", new TextEditorView(mini: true, attributes: {id: 'col_uid', type: 'string'},  placeholderText: 'User Id') #from editor view class
 
             @div class: 'info-div', =>
               @label class: 'info-label', '集合类型'

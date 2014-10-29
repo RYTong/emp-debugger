@@ -1,5 +1,5 @@
-{$, $$, View} = require 'atom'
-EmpEditView = require '../../view/emp-edit-view'
+{$, $$, View, TextEditorView} = require 'atom'
+# EmpEditView = require '../../view/emp-edit-view'
 emp = require '../../exports/emp'
 arg_view = require './adapter_item_arg_view'
 adapter_obj = require '../emp_item/channel_adapter'
@@ -17,16 +17,16 @@ class AdapterItemPanel extends View
       @ul outlet:'item_detail', class:'off_ul', =>
         @li class:'off_li', =>
           @span "Trancode:"
-          @subview "trancode", new EmpEditView(attributes: {id: 'trancode', type: 'string'},  placeholderText: 'Trancode')
+          @subview "trancode", new TextEditorView(mini: true, attributes: {id: 'trancode', type: 'string'},  placeholderText: 'Trancode')
         @li class:'off_li', =>
           @span "Adapter:"
-          @subview "adapter", new EmpEditView(attributes: {id: 'adapter', type: 'string'},  placeholderText: 'Adapter')
+          @subview "adapter", new TextEditorView(mini: true, attributes: {id: 'adapter', type: 'string'},  placeholderText: 'Adapter')
         @li class:'off_li', =>
           @span "Procedure:"
-          @subview "procedure", new EmpEditView(attributes: {id: 'procedure', type: 'string'},  placeholderText: 'Procedure')
+          @subview "procedure", new TextEditorView(mini: true, attributes: {id: 'procedure', type: 'string'},  placeholderText: 'Procedure')
         @li class:'off_li', =>
           @span "View:"
-          @subview "view_name", new EmpEditView(attributes: {id: 'view_name', type: 'string'},  placeholderText: 'View Name')
+          @subview "view_name", new TextEditorView(mini: true, attributes: {id: 'view_name', type: 'string'},  placeholderText: 'View Name')
         @button class: 'off_ul_btn btn btn-info inline-block-tight', click:'add_arg',' Add Arg'
         @button class: 'off_ul_btn btn btn-info inline-block-tight', click:'destroy',' Delete '
 

@@ -1,5 +1,5 @@
-{$, $$, View} = require 'atom'
-EmpEditView = require './emp-edit-view'
+{$, $$, View, TextEditorView} = require 'atom'
+# EmpEditView = require './emp-edit-view'
 EmpChaManaView = require '../channel_view/emp-channel-manage-view'
 EmpAppMan = require '../emp_app/emp_app_manage'
 EmpAppWizardView = require '../app_wizard/emp-debugger-app-wizard-view'
@@ -33,15 +33,15 @@ class EmpAppManaView extends View
           @label class: "emp-setting-label", "Erl source"
           @div class: 'controls', =>
             @div class: 'setting-editor-container', =>
-              @subview "emp_app_erl", new EmpEditView(attributes: {id: 'emp_erl', type: 'string'},  placeholderText: 'Erlang Source') #fr
+              @subview "emp_app_erl", new TextEditorView(mini: true, attributes: {id: 'emp_erl', type: 'string'},  placeholderText: 'Erlang Source') #fr
           @button outlet:"btn_run", class: 'btn btn-else btn-info inline-block-tight', click: 'run_erl', "Run Erl Term"
 
 
         @div outlet:"emp_app_btns", class: "emp-setting-btn-else ",  =>
-          @button class: 'btn btn-else btn-success inline-block-tight', click: 'run_app', "Start App"
-          @button class: 'btn btn-else btn-error inline-block-tight', click: 'stop_app', "Stop App"
-          @button class: 'btn btn-else btn-warning inline-block-tight', click: 'conf_app', "Config App"
-          @button class: 'btn btn-else btn-warning inline-block-tight', click: 'make_app', "Make App"
+          @button outlet:"btn_run_app", class: 'btn btn-else btn-success inline-block-tight', click: 'run_app', "Start App"
+          @button outlet:"btn_stop_app", class: 'btn btn-else btn-error inline-block-tight', click: 'stop_app', "Stop App"
+          @button outlet:"btn_conf_app", class: 'btn btn-else btn-warning inline-block-tight', click: 'conf_app', "Config App"
+          @button outlet:"btn_make_app", class: 'btn btn-else btn-warning inline-block-tight', click: 'make_app', "Make App"
           @button outlet:"btn_c_make", class: 'btn btn-else btn-warning inline-block-tight', click: 'make_app_runtime', "C_App"
           @button outlet:"btn_import_app", class: 'btn btn-else btn-info inline-block-tight',click: 'import_menu', "Import Menu"
 
@@ -63,6 +63,7 @@ class EmpAppManaView extends View
   check_os: ->
     # add linux type
     tmp_os = os.platform().toLowerCase()
+    # console.log tmp_os
     if tmp_os isnt emp.OS_DARWIN and tmp_os isnt emp.OS_LINUX
       unless @emp_app_erl.isDisabled()
         # console.log "1--------"
@@ -75,6 +76,14 @@ class EmpAppManaView extends View
           child = $(btn)
           child.disable()
         @show_disable()
+      unless @btn_run_app.isDisabled()
+        @btn_run_app.disable()
+      unless @btn_stop_app.isDisabled()
+        @btn_stop_app.disable()
+      unless @btn_conf_app.isDisabled()
+        @btn_conf_app.disable()
+      unless @btn_make_app.isDisabled()
+        @btn_make_app.disable()
 
   # -------------------------------------------------------------------------
   # btn callback for app setting

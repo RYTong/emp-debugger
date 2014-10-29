@@ -1,7 +1,7 @@
-{$, $$, View} = require 'atom'
+{$, $$, View, TextEditorView} = require 'atom'
 path = require 'path'
 fs = require 'fs'
-EmpEditView = require '../../view/emp-edit-view'
+# EmpEditView = require '../../view/emp-edit-view'
 emp = require '../../exports/emp'
 AdapterView = require './cha_adapter_view'
 ParamView = require './cha_params_view'
@@ -28,13 +28,13 @@ class AddGenPanel extends View
             @div class:'cha_detail_div', =>
               @div class: 'info-div', =>
                 @label outlet:"cha_id_title",class: 'info-label', '频道ID*: '
-                @subview "cha_id", new EmpEditView(attributes: {id: 'cha_id', type: 'string'},  placeholderText: 'Channel ID') #from editor view class
+                @subview "cha_id", new TextEditorView(mini: true, attributes: {id: 'cha_id', type: 'string'},  placeholderText: 'Channel ID') #from editor view class
               @div class: 'info-div', =>
                 @label class: 'info-label', '频道名称*'
-                @subview "cha_name", new EmpEditView(attributes: {id: 'cha_name', type: 'string'},  placeholderText: 'Channel Name') #from editor view class
+                @subview "cha_name", new TextEditorView(mini: true, attributes: {id: 'cha_name', type: 'string'},  placeholderText: 'Channel Name') #from editor view class
               @div class: 'info-div', =>
                 @label class: 'info-label', '所属App'
-                @subview "cha_app", new EmpEditView(attributes: {id: 'cha_app', type: 'string'},  placeholderText: 'App') #from editor view class
+                @subview "cha_app", new TextEditorView(mini: true, attributes: {id: 'cha_app', type: 'string'},  placeholderText: 'App') #from editor view class
             @div class: 'info-div', =>
               @label class: 'info-label', '频道配型'
               @select outlet: "channel_entry", class: "form-control", =>

@@ -55,6 +55,7 @@ class EmpAppManaView extends View
     @btn_import_app.disable()
     @btn_run.disable()
     @btn_c_make.disable()
+
     this
 
   focus: ->
@@ -62,7 +63,7 @@ class EmpAppManaView extends View
 
   check_os: ->
     # add linux type
-    tmp_os = os.platform().toLowerCase()
+    tmp_os = emp.get_emp_os()
     # console.log tmp_os
     if tmp_os isnt emp.OS_DARWIN and tmp_os isnt emp.OS_LINUX
       unless @emp_app_erl.isDisabled()

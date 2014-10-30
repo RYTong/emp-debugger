@@ -9,7 +9,7 @@ bash_path_key = 'emp-channel-wizard.path'
 rel_erl_dir = '../../erl_util/atom_pl_parse_json.erl'
 rel_ebin_dir = '../../erl_util/'
 emp = require '../exports/emp'
-os_platform = os.platform().toLowerCase()
+os_platform = emp.get_emp_os()
 
 # @doc 编译状态标示 编译步骤，最多2步，
 # 0标示未开始，1标示初始化path，2标示编译开始

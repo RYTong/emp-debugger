@@ -151,7 +151,7 @@ class EmpAppWizardView extends ScrollView
 
       @mk_app_dir(@app_dir, @app_name)
       # console.log  "111111"
-      # emp.show_info("创建app 完成~")
+      emp.show_info("创建app 完成~")
       # console.log  "222222"
       atom.open options =
         pathsToOpen: [@app_dir]
@@ -204,5 +204,7 @@ class EmpAppWizardView extends ScrollView
     f_con = fs.readFileSync f_path, 'utf8'
     nf_con = @string_replace(f_con)
     fs.writeFileSync(t_path, nf_con, 'utf8')
-    # if f_name is 'iewp' or f_name is 'configure'
-    #   fs.chmodSync(t_path, 493);
+    if f_name is 'iewp' or f_name is 'configure'
+      tmp_os = emp.get_emp_os()
+      if tmp_os is emp.OS_DARWIN or tmp_os is emp.OS_LINUX
+        fs.chmodSync(t_path, 493);

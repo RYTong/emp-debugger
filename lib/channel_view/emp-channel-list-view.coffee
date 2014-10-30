@@ -284,44 +284,16 @@ parse_conf = (callback)->
     tmp_fs_watcher = fs.watch result_json_dir, {persistent: true, interval: 5000}, (event, filename) ->
       # console.log('event is: ' + event)
       if (filename)
-        if filename is tmp_json_file and re_flag
-          channel_json = fs.readFileSync(result_json_file, 'utf8')
-          callback.refresh_view(channel_json)
+        if filename is tmp_json_file
+          if fs.existsSync(result_json_file)
+            channel_json = fs.readFileSync(result_json_file, 'utf8')
+            callback.refresh_view(channel_json)
+          else
+            emp.show_error("解析channel.conf 失败，请查看日志")
+
           # console.log('filename provided: ' + filename)
           tmp_fs_watcher.close()
-
-      # else
       #   console.log('filename not ·')
 
     tmp_pid = atom.project.emp_app_pid
     tmp_pid.stdin.write(erl_str+'\r\n')
-
-    # fs.watchFile result_json_file, { persistent: true, interval: 3000 }, (curr, prev) ->
-    #   console.log('the current mtime is: ' + curr.mtime)
-    #   console.log('the previous mtime was: ' + prev.mtime)
-
-
-
-    # if fs.existsSync(result_json_file)
-    #   if (re_flag)
-    #     channel_json = fs.readFileSync(result_json_file, 'utf8')
-    #     callback.refresh_view(channel_json)
-    #
-    #
-    # else
-    #   emp.show_error("解析channel.conf 失败，请查看日志")
-
-
-
-    # if fs.existsSync(result_json_file)
-    #   channel_json = fs.readFileSync(result_json_file, 'utf8')
-    #   callback.refresh_view(channel_json)
-    # else
-    #   emp.show_error("解析channel.conf 失败，请查看日志")
-      # if app_state
-      #   if pid
-      #     pid.stdin.write(erl_str+'\r\n')
-      #   else
-      #     show_error("no Pid ~")
-      # else
-      #   show_error("The app is not running ~")

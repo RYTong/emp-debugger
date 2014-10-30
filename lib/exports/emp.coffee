@@ -1,6 +1,7 @@
 # macro defined
 fs = require 'fs'
 path = require 'path'
+os = require 'os'
 
 module.exports =
   parser_beam_file_mod : 'atom_pl_parse_json'
@@ -137,6 +138,10 @@ module.exports.isEmpty = (obj) ->
         false;
     true;
 
+module.exports.get_emp_os = () ->
+  if !atom.project.emp_os
+    atom.project.emp_os = os.platform().toLowerCase()
+  atom.project.emp_os
 
 
 module.exports.mkdir_sync = (tmp_dir) ->

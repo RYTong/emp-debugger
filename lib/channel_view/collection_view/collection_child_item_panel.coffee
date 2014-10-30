@@ -109,8 +109,8 @@ class ItemsPanel extends View
     shift_key = e.shiftKey
     ctrl_key = e.ctrlKey
 
-    os_platform = os.platform().toLowerCase()
-    console.log os_platform
+    os_platform = emp.get_emp_os()
+    # console.log os_platform
     unless os_platform isnt emp.OS_DARWIN
       ctrl_key = e.metaKey
 

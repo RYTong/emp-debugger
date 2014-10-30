@@ -1,7 +1,6 @@
 path = require 'path'
 fs = require 'fs'
 c_process = require 'child_process'
-os = require 'os'
 emp = require '../exports/emp'
 
 bash_path_key = 'emp-debugger.path'
@@ -88,6 +87,23 @@ class emp_app
     f_state = fs.existsSync conf_f_p
     # console.log f_state
     # console.log cwd
+    try
+      if f_state
+        conf_stat = fs.statSync(conf_f_p).mode & 0o0777
+        if conf_stat < 457
+          fs.chmodSync(conf_f_p, 493)
+
+      script_file = atom.config.get(emp.EMP_STAET_SCRIPT_KEY)
+      script_path = path.join cwd, script_file
+      # console.log script_path
+      if fs.existsSync script_path
+        script_stat = fs.statSync(script_path).mode & 0o0777
+        if script_stat < 457
+          fs.chmodSync(conf_f_p, 493)
+    catch e
+      console.error e
+
+
     if f_state
       c_process.execFile conf_f_p, conf_ags, cwd:cwd, (error, stdout, stderr) ->
         if (error instanceof Error)
@@ -110,10 +126,13 @@ class emp_app
     script_path = path.join cwd, script_file
     # console.log script_path
     f_state = fs.existsSync script_path
+
     # console.log f_state
     # console.log cwd
+    # console.log script_exc
+    # console.log cwd
     if f_state
-      pid = c_process.spawn script_exc, cwd:cwd
+      pid = c_process.spawn script_exc, [],  {cwd:cwd}
       app_state = true
       set_app_stat(true)
       pid.stdout.on 'data', (data) ->
@@ -188,7 +207,7 @@ class emp_app
     return app_state
 
   initial_path: ->
-    os_platform = os.platform().toLowerCase()
+    os_platform = emp.get_emp_os()
     # console.log os_platform
     if os_platform is emp.OS_DARWIN or os_platform is emp.OS_LINUX
 

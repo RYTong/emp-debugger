@@ -8,7 +8,7 @@
             .label_title{left:123px;top:11px;font-size:19px;font-weight:bold;color:#000000;}
             .button_main{left:260px;top:6px;width:54px;height:32px;background-color:#99FFFF;color:#000000;}
             .button_back{left:8px;top:6px;width:54px;height:32px;background-color:#99FFFF;color:#000000;}
-            .button_next {left:8px; top:100px; width:304px; height: 60px;background-color:#3300FF; color:#FFFFFF;}
+            .button_next {left:8px; bottom:20px; width:304px; height: 60px;background-color:#3300FF; color:#FFFFFF;}
             .acc_div{left:0px;top:51px;width:320px;}
 
         </style>
@@ -65,7 +65,7 @@
             <input type="button" class="button_main" name="main_but" onclick="main_page()" value="Home" />
         </div>
         <div class="acc_div" name="div_acc" border="0">
-            <label>此处填页面内容.</label>
+            <label>Channel:${channel}, TranCode: ${trancode}, 此处填页面内容.</label>
         </div>
         <input type="button" class="button_next" name="next_page" onclick="common_req()" value="Next Page" />
     </body>

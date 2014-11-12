@@ -5,9 +5,12 @@ emp = require '../exports/emp'
 
 bash_path_key = 'emp-debugger.path'
 pid = null
+npid = null
+node_name = null
 
 emp_app_view = null
 app_state = false
+connect_state = false
 emp_app_start_script='iewp'
 emp_app_make_cmd='make'
 emp_app_config_cmd='configure'
@@ -15,6 +18,8 @@ emp_app_config_arg= ['--with-debug', '--with-mysql']
 emp_import_menu = '[{App_name, _}|_]=ewp_app_manager:all_apps(),ewp_channel_util:import_menu(App_name).'
 emp_c_make = '[{App_name, _}|_]=ewp_app_manager:all_apps(), ewp:c_app(App_name).'
 emp_get_app_name = '[{A, _}|_]=ewp_app_manager:all_apps(), A.'
+
+
 
 # 定义编译文件到 atom conf 中
 # emp_app_  ='iewp'
@@ -132,6 +137,11 @@ class emp_app
     # console.log script_exc
     # console.log cwd
     if f_state
+      if pid
+        tmp_pid = pid
+        pid = null
+        tmp_pid.kill()
+
       pid = c_process.spawn script_exc, [],  {cwd:cwd}
       app_state = true
       set_app_stat(true)
@@ -141,11 +151,9 @@ class emp_app
       pid.stderr.on 'data', (data) ->
         console.error data.binarySlice()
 
-      # pid.on 'message', (msg) ->
-      #   console.warn msg
-
       pid.on 'close', (code) ->
         app_state = false
+        # pid.stdin.write('q().\r\n')
         # set_app_stat(false)
         pid.stdin.end()
         emp_app_view.refresh_app_st(app_state)
@@ -159,7 +167,6 @@ class emp_app
       app_state = false
       set_app_stat(false)
       if pid
-        pid.stdin.write('q().\r\n')
         pid.kill()
       else
         emp.show_error("no Pid ~")
@@ -175,6 +182,85 @@ class emp_app
         emp.show_error("no Pid ~")
     else
       emp.show_error("The app is not running ~")
+
+  connect_node: (tmp_node_name, node_cookie, fa_view)->
+    node_name = tmp_node_name
+    atom.project.emp_node_name = tmp_node_name
+    console.log "node_name:#{node_name}, cookie:#{node_cookie}"
+    # console.log "-------"
+    unless node_cookie.match(/\-setcookie/ig)
+      node_cookie = " -setcookie " +node_cookie
+    # console.log "------zzz-:#{node_cookie}"
+    check_flag = ''
+    unless node_cookie.match(/\-sname|\-name/ig)
+      # console.log emp.mk_node_name()
+      tmp_obj = emp.mk_node_name(node_name)
+      # console.log tmp_obj
+      check_flag = tmp_obj.name
+      node_cookie = node_cookie + tmp_obj.node_name
+    t_erl = '-pa '+ atom.project.parse_beam_dir + node_cookie
+    re_arg = ["-run", "#{emp.parser_beam_file_mod}", "connect_node", ""+node_name, ""+check_flag]
+    re_arg = re_arg.concat(t_erl.replace(/\s+/ig, " ").split(" "))
+
+    cwd = atom.project.getPath()
+    # console.log t_erl
+    # console.log re_arg
+    if npid
+      tmp_pid = npid
+      npid = null
+      tmp_pid.kill()
+
+    npid = c_process.spawn "erl", re_arg,  {cwd:cwd}
+    connect_state = true
+    set_node_stat(true)
+    npid.stdout.on 'data', (data) ->
+      console.info data.binarySlice()
+
+    npid.stderr.on 'data', (data) ->
+      err_msg = data.binarySlice()
+      if err_msg is "error_" + check_flag
+        console.error "Connect remote error"
+        connect_state = false
+        set_node_stat(false)
+        fa_view.refresh_node_st(connect_state)
+      else
+        console.error data.binarySlice()
+
+    npid.on 'close', (code) ->
+      connect_state = false
+      console.log "close -------"
+      # npid.stdin.write('q().\r\n')
+      npid.stdin.end()
+      # emp_app_view.refresh_app_st(app_state)
+      console.warn "close over:#{code}"
+
+
+  disconnect_node: ->
+    if connect_state
+      if npid
+        npid.kill()
+
+  run_nerl: (erl_str) ->
+
+    if connect_state
+      if npid
+        if erl_str.match(/^[\w\d]*:[\w\d]*/ig)
+          erl_str = "#{emp.parser_beam_file_mod}:run_in_remote(\'#{node_name}\', \"#{erl_str}\")."
+        console.log "erl:#{erl_str}"
+        npid.stdin.write(erl_str+'\r\n')
+      else
+        emp.show_error("no Pid ~")
+    else
+      emp.show_error("The app is not running ~")
+
+  make_app_runtime_node: ->
+    emp_c_make_node = "#{emp.parser_beam_file_mod}:node_fun_call(\'#{node_name}\', node_cmake)."
+    @run_to_node(emp_c_make_node)
+
+  import_menu_node: ->
+    emp_c_make_node = "#{emp.parser_beam_file_mod}:node_fun_call(\'#{node_name}\', node_import)."
+    @run_to_node(emp.EMP_IMPORT_MENU_KEY)
+
 
   make_app_runtime: ->
     @run_from_conf(emp.EMP_CMAKE_KEY)
@@ -193,11 +279,11 @@ class emp_app
     else
       emp.show_error("The app is not running ~")
 
-  get_app_name: ->
+  run_to_node: (erl_str)->
     # ewp_app_manager:all_apps().
-    if app_state
-      if pid
-        pid.stdin.write(emp_get_app_name+'\r\n')
+    if connect_state
+      if npid
+        npid.stdin.write(erl_str+'\r\n')
       else
         emp.show_error("no Pid ~")
     else
@@ -273,3 +359,11 @@ set_app_stat = (state)->
     atom.project.emp_app_pid = null
 
   atom.project.emp_app_state = state
+
+set_node_stat = (state) ->
+  if state
+    atom.project.emp_node_pid = npid
+  else
+    atom.project.emp_node_pid = null
+
+  atom.project.emp_node_state = state

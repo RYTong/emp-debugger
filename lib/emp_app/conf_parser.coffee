@@ -54,6 +54,7 @@ compile_paser = (callback)->
 
         erl_dir = path.join(__dirname, rel_erl_dir)
         ebin_dir = path.join(__dirname, rel_ebin_dir)
+        atom.project.parse_beam_dir = ebin_dir
         erlc_str = 'erlc -o '+ebin_dir+' '+erl_dir+' -noshell -s erlang halt'
     #
         c_process.exec erlc_str, (error, stdout, stderr) ->
@@ -84,41 +85,40 @@ compile_paser = (callback)->
 module.exports.remove_cha = (cha_str, cid_list) ->
   # console.log "~~---------------remove cha ~~:#{cha_str}"
   channel_conf = atom.project.channel_conf
-  if !atom.project.emp_app_state
-    parse_beam_dir = atom.project.parse_beam_dir
-    t_erl = 'erl -pa '+parse_beam_dir+' -channel_conf '+channel_conf
-    t_erl = t_erl+' -cha_id'+cha_str+" -sname testjs -run #{emp.parser_beam_file_mod} remove_channel -noshell -s erlang halt"
-    c_process.exec t_erl, (error, stdout, stderr) ->
-      if (error instanceof Error)
-        console.log error.message
-        emp.show_error(error.message)
-      if stderr
-        console.error "compile:#{stderr}"
-  else
+  if atom.project.emp_app_state
+
     tmp_pid = atom.project.emp_app_pid
     if tmp_pid
       cid_list = "[\""+cid_list.join("\",\"")+"\"]"
       erl_str = "#{emp.parser_beam_file_mod}:remove_channel(\"#{channel_conf}\", #{cid_list})."
       # console.log erl_str
       tmp_pid.stdin.write(erl_str+'\r\n')
+  else if atom.project.emp_node_state
+    tmp_pid = atom.project.emp_node_pid
+    if tmp_pid
+      cid_list = "[\""+cid_list.join("\",\"")+"\"]"
+      tmp_node_name = atom.project.emp_node_name
+      erl_str = "#{emp.parser_beam_file_mod}:node_fun_call(\'#{tmp_node_name}\', remove_channel, [\"#{channel_conf}\", #{cid_list}])."
+      # console.log erl_str
+      tmp_pid.stdin.write(erl_str+'\r\n')
+  else
+    parse_beam_dir = atom.project.parse_beam_dir
+    t_erl = 'erl -pa '+parse_beam_dir+' -channel_conf '+channel_conf
+    t_erl = t_erl+' -cha_id'+cha_str+" -sname " + emp.mk_node_name() +" -run #{emp.parser_beam_file_mod} remove_channel -noshell -s erlang halt"
+    c_process.exec t_erl, (error, stdout, stderr) ->
+      if (error instanceof Error)
+        console.log error.message
+        emp.show_error(error.message)
+      if stderr
+        console.error "compile:#{stderr}"
+
 
 
 
 module.exports.remove_col = (col_str, col_list) ->
   # console.log "~~---------------remove col ~~:#{col_str}"
   channel_conf = atom.project.channel_conf
-  if !atom.project.emp_app_state
-    parse_beam_dir = atom.project.parse_beam_dir
-    t_erl = 'erl -pa '+parse_beam_dir+' -channel_conf '+channel_conf
-    t_erl = t_erl+' -col_id'+col_str+' -sname testjs -run atom_pl_parse_json remove_col -noshell -s erlang halt'
-    c_process.exec t_erl, (error, stdout, stderr) ->
-      # console.log "compile:#{stdout}"
-      if (error instanceof Error)
-        console.log error.message
-        emp.show_error(error.message)
-      if stderr
-        console.error "compile:#{stderr}"
-  else
+  if atom.project.emp_app_state
     tmp_pid = atom.project.emp_app_pid
     if tmp_pid
       col_list = "["+col_list.join(",")+"]"
@@ -126,12 +126,33 @@ module.exports.remove_col = (col_str, col_list) ->
       # console.log erl_str
       tmp_pid.stdin.write(erl_str+'\r\n')
 
+  else if atom.project.emp_node_state
+    tmp_pid = atom.project.emp_node_pid
+    if tmp_pid
+      tmp_node_name = atom.project.emp_node_name
+      col_list = "["+col_list.join(",")+"]"
+      erl_str = "#{emp.parser_beam_file_mod}:node_fun_call(\'#{tmp_node_name}\', remove_col, [\"#{channel_conf}\", #{col_list}])."
+      # console.log erl_str
+      tmp_pid.stdin.write(erl_str+'\r\n')
+  else
+    parse_beam_dir = atom.project.parse_beam_dir
+    t_erl = 'erl -pa '+parse_beam_dir+' -channel_conf '+channel_conf
+    t_erl = t_erl+' -col_id'+col_str+' -sname ' + emp.mk_node_name() + " -run #{emp.parser_beam_file_mod} remove_col -noshell -s erlang halt"
+    c_process.exec t_erl, (error, stdout, stderr) ->
+      # console.log "compile:#{stdout}"
+      if (error instanceof Error)
+        console.log error.message
+        emp.show_error(error.message)
+      if stderr
+        console.error "compile:#{stderr}"
+
+
 module.exports.edit_col = (col_str) ->
   # console.log "~~---------------remove col ~~:#{col_str}"
   channel_conf = atom.project.channel_conf
   parse_beam_dir = atom.project.parse_beam_dir
   t_erl = 'erl -pa '+parse_beam_dir+' -channel_conf '+channel_conf
-  t_erl = t_erl+col_str+' -sname testjs -run atom_pl_parse_json edit_col -noshell -s erlang halt'
+  t_erl = t_erl+col_str+' -sname ' +emp.mk_node_name() ' -run atom_pl_parse_json edit_col -noshell -s erlang halt'
   # console.log t_erl
   c_process.exec t_erl, (error, stdout, stderr) ->
     # console.log "compile:#{stdout}"
@@ -145,7 +166,7 @@ module.exports.edit_cha = (cha_str) ->
   channel_conf = atom.project.channel_conf
   parse_beam_dir = atom.project.parse_beam_dir
   t_erl = 'erl -pa '+parse_beam_dir+' -channel_conf '+channel_conf
-  t_erl = t_erl+cha_str+' -sname testjs -run atom_pl_parse_json edit_cha -noshell -s erlang halt'
+  t_erl = t_erl+cha_str+' -sname '+ emp.mk_node_name() + ' -run atom_pl_parse_json edit_cha -noshell -s erlang halt'
   # console.log t_erl
   c_process.exec t_erl, (error, stdout, stderr) ->
     # console.log "compile:#{stdout}"

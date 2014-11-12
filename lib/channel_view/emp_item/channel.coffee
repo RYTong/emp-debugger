@@ -85,10 +85,12 @@ class emp_channel
   # 编辑channel
   edit_channel: ->
     # console.log "edit channel"
-    if !atom.project.emp_app_state
-      @format_edit_channel()
-    else
+    if atom.project.emp_app_state
       @format_edit_channel_fun()
+    else if atom.project.emp_node_state
+      @format_edit_channel_fun('node')
+    else
+      @format_edit_channel()
     @create_adapter_detail()
 
   # @doc 拼接参数串，用于传递给erl 处理
@@ -112,11 +114,9 @@ class emp_channel
     conf_parser.edit_cha(p_str)
 
   # @doc 拼接参数串，用于传递给emp app 处理
-  format_edit_channel_fun: ->
+  format_edit_channel_fun: (type)->
     # console.log "edit channel "
     tmp_conf = atom.project.channel_conf
-
-    # console.log p_str
     # @doc 拼接 props 的相关字段
     params_str = []
     for tmp_key,tmp_val of @params
@@ -135,11 +135,18 @@ class emp_channel
       views_str = 'undefined'
     else
       views_str = "["+views_str.join(",")+"]"
-
-    erl_str = "#{emp.parser_beam_file_mod}:edit_cha(\"#{tmp_conf}\",
-                \"#{@id}\", \"#{@name}\", \"#{@app}\", \"#{@entry}\", #{views_str}, #{params_str}, #{@state})."
-    # console.log erl_str
-    tmp_pid = atom.project.emp_app_pid
+    tmp_pid = null
+    if !type
+      erl_str = "#{emp.parser_beam_file_mod}:edit_cha(\"#{tmp_conf}\",
+                  \"#{@id}\", \"#{@name}\", \"#{@app}\", \"#{@entry}\", #{views_str}, #{params_str}, #{@state})."
+      # console.log erl_str
+      tmp_pid = atom.project.emp_app_pid
+    else
+      tmp_node_name = atom.project.emp_node_name
+      erl_str = "#{emp.parser_beam_file_mod}:node_fun_call(\'#{tmp_node_name}\', edit_cha, [\"#{tmp_conf}\",
+                  \"#{@id}\", \"#{@name}\", \"#{@app}\", \"#{@entry}\", #{views_str}, #{params_str}, #{@state}])."
+      # console.log erl_str
+      tmp_pid = atom.project.emp_node_pid
     tmp_pid.stdin.write(erl_str+'\r\n')
 
   # ---------------------------------------------------------------------------
@@ -156,12 +163,12 @@ class emp_channel
     # @refresh_channel_menu()
 
   # @doc 编译erl 模块
-  recompile_channel_mod: ->
-    # console.log "refresh mod"
-    if atom.project.emp_app_state
-      tmp_pid = atom.project.emp_app_pid
-      if erl_cstr = atom.config.get(emp.EMP_CMAKE_KEY)
-        tmp_pid.stdin.write(erl_cstr+'\r\n')
+  # recompile_channel_mod: ->
+  #   # console.log "refresh mod"
+  #   if atom.project.emp_app_state
+  #     tmp_pid = atom.project.emp_app_pid
+  #     if erl_cstr = atom.config.get(emp.EMP_CMAKE_KEY)
+  #       tmp_pid.stdin.write(erl_cstr+'\r\n')
 
   refresh_channel_menu: ->
     # @doc 添加channel 之后自动同步
@@ -169,6 +176,16 @@ class emp_channel
       tmp_pid = atom.project.emp_app_pid
       if erl_str = atom.config.get(emp.EMP_IMPORT_MENU_KEY)
         tmp_pid.stdin.write(erl_str+'\r\n')
+
+      if erl_cstr = atom.config.get(emp.EMP_CMAKE_KEY)
+        tmp_pid.stdin.write(erl_cstr+'\r\n')
+
+    else if atom.project.emp_node_state
+      tmp_pid = atom.project.emp_node_pid
+      tmp_node_name = atom.project.emp_node_name
+      erl_str = "#{emp.parser_beam_file_mod}:node_fun_call(\'#{tmp_node_name}\', node_refresh_cha, [])."
+      # console.log erl_str
+      tmp_pid.stdin.write(erl_str+'\r\n')
 
 
   # 在channel.conf 中添加channel
@@ -275,7 +292,9 @@ class emp_channel
           if err
             console.error(err)
             emp.show_error("创建辅助Erl代码失败~")
-          @recompile_channel_mod()
+          # @recompile_channel_mod()
+      # else
+
 
   #@doc 处理adapter 中配置的参数
   format_key_list: (obj)->
@@ -347,7 +366,7 @@ class emp_channel
     xhtml_template = fs.readFileSync tmp_xhtml_dir, 'utf8'
     json_template = fs.readFileSync tmp_json_dir, 'utf8'
     json_template = json_template.replace(/\$channel/ig, @id)
-    xhtml_template = xhtml_template.replace(/\$\{app\}/ig, @app)
+    xhtml_template = xhtml_template.replace(/\$\{app\}/ig, @app).replace(/\$\{channel\}/ig, @id)
 
     for key,obj of @adapters
       tmp_tran = key
@@ -356,7 +375,7 @@ class emp_channel
       tmp_xhtml_file = path.join cha_dir, ext_xhtml, (tmp_tran+'.'+ext_xhtml)
 
       if !fs.existsSync tmp_xhtml_file
-        fs.writeFile tmp_xhtml_file, xhtml_template, 'utf8', (err) =>
+        fs.writeFile tmp_xhtml_file, xhtml_template.replace(/\$\{trancode\}/ig, tmp_tran), 'utf8', (err) =>
           if err
             console.error(err)
             emp.show_error("创建离线资源代码失败~:#{tmp_xhtml_file}")

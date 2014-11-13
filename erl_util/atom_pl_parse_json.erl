@@ -34,15 +34,174 @@
 -define(NORMAL_NODE, 0).
 
 
+%% @doc 用于连接远程接口，在ping 通的同时，加载该文件的binary
+connect_node([NodeName, Ck_flag]) ->
+  try
+
+    ANodeName =
+      case is_list(NodeName) of
+        true ->
+          list_to_atom(NodeName);
+        _ ->
+          NodeName
+      end,
+    io:format("do_connect ~p~n", [ANodeName]),
+    % put('test11', "123"),
+
+    % io:format("~p~n", [Re]),
+    case Re = net_adm:ping(ANodeName) of
+      'pong' ->
+        Pa_path = script_get_init_argument_def(pa),
+        Beam_path = filename:join(Pa_path, ?MODULE) ++ ".beam",
+        File_state = filelib:is_file(Beam_path),
+        if File_state ->
+            case file:read_file(Beam_path) of
+              {ok, File_bin} ->
+                File_name = atom_to_list(?MODULE) ++ ".erl",
+                rpc:call(ANodeName, code, load_binary, [?MODULE, File_name, File_bin]);
+              _ ->
+                throw("there isn't the beam file~ ")
+            end;
+          true ->
+            throw("there isn't the beam file~ ")
+        end;
+      _ ->
+        throw("error_"++Ck_flag)
+    end,
+    io:format("~p~n", [Re])
+  catch
+      _:Err ->
+        error_logger:error_msg("Error msg: ~p~n", [Err]),
+        Err_re = hd(io_lib:format("~s~n", [Err])),
+        io:put_chars(standard_error, Err_re)
+  end.
+
+%% @doc 用与在远程节点执行函数
+%% @example：ets:info(Arg). -> rpc:call('node', ets, info,[Arg]).
+run_in_remote(NodeName, ErlangStr) ->
+  try
+    case erl_scan:string(ErlangStr) of
+      {ok, Tokens, _} ->
+        case get_remote_info(Tokens) of
+          error ->
+            throw("error term ");
+          {Mod, Fun, Arg} ->
+            Re = rpc:call(NodeName, Mod, Fun, Arg),
+            % io:format("~p~n", [get('test11')]),
+            io:format("~p~n", [Re])
+        end;
+      {error, Info, _Loc} ->
+        throw(Info)
+    end
+  catch
+      _:Err ->
+        error_logger:error_msg("Error msg: ~p~n", [Err]),
+        Err_re = hd(io_lib:format("~s~n", [Err])),
+        io:put_chars(standard_error, Err_re)
+  end.
+
+%% @doc 用与在远程节点执行编译app 操作
+%% @example：ets:info(Arg). -> rpc:call('node', ets, info,[Arg]).
+node_fun_call(NodeName, Fun) ->
+  node_fun_call(NodeName, Fun, []).
+node_fun_call(NodeName, Fun, Arg) ->
+  try
+    case rpc:call(NodeName, ?MODULE, Fun, Arg) of
+      error ->
+        throw("remote process error~ ");
+      _ ->
+        ok
+    end
+  catch
+      _:Err ->
+        error_logger:error_msg("Error msg: ~p~n", [Err]),
+        Err_re = hd(io_lib:format("~s~n", [Err])),
+        io:put_chars(standard_error, Err_re)
+  end.
+
+node_refresh_cha() ->
+  try
+    case ewp_app_manager:all_apps() of
+      [{App_name, _}|_] ->
+        % io:format("this is refresh channel ")，
+        ewp_channel_util:import_menu(App_name),
+        ewp:c_app(App_name);
+      _ ->
+        error
+    end
+  catch
+      _:Err ->
+        error_logger:error_msg("Error msg: ~p~n", [Err]),
+        Err_re = hd(io_lib:format("~s~n", [Err])),
+        io:put_chars(standard_error, Err_re)
+  end.
+
+%% @doc 远程调用中，用于运行时编译的接口
+node_cmake() ->
+  try
+    case ewp_app_manager:all_apps() of
+      [{App_name, _}|_] ->
+        ewp:c_app(App_name);
+      _ ->
+        error
+    end
+  catch
+      _:Err ->
+        error_logger:error_msg("Error msg: ~p~n", [Err]),
+        Err_re = hd(io_lib:format("~s~n", [Err])),
+        io:put_chars(standard_error, Err_re)
+  end.
+
+%% @doc 远程调用中，用于运行时导入channel 的接口
+node_import() ->
+  try
+    case ewp_app_manager:all_apps() of
+      [{App_name, _}|_] ->
+        ewp_channel_util:import_menu(App_name);
+      _ ->
+        error
+    end
+  catch
+      _:Err ->
+        error_logger:error_msg("Error msg: ~p~n", [Err]),
+        Err_re = hd(io_lib:format("~s~n", [Err])),
+        io:put_chars(standard_error, Err_re)
+  end.
+
+
+get_remote_info([{atom,_, Mod}, {':', _}, {atom, _, Fun}|Next]) ->
+  case get_rpc_arg(Next, [], 0) of
+    error ->
+      error;
+    {ok, Arg} ->
+      {Mod, Fun, Arg}
+  end;
+get_remote_info(_) ->
+  error.
+
+get_rpc_arg([{'(', _}|Next], [], 0) ->
+  get_rpc_arg(Next, [{'[',1}], 1);
+get_rpc_arg([{')', _}|_Next], Acc, 1) ->
+  case erl_parse:parse_term(lists:reverse([{dot, 1}, {']', 1}|Acc])) of
+    {ok, _} = Re ->
+      Re;
+    _ ->
+      error
+  end;
+get_rpc_arg([Else|Next], Acc, N) ->
+  get_rpc_arg(Next, [Else|Acc], N).
+
+
+
 %% @doc add collection
 add_col(ConfFile, ColId, ColName, ColApp, NewType, ColUrl,
         ColUid, NewState, Items) ->
-  % io:format("asdasdads-------~n", []),
+  % io:format("add_col:asdasdads-------~n", []),
   % NewApp = check_coll_app(ColApp),
   NewUrl = check_coll_default(ColUrl),
   NewUid = check_coll_default(ColUid),
   NewCol = new_collection(ColId, ColApp, ColName, NewUrl, NewUid, NewType, NewState, Items),
-  do_edit_collection(NewCol, ColId, ColApp, Items, false),
+  do_add_collection(NewCol, ColId, ColApp, Items, false),
 
   check_conf_file(ConfFile),
   ConfC = consult_file(ConfFile),
@@ -279,6 +438,38 @@ do_edit_collection(Collection, Id, App, Items, Exist) ->
       io:put_chars(standard_error, Err_re)
   end.
 
+
+do_add_collection(Collection, Id, App, Items, Exist) ->
+  try
+    do_check_exist(collections, App, Id, Exist),
+    OldItems = ewp_channel_store:select(collection_items, {id, '=', Id}),
+    {AddItems, DelItems, ModItems} =
+        lists:foldl(
+            fun(X, {Add, Del, Mod}) ->
+                ItemId = o(X, item_id),
+                ItemType = o(X, item_type),
+                MenuOrder = o(X, menu_order),
+                case check_item(ItemId, ItemType, MenuOrder, Add) of
+                    {equal, NewAdd} ->
+                        {NewAdd, Del, Mod};
+                    {modify, NewMenuOrder, NewAdd} ->
+                        {NewAdd, Del, [{ItemId, ItemType, NewMenuOrder}|Mod]};
+                    delete ->
+                        {Add, [{ItemId, ItemType, MenuOrder}|Del], Mod}
+                end
+            end, {Items, [], []}, OldItems),
+    % ?ewp_log("Collection = ~p~n", [Collection]),
+    Store_type = get_store_type(),
+    ewp_channel_store:insert(collections, Collection, Store_type),
+    [ewp_channel_store:insert(collection_items, [{id, Id}|Item], Store_type) || Item <- AddItems],
+    NodeType = proplists:get_value(type, Collection),
+    check_collection(Id, NodeType, App)
+  catch
+    _:Err ->
+      error_logger:error_msg("Error msg: ~p~n", [Err]),
+      Err_re = hd(io_lib:format("~s~n", [Err])),
+      io:put_chars(standard_error, Err_re)
+  end.
 
 format_item(Items) ->
   % io:format("~p~n", [Items]),

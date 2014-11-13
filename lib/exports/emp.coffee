@@ -1,12 +1,19 @@
 # macro defined
 fs = require 'fs'
 path = require 'path'
+os = require 'os'
 
 module.exports =
   parser_beam_file_mod : 'atom_pl_parse_json'
 
   EMP_APP_WIZARD_APP_P :'emp-debugger.Default-App-Wizard-App-Path'
   EMP_APP_WIZARD_EWP_P :'emp-debugger.Default-App-Wizard-Ewp-Path'
+
+  EMP_NODE_NAME :'emp-debugger.Default-EMP-NODE-NAME'
+  EMP_NODE_COOKIE :'emp-debugger.Default-EMP-NODE-COOKIE'
+  EMP_NODE_NAME : 'ebank@localhost'
+  EMP_NODE_COOKIE : 'ewpcool'
+
   bash_path_key:'emp-debugger.path'
 
   EMP_MAKE_CMD_KEY: 'emp-debugger.emp-make'
@@ -112,6 +119,33 @@ module.exports =
   REPLACE_GETTER : "\\$getter";
   ADAPTER_REQUEST_PARAMS: "{'$key', $value}";
 
+module.exports.mk_node_name = (node_name) ->
+  default_name = " -sname "
+  tmp_re = node_name.split("@")
+  def_node_name = "atom_js" + Math.round(Math.random()*100)
+  def_host = " "
+  if tmp_re.length >1
+    # console.log "node name has HOST~"
+    if valid_ip(tmp_re[1])
+      default_name = " -name "
+      def_host = get_def_host()
+      def_node_name = def_node_name + "@" +def_host
+  # console.log def_host
+  re_name = default_name + def_node_name
+  {name:def_node_name, node_name: re_name}
+
+get_def_host = ->
+  add_list = os.networkInterfaces()
+  tmp_address = ''
+  for key,val of add_list
+    # console.log val
+    for tmp_obj in val
+      if !tmp_obj.internal and tmp_obj.family is 'IPv4'
+        tmp_address = tmp_obj.address
+        break
+
+  tmp_address
+
 
 module.exports.show_error = (err_msg) ->
   atom.confirm
@@ -137,6 +171,10 @@ module.exports.isEmpty = (obj) ->
         false;
     true;
 
+module.exports.get_emp_os = () ->
+  if !atom.project.emp_os
+    atom.project.emp_os = os.platform().toLowerCase()
+  atom.project.emp_os
 
 
 module.exports.mkdir_sync = (tmp_dir) ->
@@ -182,4 +220,9 @@ mk_dirs_sync = (p, made) ->
             throw err0
   made
 
+valid_ip = (ip_add)->
+    # console.log ip_add
+    ip_add.match(///^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$///ig)
+
 module.exports.mk_dirs_sync = mk_dirs_sync
+module.exports.valid_ip = valid_ip

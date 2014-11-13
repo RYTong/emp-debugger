@@ -106,8 +106,28 @@
         // overflow:auto;
         display:block;
 
+        .emp-setting-btn-head {
+          color:#FFFFFF;
+          // background-color:#E6FFFFF;
+          // word-wrap:normal;
+          vertical-align: top;
+          margin: @component-padding/4 @component-padding @component-padding/4 @component-padding;
+          // height:auto;
+          // display:block;
+          right:0;
+          left:0;
+          .btn-group {
+            left:0;
+            right:0;
+            .btn-else {
+              border: 1px solid #ccc;
+              margin-bottom:@component-padding/4;
+            }
+          }
 
-        .emp-setting-btn-else{
+        }
+        .emp-setting-btn-else,
+        .setting_local_view > .emp-setting-btn-else{
           color:#FFFFFF;
           // background-color:#E6FFFFF;
           // word-wrap:normal;
@@ -124,8 +144,8 @@
           }
         }
 
-
-        .emp-setting-con{
+        .emp-setting-con,
+        .setting_local_view > .emp-setting-con{
           color:#FFFFFF;
           // background-color:#E6FFFFF;
           // word-wrap:normal;
@@ -199,6 +219,16 @@
               margin-bottom:@component-padding/4;
             }
 
+          }
+
+          .emp-set-div-content-wb {
+            padding: 5px 5px 5px 0;
+            border-bottom: 1px solid #858585;
+            .btn-group.btn-else {
+              // border: 1px solid #ccc;
+              margin-bottom:@component-padding/4;
+
+            }
           }
 
           .emp-btn-group {

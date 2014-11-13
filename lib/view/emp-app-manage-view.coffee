@@ -1,5 +1,6 @@
 {$, $$, View, TextEditorView} = require 'atom'
 # EmpEditView = require './emp-edit-view'
+EmpAppNodeView = require '../app_wizard/emp-debugger-app-node-view'
 EmpChaManaView = require '../channel_view/emp-channel-manage-view'
 EmpAppMan = require '../emp_app/emp_app_manage'
 EmpAppWizardView = require '../app_wizard/emp-debugger-app-wizard-view'
@@ -8,8 +9,10 @@ emp = require '../exports/emp'
 
 module.exports =
 class EmpAppManaView extends View
+  emp_app_stat_view:null
   emp_app_manage: null
-  emp_app_wizard:null
+  emp_app_wizard: null
+  emp_node_view: null
   app_state_show: "#66FF33"
   app_state_close: "#FF1919"
   app_state_dis: "#FF6600"
@@ -17,44 +20,48 @@ class EmpAppManaView extends View
   @content: ->
     # console.log 'constructor'
     @div outlet:"emp_app_view", class:'emp-setting-server', =>
-      # @div outlet: 'emp_lineNumber', class: 'line-numbers'
-
-      # ------------------------ server state pane ------------------------
       @div outlet: 'app_detail', class: 'emp-setting-row', =>
         @div class: "emp-setting-con panel-body padded", =>
           @div class: "block conf-heading icon icon-gear", "App Management"
 
-        @div class: "emp-setting-con panel-body padded", =>
-          @label class: "emp-setting-label", "App State   : "
-          @label outlet:"emp_app_st", class: "emp-label-content", style: "color:#FF1919;", "Close"
-          @span outlet:"emp_app_load", class: 'loading loading-spinner-small inline-block',style:"display:none;"
-        @div outlet:"emp_conmiunication_pane", class: "emp-setting-con panel-body padded", =>
+        @div outlet:"emp_node_type", class: "emp-setting-btn-head ",  =>
+          @div class: "btn-group ", =>
+            @button outlet:"btn_show_local", class: 'btn selected', click: 'show_local', "Start Local App"
+            @button outlet:"btn_show_node", class: 'btn', click: 'show_node', "Connect Remote Node"
 
-          @label class: "emp-setting-label", "Erl source"
-          @div class: 'controls', =>
-            @div class: 'setting-editor-container', =>
-              @subview "emp_app_erl", new TextEditorView(mini: true, attributes: {id: 'emp_erl', type: 'string'},  placeholderText: 'Erlang Source') #fr
-          @button outlet:"btn_run", class: 'btn btn-else btn-info inline-block-tight', click: 'run_erl', "Run Erl Term"
+        @div outlet:"app_local_view", class:"setting_local_view", =>
+          @div class: "emp-setting-con panel-body padded", =>
+            @label class: "emp-setting-label", "App State   : "
+            @label outlet:"emp_app_st", class: "emp-label-content", style: "color:#FF1919;", "Close"
+            @span outlet:"emp_app_load", class: 'loading loading-spinner-small inline-block',style:"display:none;"
+
+          @div outlet:"emp_conmiunication_pane", class: "emp-setting-con panel-body padded", =>
+            @label class: "emp-setting-label", "Erl source"
+            @div class: 'controls', =>
+              @div class: 'setting-editor-container', =>
+                @subview "emp_app_erl", new TextEditorView(mini: true, attributes: {id: 'emp_erl', type: 'string'},  placeholderText: 'Erlang Source') #fr
+            @button outlet:"btn_run", class: 'btn btn-else btn-info inline-block-tight', click: 'run_erl', "Run Erl Term"
 
 
-        @div outlet:"emp_app_btns", class: "emp-setting-btn-else ",  =>
-          @button outlet:"btn_run_app", class: 'btn btn-else btn-success inline-block-tight', click: 'run_app', "Start App"
-          @button outlet:"btn_stop_app", class: 'btn btn-else btn-error inline-block-tight', click: 'stop_app', "Stop App"
-          @button outlet:"btn_conf_app", class: 'btn btn-else btn-warning inline-block-tight', click: 'conf_app', "Config App"
-          @button outlet:"btn_make_app", class: 'btn btn-else btn-warning inline-block-tight', click: 'make_app', "Make App"
-          @button outlet:"btn_c_make", class: 'btn btn-else btn-warning inline-block-tight', click: 'make_app_runtime', "C_App"
-          @button outlet:"btn_import_app", class: 'btn btn-else btn-info inline-block-tight',click: 'import_menu', "Import Menu"
+          @div outlet:"emp_app_btns", class: "emp-setting-btn-else ",  =>
+            @button outlet:"btn_run_app", class: 'btn btn-else btn-success inline-block-tight', click: 'run_app', "Start App"
+            @button outlet:"btn_stop_app", class: 'btn btn-else btn-error inline-block-tight', click: 'stop_app', "Stop App"
+            @button outlet:"btn_conf_app", class: 'btn btn-else btn-warning inline-block-tight', click: 'conf_app', "Config App"
+            @button outlet:"btn_make_app", class: 'btn btn-else btn-warning inline-block-tight', click: 'make_app', "Make App"
+            @button outlet:"btn_c_make", class: 'btn btn-else btn-warning inline-block-tight', click: 'make_app_runtime', "C_App"
+            @button outlet:"btn_import_app", class: 'btn btn-else btn-info inline-block-tight',click: 'import_menu', "Import Menu"
 
   initialize: ->
     # unless os.platform().toLowerCase() isnt OS_DARWIN
     @emp_app_manage = new EmpAppMan(this)
+    @emp_node_view = new EmpAppNodeView(this, @emp_app_manage)
     @emp_cha_manage = new EmpChaManaView(this)
     @emp_app_wizard = new EmpAppWizardView(this)
+
+    @app_local_view.after(@emp_node_view)
     @app_detail.after(@emp_cha_manage)
     @app_detail.after(@emp_app_wizard)
-    @btn_import_app.disable()
-    @btn_run.disable()
-    @btn_c_make.disable()
+
     this
 
   focus: ->
@@ -62,31 +69,58 @@ class EmpAppManaView extends View
 
   check_os: ->
     # add linux type
-    tmp_os = os.platform().toLowerCase()
+    tmp_os = emp.get_emp_os()
+    # tmp_os = "win32"  #comment this
     # console.log tmp_os
     if tmp_os isnt emp.OS_DARWIN and tmp_os isnt emp.OS_LINUX
-      unless @emp_app_erl.isDisabled()
-        # console.log "1--------"
-        @emp_app_erl.disable()
-      unless @emp_app_btns.isDisabled()
-        @emp_app_btns.disable()
-      unless @btn_run.isDisabled()
-        @btn_run.disable()
-        for btn in @emp_app_btns.children()
-          child = $(btn)
-          child.disable()
-        @show_disable()
-      unless @btn_run_app.isDisabled()
-        @btn_run_app.disable()
-      unless @btn_stop_app.isDisabled()
-        @btn_stop_app.disable()
-      unless @btn_conf_app.isDisabled()
-        @btn_conf_app.disable()
-      unless @btn_make_app.isDisabled()
-        @btn_make_app.disable()
+      # @btn_show_local.disable()
+      # @btn_show_node.disable()
+      @emp_node_type.hide()
+      @show_node()
+
+      # unless @emp_app_erl.isDisabled()
+      #   # console.log "1--------"
+      #   @emp_app_erl.disable()
+      # unless @emp_app_btns.isDisabled()
+      #   @emp_app_btns.disable()
+      # unless @btn_run.isDisabled()
+      #   @btn_run.disable()
+      #   for btn in @emp_app_btns.children()
+      #     child = $(btn)
+      #     child.disable()
+      #   @show_disable()
+      # unless @btn_run_app.isDisabled()
+      #   @btn_run_app.disable()
+      # unless @btn_stop_app.isDisabled()
+      #   @btn_stop_app.disable()
+      # unless @btn_conf_app.isDisabled()
+      #   @btn_conf_app.disable()
+      # unless @btn_make_app.isDisabled()
+      #   @btn_make_app.disable()
+    else
+      @btn_import_app.disable()
+      @btn_run.disable()
+      @btn_c_make.disable()
+
+
 
   # -------------------------------------------------------------------------
   # btn callback for app setting
+  show_local: ->
+    console.log "show_local"
+    @btn_show_node.removeClass("selected")
+    @btn_show_local.addClass("selected")
+    @emp_node_view.hide()
+    @app_local_view.show()
+
+
+
+  show_node: ->
+    console.log "show_node"
+    @btn_show_node.addClass("selected")
+    @btn_show_local.removeClass("selected")
+    @app_local_view.hide()
+    @emp_node_view.show()
 
   run_erl: ->
     erl_str = @emp_app_erl.getEditor().getText()

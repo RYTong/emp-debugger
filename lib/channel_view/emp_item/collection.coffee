@@ -60,6 +60,10 @@ class emp_collection
   create_collection: (col_objs)->
     if atom.project.emp_app_state
       @sync_create_collection()
+
+    else if atom.project.emp_node_state
+      @sync_create_collection('node')
+
     else
       @do_create_collection(col_objs)
 
@@ -80,7 +84,7 @@ class emp_collection
     # console.log col_con
     fs.writeFileSync(atom.project.channel_conf, col_con, 'utf8')
 
-  sync_create_collection: ->
+  sync_create_collection: (type)->
     tmp_conf = atom.project.channel_conf
     item_str = []
     for tmp_obj in @items
@@ -90,18 +94,29 @@ class emp_collection
     else
       item_str = "[" + item_str.join(",") + "]"
 
-    tmp_pid = atom.project.emp_app_pid
-    erl_str = "#{emp.parser_beam_file_mod}:add_col(\"#{tmp_conf}\",
-                \"#{@id}\", \"#{@name}\", \"#{@app}\", #{@type} , \"#{@url}\",
-            \"#{@uid}\", #{@state}, #{item_str}). "
-    if erl_str = atom.config.get(emp.EMP_IMPORT_MENU_KEY)
+    if type
+      tmp_pid = atom.project.emp_node_pid
+      tmp_node_name = atom.project.emp_node_name
+      erl_str = "#{emp.parser_beam_file_mod}:node_fun_call(\'#{tmp_node_name}\', add_col, [\"#{tmp_conf}\",
+                  \"#{@id}\", \"#{@name}\", \"#{@app}\", #{@type} , \"#{@url}\",
+              \"#{@uid}\", #{@state}, #{item_str}]). "
+      # console.log erl_str
+      tmp_pid.stdin.write(erl_str+'\r\n')
+    else
+      tmp_pid = atom.project.emp_app_pid
+      erl_str = "#{emp.parser_beam_file_mod}:add_col(\"#{tmp_conf}\",
+                  \"#{@id}\", \"#{@name}\", \"#{@app}\", #{@type} , \"#{@url}\",
+              \"#{@uid}\", #{@state}, #{item_str}). "
+      # if erl_str = atom.config.get(emp.EMP_IMPORT_MENU_KEY)
       tmp_pid.stdin.write(erl_str+'\r\n')
 
   edit_collection: ()->
-    if !atom.project.emp_app_state
-      @do_edit_collection()
-    else
+    if atom.project.emp_app_state
       @do_edit_collection_rt()
+    else if atom.project.emp_node_state
+      @do_edit_collection_rt('node')
+    else
+      @do_edit_collection()
 
   do_edit_collection: ()->
     # console.log col_objs
@@ -117,7 +132,7 @@ class emp_collection
     # console.log p_str
     conf_parser.edit_col(p_str)
 
-  do_edit_collection_rt: () ->
+  do_edit_collection_rt: (type) ->
     # console.log " do "
     tmp_conf = atom.project.channel_conf
     item_str = []
@@ -127,9 +142,20 @@ class emp_collection
       item_str = "[]"
     else
       item_str = "[" + item_str.join(",") + "]"
-    erl_str = "#{emp.parser_beam_file_mod}:edit_col(\"#{tmp_conf}\",
-                \"#{@id}\", \"#{@name}\", \"#{@app}\", #{@type} , \"#{@url}\",
-            \"#{@uid}\", #{@state}, #{item_str}). "
-    # console.log erl_str
-    tmp_pid = atom.project.emp_app_pid
-    tmp_pid.stdin.write(erl_str+'\r\n')
+
+    if type
+      tmp_pid = atom.project.emp_node_pid
+      tmp_node_name = atom.project.emp_node_name
+      erl_str = "#{emp.parser_beam_file_mod}:node_fun_call(\'#{tmp_node_name}\', edit_col, [\"#{tmp_conf}\",
+                  \"#{@id}\", \"#{@name}\", \"#{@app}\", #{@type} , \"#{@url}\",
+              \"#{@uid}\", #{@state}, #{item_str}]). "
+
+      # console.log erl_str
+      tmp_pid.stdin.write(erl_str+'\r\n')
+    else
+      erl_str = "#{emp.parser_beam_file_mod}:edit_col(\"#{tmp_conf}\",
+                  \"#{@id}\", \"#{@name}\", \"#{@app}\", #{@type} , \"#{@url}\",
+              \"#{@uid}\", #{@state}, #{item_str}). "
+      # console.log erl_str
+      tmp_pid = atom.project.emp_app_pid
+      tmp_pid.stdin.write(erl_str+'\r\n')

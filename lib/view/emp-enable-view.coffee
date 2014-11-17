@@ -1,4 +1,5 @@
 {$, $$, View, SelectListView, EditorView} = require 'atom'
+path = require 'path'
 
 module.exports =
 class EnableView extends SelectListView
@@ -71,13 +72,23 @@ class EnableView extends SelectListView
   # Returns a String of HTML, DOM element, jQuery object, or View.
   viewForItem: (item) ->
     # console.log "view item"
+    # console.log item
     icon_class = "status-added icon-diff-added"
     icon_class =  "status-ignored icon-diff-ignored" unless !item.readed
+    label_name = ''
+    label_path = ''
+    if item.name
+      label_name = item.name
+      label_path = "<div class=\"secondary-line no-icon\">Path: #{item.dir}</div>"
+    else
+      label_name = item.index
+      label_path = ""
+
 
     "<li class=\"two-lines\">
          <div class=\"status icon #{icon_class}\"></div>
-         <div class=\"primary-line icon icon-file-text\">#{item.index}</div>
-         <div class=\"secondary-line no-icon\">From client: ##{item.fa_address}:#{item.fa_from}</div>"
+         <div class=\"primary-line icon icon-file-text\">#{label_name}</div>
+         <div class=\"secondary-line no-icon\">From client: ##{item.fa_address}:#{item.fa_from}</div>" +label_path
 
   # Public: Callback function for when an item is selected.
   #
@@ -109,7 +120,17 @@ class EnableView extends SelectListView
 
   # initial a new editor pane
   initial_new_pane: (item)->
-    tmp_editor = atom.workspace.openSync()
+    tmp_editor = null
+    # atom.open({pathsToOpen: [pathToOpen], newWindow: true})
+    if dest_file_path = item.dir
+      project_path = atom.project.getPath()
+      tmp_file_path = path.join project_path, dest_file_path
+      # test_path = path.join project_path, 'test.xhtml'
+      changeFocus = true
+      tmp_editor = atom.workspaceView.openSync(tmp_file_path, { changeFocus })
+    else
+      tmp_editor = atom.workspace.openSync()
+
     tmp_editor["emp_live_view"] = item
     tmp_editor["emp_live_script_name"] = null
     tmp_editor["emp_live_script"] = null

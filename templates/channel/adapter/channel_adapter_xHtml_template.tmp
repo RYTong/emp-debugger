@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
+<!--<atom_emp_related_file_info>${atom_related_info}</atom_emp_related_file_info>-->
 <content>
     <head>
         <style>
@@ -20,8 +21,8 @@
 
             ryt = RYTL:new{};
 
-            local next_channelId = "";
-            local next_trancode = "";
+            local next_channelId = "${channel}";
+            local next_trancode = "${next_tran_code}";
 
             function main_page()
                 local result = history:get(-1);

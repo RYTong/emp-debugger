@@ -123,7 +123,7 @@ class EmpDebuggerSettingView extends View
       @emp_setting_view.hide()
 
       @app_view.show()
-      @app_view.check_os()
+
       @app_view.focus()
       @activ_pane = PANE_APP
 
@@ -139,6 +139,7 @@ class EmpDebuggerSettingView extends View
     unless @app_view
       @app_view = new EmpAppManaView(this)
       @emp_setting_view.before(@app_view)
+      @app_view.check_os()
     @app_view
 
   # Returns an object that can be retrieved when package is activated

@@ -359,7 +359,9 @@ class emp_channel
 
   # @doc 创建离线资源文件
   create_off: (project_path)->
-    cha_dir = @initial_dir(project_path)
+    cha_dir_arr = @initial_dir(project_path)
+    cha_dir = cha_dir_arr[0]
+    relate_dir = cha_dir_arr[1]
     pro_dir = path.join __dirname, '../../../', emp.STATIC_CHANNEL_TEMPLATE, @entry_dir
     tmp_xhtml_dir = path.join pro_dir,emp.STATIC_OFF_TEMPLATE
     tmp_json_dir = path.join pro_dir,emp.STATIC_CS_TEMPLATE
@@ -368,14 +370,33 @@ class emp_channel
     json_template = json_template.replace(/\$channel/ig, @id)
     xhtml_template = xhtml_template.replace(/\$\{app\}/ig, @app).replace(/\$\{channel\}/ig, @id)
 
+    tmp_arr = []
+    for key,obj of @adapters
+      tmp_arr.push(obj)
+    tmp_arr.reverse()
+    if tmp_arr.length >1
+      tmp_arr.pop()
+
     for key,obj of @adapters
       tmp_tran = key
       # tmp_view = obj.trancode
       ext_xhtml = emp.OFF_EXTENSION_XHTML
-      tmp_xhtml_file = path.join cha_dir, ext_xhtml, (tmp_tran+'.'+ext_xhtml)
+      tmp_xhtml_name = tmp_tran+'.'+ext_xhtml
+      tmp_xhtml_file = path.join cha_dir, ext_xhtml, tmp_xhtml_name
+      #doc:文件的相对地址
+
 
       if !fs.existsSync tmp_xhtml_file
-        fs.writeFile tmp_xhtml_file, xhtml_template.replace(/\$\{trancode\}/ig, tmp_tran), 'utf8', (err) =>
+        tmp_xhtml_template = xhtml_template.replace(/\$\{trancode\}/ig, tmp_tran)
+        tmp_relate_file = path.join relate_dir, ext_xhtml, tmp_xhtml_name
+        tmp_xhtml_template = tmp_xhtml_template.replace(/\$\{atom_related_info\}/ig, tmp_relate_file)
+
+        if next_obj = tmp_arr.pop()
+          tmp_xhtml_template = tmp_xhtml_template.replace(emp.EMP_ENTRANCE_NEXT_TRANCODE, next_obj.trancode)
+        else
+          tmp_xhtml_template = tmp_xhtml_template.replace(emp.EMP_ENTRANCE_NEXT_TRANCODE, "")
+
+        fs.writeFile tmp_xhtml_file, tmp_xhtml_template, 'utf8', (err) =>
           if err
             console.error(err)
             emp.show_error("创建离线资源代码失败~:#{tmp_xhtml_file}")
@@ -392,9 +413,9 @@ class emp_channel
   # @doc 初始化离线资源文件的路径
   initial_dir:(project_path) ->
     pub_dir = path.join project_path,emp.CHA_PUBLIC_DIR
-    www_dir = path.join pub_dir, "/www";
+    www_dir = path.join pub_dir, "/www"
     resrc_dir = path.join www_dir, "/resource_dev"
-    common_dir = path.join resrc_dir, "/common"
+    relate_dir = path.join emp.CHA_PUBLIC_DIR, "/www", "/resource_dev"
 
     emp.mkdir_sync(pub_dir)
     emp.mkdir_sync(www_dir)
@@ -406,6 +427,7 @@ class emp_channel
     adapter_plat = @off_detail.plat
     adapter_res = @off_detail.res
     dest_dir = path.join resrc_dir,adapter_plat
+    relate_dir = path.join relate_dir, adapter_plat
     # console.log "dest dir :#{dest_dir}"
 
     if !fs.existsSync(dest_dir)
@@ -414,17 +436,20 @@ class emp_channel
     cha_dir = ''
     if adapter_plat is emp.ADAPTER_PLT_D
       cha_dir = path.join dest_dir,emp.OFF_DEFAULT_BASE,@id
+      relate_dir = path.join relate_dir,emp.OFF_DEFAULT_BASE,@id
       @initial_cha_temp_dir(cha_dir)
     else if (adapter_plat isnt emp.ADAPTER_PLT_D) and !adapter_res
       cha_dir = path.join dest_dir,emp.OFF_COMMON_BASE,emp.OFF_DEFAULT_BASE,@id
+      relate_dir = path.join relate_dir,emp.OFF_COMMON_BASE,emp.OFF_DEFAULT_BASE,@id
       @initial_cha_temp_dir(cha_dir)
     else
       res_dir = path.join dest_dir,adapter_res
       @initial_channels_dir(res_dir)
       cha_dir = path.join res_dir,emp.OFF_DEFAULT_BASE,@id
+      relate_dir = path.join relate_dir,adapter_res, emp.OFF_DEFAULT_BASE,@id
       @initial_cha_temp_dir(cha_dir)
     # console.log cha_dir
-    cha_dir
+    [cha_dir, relate_dir]
 
   # @doc 构建 离线资源的根目录（平台） root=/resource_dev/plateform
   initial_root_dir: (resrc_dir) ->

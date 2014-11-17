@@ -79,6 +79,9 @@ module.exports =
   EMP_ENTRANCE_FIRST_ID: '${first_cha_id}'
   EMP_ENTRANCE_FIRST_TRANCODE: '${first_tran_code}'
 
+  # EMP_ENTRANCE_NEXT_ID: '${next_cha_id}'
+  EMP_ENTRANCE_NEXT_TRANCODE: '${next_tran_code}'
+
   # adapter template
   STATIC_TEMPLATE_DIR:"/templates/"
   STATIC_APP_TEMPLATE:"/templates/app/"

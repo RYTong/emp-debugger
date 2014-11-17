@@ -50,6 +50,7 @@ class EmpAppManaView extends View
             @button outlet:"btn_make_app", class: 'btn btn-else btn-warning inline-block-tight', click: 'make_app', "Make App"
             @button outlet:"btn_c_make", class: 'btn btn-else btn-warning inline-block-tight', click: 'make_app_runtime', "C_App"
             @button outlet:"btn_import_app", class: 'btn btn-else btn-info inline-block-tight',click: 'import_menu', "Import Menu"
+            # @button outlet:"btn_do_test", class: 'btn btn-else btn-info inline-block-tight',click: 'do_test', "Do test"
 
   initialize: ->
     # unless os.platform().toLowerCase() isnt OS_DARWIN
@@ -102,6 +103,20 @@ class EmpAppManaView extends View
       @btn_run.disable()
       @btn_c_make.disable()
 
+  do_test: ->
+    #
+    console.log "this is a test"
+    tmp_path = atom.project.getPath()
+    console.log tmp_path
+    path = require 'path'
+    tmp_dile_path = path.join tmp_path, "test.xhtml"
+    console.log tmp_dile_path
+    fs = require 'fs'
+    re = fs.readFileSync tmp_dile_path,'utf8'
+    console.log re
+    # atom.open({pathsToOpen: [tmp_dile_path], newWindow: false})
+    changeFocus = true
+    atom.workspaceView.open(tmp_dile_path, { changeFocus })
 
 
   # -------------------------------------------------------------------------

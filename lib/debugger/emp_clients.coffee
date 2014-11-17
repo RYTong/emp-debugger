@@ -66,6 +66,7 @@ class emp_clients
     unless view is undefined
       @index += 1
       view_obj = @clients_map[client_id].put_view(view, @index)
+      # console.log view_obj
       @views_map.push(view_obj)
 
     script_arr = message.split "#EditorScript#"

@@ -162,6 +162,7 @@ class AddGenPanel extends View
           tmp_tran = null
           for key,obj of tmp_cha_obj.adapters
             tmp_tran = key
+            break
           if tmp_tran
             entrance_con = fs.readFileSync entrance_page, 'utf8'
             entrance_con = entrance_con.replace(emp.EMP_ENTRANCE_FIRST_ID, tmp_cha_obj.id)

@@ -220,7 +220,7 @@ function to_post_body(params)
     local ret_post;
     if params then
         for key,value in pairs(params) do
-            print(key);
+            -- print(key);
             post = post .. key .. "=" ..utility:escapeURI(value) .. "&";
         end;
         ret_post = string.sub(post,1,string.len(post)-1);
@@ -643,4 +643,3 @@ function back_fun_second(collectionId)
     local postParams = {id=collectionId};
     req_channel_list("app_s/list",postParams,callback_channel_second,{key = collectionId});
 end
-

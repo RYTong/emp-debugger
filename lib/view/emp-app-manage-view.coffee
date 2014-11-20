@@ -6,6 +6,10 @@ EmpAppMan = require '../emp_app/emp_app_manage'
 EmpAppWizardView = require '../app_wizard/emp-debugger-app-wizard-view'
 os = require 'os'
 emp = require '../exports/emp'
+# path = require 'path'
+# path_fliter = require '../util/path-loader'
+# relate_view = require './emp-relate-view'
+# tmp_result = ''
 
 module.exports =
 class EmpAppManaView extends View
@@ -50,7 +54,7 @@ class EmpAppManaView extends View
             @button outlet:"btn_make_app", class: 'btn btn-else btn-warning inline-block-tight', click: 'make_app', "Make App"
             @button outlet:"btn_c_make", class: 'btn btn-else btn-warning inline-block-tight', click: 'make_app_runtime', "C_App"
             @button outlet:"btn_import_app", class: 'btn btn-else btn-info inline-block-tight',click: 'import_menu', "Import Menu"
-            # @button outlet:"btn_do_test", class: 'btn btn-else btn-info inline-block-tight',click: 'do_test', "Do test"
+            # @button outlet:"btn_do_test", class: 'btn btn-else btn-info inline-block-tight',click: 'do_test1', "Do test"
 
   initialize: ->
     # unless os.platform().toLowerCase() isnt OS_DARWIN
@@ -62,6 +66,10 @@ class EmpAppManaView extends View
     @app_local_view.after(@emp_node_view)
     @app_detail.after(@emp_cha_manage)
     @app_detail.after(@emp_app_wizard)
+
+    # path_fliter.load_path "public/www/resource_dev", "m1.xhtml", null, (result) ->
+    #   # console.log result
+    #   tmp_result = result
 
     this
 
@@ -102,6 +110,18 @@ class EmpAppManaView extends View
       @btn_import_app.disable()
       @btn_run.disable()
       @btn_c_make.disable()
+
+  # do_test1: ->
+  #   console.log "this is a test1"
+  #   # console.log atom.project.getDirectories()
+  #   # console.log atom.project.resolve("lib/test")
+  #   # root_dir = atom.project.getDirectories()[0]
+  #   dir = "public/www/resource_dev"
+  #   # console.log root_dir.isDirectory(dir)
+  #   # console.log root_dir.getSubdirectory(dir)
+  #   # entries = root_dir.getSubdirectory(dir).getEntriesSync()
+  #
+  #   @path_view = new relate_view("", "", "", [], tmp_result)
 
   do_test: ->
     #

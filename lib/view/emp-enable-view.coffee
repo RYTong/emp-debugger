@@ -1,15 +1,35 @@
 {$, $$, View, SelectListView, EditorView} = require 'atom'
 path = require 'path'
+emp = require '../exports/emp'
+relate_view = require './emp-relate-view'
+path_fliter = require '../util/path-loader'
+
+relate_all_views = null
+tmp_offline_path = null
 
 module.exports =
 class EnableView extends SelectListView
   emp_socket_server: null
+
 
   initialize: (serializeState, @emp_socket_server) ->
     # console.log 'enable view process initial'
     super
     @addClass('overlay from-top')
     @setMaxItems(20)
+
+    unless tmp_offline_path = atom.config.get(emp.EMP_OFFLINE_RELATE_DIR)
+      tmp_offline_path = emp.EMP_OFFLINE_RELATE_PATH_V
+      atom.config.set(emp.EMP_OFFLINE_RELATE_DIR, tmp_offline_path)
+    # console.log tmp_offline_path
+    path_fliter.load_all_path tmp_offline_path, emp.EMP_VIEW_FILTER_IGNORE, (paths) ->
+      # console.log result
+      relate_all_views = paths
+
+    @subscribe atom.project, 'path-changed', =>
+      console.log "path changed -----------"
+      console.log data
+
     atom.workspaceView.command "emp-debugger:enable-view", => @enable_view()
 
 
@@ -57,7 +77,7 @@ class EnableView extends SelectListView
   #
   # Returns the property name to fuzzy filter by.
   getFilterKey: ->
-    console.log "get key"
+    # console.log "get key"
     'index'
 
   # Public: Create a view for the given model item.
@@ -123,18 +143,40 @@ class EnableView extends SelectListView
     tmp_editor = null
     # atom.open({pathsToOpen: [pathToOpen], newWindow: true})
     if dest_file_path = item.dir
-      project_path = atom.project.getPath()
-      tmp_file_path = path.join project_path, dest_file_path
-      # test_path = path.join project_path, 'test.xhtml'
-      changeFocus = true
-      tmp_editor = atom.workspaceView.openSync(tmp_file_path, { changeFocus })
+      tmp_name = item.name
+      index = 0
+      # console.log relate_all_views
+      re_path_arr = path_fliter.filter_path(relate_all_views, tmp_name)
+      # console.log re_path_arr
+      for tmp_item in re_path_arr
+        if tmp_item.name is  tmp_name
+          index += 1
+      if index is 1
+        project_path = atom.project.getPath()
+        tmp_file_path = path.join project_path, dest_file_path
+        # test_path = path.join project_path, 'test.xhtml'
+        @create_editor tmp_file_path, item
+      else
+        @path_view = new relate_view(re_path_arr, item, tmp_offline_path, emp.EMP_VIEW_FILTER_IGNORE, this.create_editor)
     else
       tmp_editor = atom.workspace.openSync()
+      @store_info(tmp_editor, item)
 
+  create_editor:(tmp_file_path, item) ->
+    changeFocus = true
+    tmp_editor = atom.workspaceView.openSync(tmp_file_path, { changeFocus })
     tmp_editor["emp_live_view"] = item
     tmp_editor["emp_live_script_name"] = null
     tmp_editor["emp_live_script"] = null
-    # console.log tmp_editor
+    tmp_editor.setText(item.view)
+    gramers = @getGrammars()
+    tmp_editor.setGrammar(gramers[0]) unless gramers[0] is undefined
+
+
+  store_info: (tmp_editor, item)->
+    tmp_editor["emp_live_view"] = item
+    tmp_editor["emp_live_script_name"] = null
+    tmp_editor["emp_live_script"] = null
     tmp_editor.setText(item.view)
     gramers = @getGrammars()
     tmp_editor.setGrammar(gramers[0]) unless gramers[0] is undefined

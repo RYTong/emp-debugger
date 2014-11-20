@@ -444,7 +444,9 @@ class emp_channel
       @initial_cha_temp_dir(cha_dir)
     else
       res_dir = path.join dest_dir,adapter_res
-      @initial_channels_dir(res_dir)
+      if !fs.existsSync(res_dir)
+        fs.mkdirSync(res_dir);
+        @initial_channels_dir(res_dir)
       cha_dir = path.join res_dir,emp.OFF_DEFAULT_BASE,@id
       relate_dir = path.join relate_dir,adapter_res, emp.OFF_DEFAULT_BASE,@id
       @initial_cha_temp_dir(cha_dir)

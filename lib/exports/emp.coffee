@@ -24,6 +24,15 @@ module.exports =
   EMP_TMPORARY_APP_NAME:'emp-debugger.emp-tmp-app-name'
   EMP_CMAKE_KEY : 'emp-debugger.emp-c_app'
 
+  EMP_OFFLINE_DIR: 'emp-debugger.emp-offline-dev-path'
+  EMP_OFFLINE_RELATE_DIR: 'emp-debugger.emp-offline-relate-path'
+  EMP_OFFLINE_RELATE_PATH_V: "public/www/resource_dev"
+  EMP_VIEW_FILTER_IGNORE:["*.json", "*.lua", "*.png", "*.jpg", "*.css"]
+  EMP_SCRIPT_FILTER_IGNORE:["*.json", "*.xhtml", "*.png", "*.jpg", "*.css"]
+
+  EMP_CHANNEL_ADAPTER_PLAT:'emp-debugger.emp-channel-adapter-platform'
+  EMP_CHANNEL_ADAPTER_RES:'emp-debugger.emp-channel-adapter-resolution'
+
   OS_DARWIN:'darwin'
   OS_LINUX:'linux'
   OS_PATH:'PATH'
@@ -66,6 +75,12 @@ module.exports =
   ADAPTER_PLT_R1: '320-480'
   ADAPTER_PLT_R2: '640-960'
   ADAPTER_PLT_R3: '640-1136'
+  ADAPTER_PLT_R4: '750-1334'
+  ADAPTER_PLT_R5: '768-1024'
+  ADAPTER_PLT_R6: '1080-1920'
+  ADAPTER_PLT_R7: '1536-2048'
+
+
 
 
   GEN_VIEW:'gen_view'

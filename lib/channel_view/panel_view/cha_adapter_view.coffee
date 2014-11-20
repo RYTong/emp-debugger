@@ -31,10 +31,12 @@ class AdapterPanel extends View
       # @div class: 'info-div', =>
         @label class: 'info-label', '平台'
         @select outlet: "off_plat", class: "form-control", =>
+
           @option value: emp.ADAPTER_PLT_D, selected:"selected", "Default"
-          @option value: emp.ADAPTER_PLT_I, "Iphone"
-          @option value: emp.ADAPTER_PLT_A, "Android"
-          @option value: emp.ADAPTER_PLT_W, "Wphone"
+
+          # @option value: emp.ADAPTER_PLT_I, "Iphone"
+          # @option value: emp.ADAPTER_PLT_A, "Android"
+          # @option value: emp.ADAPTER_PLT_W, "Wphone"
       # @div class: 'info-div', =>
         @label outlet:'testt', class: 'info-label', '分辨率'
         # @select outlet: "off_rel", class: "form-control", =>
@@ -47,9 +49,9 @@ class AdapterPanel extends View
         #     @li 'three'
         @select outlet: "off_rel", class: "form-control", =>
           @option value: emp.ADAPTER_PLT_R,selected:"selected", "Default"
-          @option value: emp.ADAPTER_PLT_R1, emp.ADAPTER_PLT_R1
-          @option value: emp.ADAPTER_PLT_R2, emp.ADAPTER_PLT_R2
-          @option value: emp.ADAPTER_PLT_R3, emp.ADAPTER_PLT_R3
+          # @option value: emp.ADAPTER_PLT_R1, emp.ADAPTER_PLT_R1
+          # @option value: emp.ADAPTER_PLT_R2, emp.ADAPTER_PLT_R2
+          # @option value: emp.ADAPTER_PLT_R3, emp.ADAPTER_PLT_R3
         @div class: 'off_type_div', =>
           @div class: 'checkbox_column', =>
             @input outlet:'off_img', type: 'checkbox', checked:'true'
@@ -81,12 +83,30 @@ class AdapterPanel extends View
     @ocode_flag=true
     @ocs_flag=true
     @ofile_flag=true
+
+    # @doc 初始化 平台选项
+    def_plat_list = [emp.ADAPTER_PLT_I, emp.ADAPTER_PLT_A, emp.ADAPTER_PLT_W]
+    unless tmp_plat_list = atom.config.get(emp.EMP_CHANNEL_ADAPTER_PLAT)
+      tmp_plat_list = def_plat_list
+      atom.config.set(emp.EMP_CHANNEL_ADAPTER_PLAT, tmp_plat_list)
+    for tmp_plat in tmp_plat_list
+      @off_plat.append(@select_option(tmp_plat))
+
+    # @doc 初始化分辨率选项
+    def_res_list = [emp.ADAPTER_PLT_R1, emp.ADAPTER_PLT_R2, emp.ADAPTER_PLT_R3,
+      emp.ADAPTER_PLT_R4,emp.ADAPTER_PLT_R5,emp.ADAPTER_PLT_R6, emp.ADAPTER_PLT_R7]
+    unless tmp_res_list = atom.config.get(emp.EMP_CHANNEL_ADAPTER_RES)
+      tmp_res_list = def_res_list
+      atom.config.set(emp.EMP_CHANNEL_ADAPTER_RES, def_res_list)
+    tmp_res_list = tmp_res_list.sort()
+    for tmp_res in tmp_res_list
+      @off_rel.append(@select_option(tmp_res))
+
     # console.log edit_obj
     if edit_obj
       if typeof(edit_obj.views) is 'object'
         for tmp_key,tmp_val of edit_obj.views
           @add_adpter_item(tmp_key, tmp_val)
-
       else
         for tmp_key,tmp_obj of edit_obj.adapters
           @add_adpter_item(tmp_key, tmp_obj)
@@ -100,6 +120,10 @@ class AdapterPanel extends View
     @off_use_off.on  'click', (e, el)=>
       @refresh_off_type(e, el)
     this
+
+  select_option: (tmp_val)->
+    $$ ->
+      @option value: tmp_val, "#{tmp_val}"
 
 
   refresh_off_type: (e, el)->

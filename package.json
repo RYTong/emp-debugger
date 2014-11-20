@@ -29,6 +29,9 @@
     "atom": ">0.120.0"
   },
   "dependencies": {
+    "minimatch": "~0.3.0",
+    "underscore-plus": "1.x",
+    "fuzzaldrin": "^2.1"
 
   }
 }

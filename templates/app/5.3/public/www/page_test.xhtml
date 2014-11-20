@@ -43,7 +43,6 @@
                     local ret_post;
                     if params then
                         for key,value in pairs(params) do
-                            print(key);
                             post = post .. key .. "=" ..utility:escapeURI(value) .. "&";
                         end;
                         ret_post = string.sub(post,1,string.len(post)-1);

@@ -1,4 +1,9 @@
 {$, $$, View, SelectListView, EditorView} = require 'atom'
+emp = require '../exports/emp'
+relate_view = require './emp-relate-view'
+path_fliter = require '../util/path-loader'
+tmp_offline_path = ''
+relate_all_views = ''
 
 module.exports =
 class EnableLuaView extends SelectListView
@@ -9,6 +14,9 @@ class EnableLuaView extends SelectListView
     super
     @addClass('overlay from-top')
     @setMaxItems(20)
+    unless tmp_offline_path = atom.config.get(emp.EMP_OFFLINE_RELATE_DIR)
+      tmp_offline_path = emp.EMP_OFFLINE_RELATE_PATH_V
+
     atom.workspaceView.command "emp-debugger:enable-lua", => @enable_lua()
 
 
@@ -25,6 +33,10 @@ class EnableLuaView extends SelectListView
     if @hasParent()
       @cancel()
     else
+      path_fliter.load_all_path tmp_offline_path, emp.EMP_SCRIPT_FILTER_IGNORE, (paths) ->
+        # console.log result
+        relate_all_views = paths
+
       @setItems(@get_script_items())
       @storeFocusedElement()
       atom.workspaceView.append(this)
@@ -37,15 +49,9 @@ class EnableLuaView extends SelectListView
     re_map = new Array()
     index = 0
     len = tmp_map.length
-    # console.log tmp_map
+
     for name,scr_obj of tmp_map
-      # console.log name
       re_map.push(scr_obj)
-    # loop
-    #   break if len is 0
-    #   len -= 1
-    #   re_map[index] = tmp_map[len]
-    #   index += 1
     re_map
 
   # Public: Get the property name to use when filtering items.
@@ -113,7 +119,42 @@ class EnableLuaView extends SelectListView
 
   # initial a new editor pane
   initial_new_pane: (item)->
-    tmp_editor = atom.workspace.openSync()
+    tmp_name = item.script_name
+    com_filter_arr = []
+    # console.log relate_all_views
+    # console.log tmp_name
+    re_path_arr = path_fliter.filter_path(relate_all_views, tmp_name)
+    # console.log re_path_arr
+    for tmp_item in re_path_arr
+      if tmp_item.name is  tmp_name
+        com_filter_arr.push(tmp_item)
+
+    if com_filter_arr.length is 0
+      tmp_editor = atom.workspace.openSync()
+      @store_info(tmp_editor, item)
+    else if com_filter_arr.length is 1
+      tmp_item = com_filter_arr.pop()
+      @create_editor tmp_item.dir, item
+    else
+      unless @path_view?
+        @path_view = new relate_view(tmp_offline_path, emp.EMP_SCRIPT_FILTER_IGNORE)
+      @path_view.enable_view(com_filter_arr, item, this.create_editor)
+
+
+
+  create_editor:(tmp_file_path, item) ->
+    changeFocus = true
+    tmp_editor = atom.workspaceView.openSync(tmp_file_path, { changeFocus })
+
+    tmp_editor["emp_live_view"] = item.fa_view.view
+    tmp_editor["emp_live_script_name"] = item.script_name
+    tmp_editor["emp_live_script"] = item
+    # console.log tmp_editor
+    tmp_editor.setText(item.script_con)
+    gramers = @getGrammars()
+    tmp_editor.setGrammar(gramers[0]) unless gramers[0] is undefined
+
+  store_info: (tmp_editor, item)->
     tmp_editor["emp_live_view"] = item.fa_view.view
     tmp_editor["emp_live_script_name"] = item.script_name
     tmp_editor["emp_live_script"] = item

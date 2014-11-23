@@ -6,14 +6,14 @@ project_path = ''
 module.exports =
 class EnableRView extends SelectListView
 
-  initialize: (@paths, @view_item, @offline_path, @ignore_name, @callback) ->
+  initialize: (@offline_path, @ignore_name) ->
     # console.log 'enable view process initial'
     super
     project_path = atom.project.getPath()
     @addClass('overlay from-top')
     @setMaxItems(20)
     # atom.workspaceView.command "emp-debugger:enable-view", =>
-    @enable_view()
+    # @enable_view()
 
 
   # Returns an object that can be retrieved when package is activated
@@ -24,7 +24,7 @@ class EnableRView extends SelectListView
     @cancel()
     @remove()
 
-  enable_view: ()->
+  enable_view: (@paths, @view_item,  @callback)->
     # console.log "enable_view"
     if @hasParent()
       @cancel()
@@ -108,24 +108,6 @@ class EnableRView extends SelectListView
   # initial a new editor pane
   initial_new_pane: (item)->
     @callback(item.dir, @view_item)
-    # atom.open({pathsToOpen: [pathToOpen], newWindow: true})
-    # if dest_file_path = item.dir
-      # project_path = atom.project.getPath()
-      # tmp_file_path = path.join project_path, dest_file_path
-      # test_path = path.join project_path, 'test.xhtml'
-      # changeFocus = true
-      # tmp_editor = atom.workspaceView.openSync(dest_file_path, { changeFocus })
-
-    # else
-      # tmp_editor = atom.workspace.openSync()
-
-    # tmp_editor["emp_live_view"] = item
-    # tmp_editor["emp_live_script_name"] = null
-    # tmp_editor["emp_live_script"] = null
-    # # console.log tmp_editor
-    # tmp_editor.setText(item.view)
-    # gramers = @getGrammars()
-    # tmp_editor.setGrammar(gramers[0]) unless gramers[0] is undefined
 
   # set the opened editor grammar, default is HTML
   getGrammars: ->

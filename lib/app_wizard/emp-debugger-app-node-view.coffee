@@ -1,6 +1,5 @@
 {$, $$, View, TextEditorView} = require 'atom'
 # EmpEditView = require './emp-edit-view'
-EmpAppMan = require '../emp_app/emp_app_manage'
 os = require 'os'
 emp = require '../exports/emp'
 

@@ -202,9 +202,6 @@ dealWithOneMessage = (message, client_id) ->
   if argsLog.length == 3
     logInfo = argsLog[1]
     log_storage.store_log(client_id, logInfo)
-    logInfo
-    return
-
   emp_client_map.store_view(client_id, message)
   # argsContent = message.split "#EditorContent#"
   # content = argsContent[1]

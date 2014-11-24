@@ -117,10 +117,10 @@ module.exports =
   OFF_DEFAULT_BASE:"channels"
   OFF_COMMON_BASE:"default"
 
-  OFF_EXTENSION_ERL: "erl";
-  OFF_EXTENSION_CS: "cs";
-  OFF_EXTENSION_JSON: "json";
-  OFF_EXTENSION_XHTML:"xhtml";
+  OFF_EXTENSION_ERL: "erl"
+  OFF_EXTENSION_CS: "cs"
+  OFF_EXTENSION_JSON: "json"
+  OFF_EXTENSION_XHTML:"xhtml"
 
   DEFAULT_COL_ITEM:'[{item_id,"$cha_id"},{item_type,$itype},{menu_order,$order}]'
 
@@ -132,10 +132,12 @@ module.exports =
                   '            {props,${props}},\r\n'+
                   '            {state,${state}}]'
 
-  ADAPTER_REQUEST_PARAMS_FORMAT:"                                      {'$key', $value}";
-  ADAPTER_VARIABLE : "    $var = $getter(\"$key\", []),\r\n";
-  REPLACE_GETTER : "\\$getter";
-  ADAPTER_REQUEST_PARAMS: "{'$key', $value}";
+  ADAPTER_REQUEST_PARAMS_FORMAT:"                                      {'$key', $value}"
+  ADAPTER_VARIABLE : "    $var = $getter(\"$key\", []),\r\n"
+  REPLACE_GETTER : "\\$getter"
+  ADAPTER_REQUEST_PARAMS: "{'$key', $value}"
+  DEFAULT_EXT_LUA : '.lua'
+  DEFAULT_EXT_XHTML :'.xhtml'
 
 module.exports.mk_node_name = (node_name) ->
   default_name = " -sname "

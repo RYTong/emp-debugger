@@ -12,8 +12,6 @@ conf_parser = require './emp_app/conf_parser'
 emp = require './exports/emp'
 n_state = null
 path = require 'path'
-DEFAULT_EXT_LUA = '.lua'
-DEFAULT_EXT_XHTML = '.xhtml'
 
 module.exports =
   empDebuggerInitView: null
@@ -40,7 +38,8 @@ module.exports =
     # @empDebuggerStateView = new EmpDebuggerStateView(n_state.empDebuggerStateViewState, @emp_socket_server, @empDebuggerLogView)
     @empEnableView = new EmpEnableView(n_state.empEnableViewState, @emp_socket_server)
     @empEnableLuaView = new EmpEnableLuaView(n_state.empEnableLuaViewState, @emp_socket_server)
-    @empDebuggerSettingView = new EmpDebuggerSettingView(n_state.empDebuggerSettingViewState, @emp_socket_server, @empDebuggerLogView, this)
+    @empDebuggerSettingView = new EmpDebuggerSettingView(n_state.empDebuggerSettingViewState,
+                                  @emp_socket_server, @empDebuggerLogView, this)
     EmpViewManage.activate()
     conf_parser.initial_parser()
 
@@ -96,10 +95,10 @@ module.exports =
       text_ext  = path.extname(text_path ).toLowerCase() unless !text_path
       debug_text = editor.getText()
       # live preview lus script with lua file
-      if text_ext is DEFAULT_EXT_LUA
+      if text_ext is emp.DEFAULT_EXT_LUA
         text_name = path.basename(text_path)
         @emp_socket_server.live_preview_lua(text_name, debug_text)
-      else if text_ext is DEFAULT_EXT_XHTML # live preview xhtml file
+      else if text_ext is emp.DEFAULT_EXT_XHTML # live preview xhtml file
         @emp_socket_server.live_preview_view(debug_text)
       else if text_ext
         emp.self_info("Warnning", "Unrecognise file type, unable live preview~")

@@ -22,13 +22,8 @@ class EnableView extends SelectListView
       tmp_offline_path = emp.EMP_OFFLINE_RELATE_PATH_V
       atom.config.set(emp.EMP_OFFLINE_RELATE_DIR, tmp_offline_path)
     # console.log tmp_offline_path
-    path_fliter.load_all_path tmp_offline_path, emp.EMP_VIEW_FILTER_IGNORE, (paths) ->
-      # console.log result
-      relate_all_views = paths
-
-    @subscribe atom.project, 'path-changed', =>
-      console.log "path changed -----------"
-      console.log data
+    # @subscribe atom.project, 'path-changed', =>
+    #   console.log "path changed -----------"
 
     atom.workspaceView.command "emp-debugger:enable-view", => @enable_view()
 
@@ -46,6 +41,10 @@ class EnableView extends SelectListView
     if @hasParent()
       @cancel()
     else
+      path_fliter.load_all_path tmp_offline_path, emp.EMP_VIEW_FILTER_IGNORE, (paths) ->
+        # console.log result
+        relate_all_views = paths
+
       @setItems(@get_view_items())
       @storeFocusedElement()
       atom.workspaceView.append(this)
@@ -104,7 +103,6 @@ class EnableView extends SelectListView
       label_name = item.index
       label_path = ""
 
-
     "<li class=\"two-lines\">
          <div class=\"status icon #{icon_class}\"></div>
          <div class=\"primary-line icon icon-file-text\">#{label_name}</div>
@@ -137,27 +135,29 @@ class EnableView extends SelectListView
     @filterEditorView.getEditor().setText('')
     @filterEditorView.updateDisplay()
 
-
   # initial a new editor pane
   initial_new_pane: (item)->
     tmp_editor = null
     # atom.open({pathsToOpen: [pathToOpen], newWindow: true})
     if dest_file_path = item.dir
       tmp_name = item.name
-      index = 0
+      com_filter_arr = []
       # console.log relate_all_views
+      # console.log tmp_name
       re_path_arr = path_fliter.filter_path(relate_all_views, tmp_name)
       # console.log re_path_arr
       for tmp_item in re_path_arr
         if tmp_item.name is  tmp_name
-          index += 1
-      if index is 1
+          com_filter_arr.push(tmp_item)
+      if com_filter_arr.length <= 1
         project_path = atom.project.getPath()
         tmp_file_path = path.join project_path, dest_file_path
         # test_path = path.join project_path, 'test.xhtml'
         @create_editor tmp_file_path, item
       else
-        @path_view = new relate_view(re_path_arr, item, tmp_offline_path, emp.EMP_VIEW_FILTER_IGNORE, this.create_editor)
+        unless @path_view?
+          @path_view = new relate_view(tmp_offline_path, emp.EMP_VIEW_FILTER_IGNORE)
+        @path_view.enable_view(com_filter_arr, item, this.create_editor)
     else
       tmp_editor = atom.workspace.openSync()
       @store_info(tmp_editor, item)
@@ -172,7 +172,6 @@ class EnableView extends SelectListView
     gramers = @getGrammars()
     tmp_editor.setGrammar(gramers[0]) unless gramers[0] is undefined
 
-
   store_info: (tmp_editor, item)->
     tmp_editor["emp_live_view"] = item
     tmp_editor["emp_live_script_name"] = null
@@ -186,13 +185,5 @@ class EnableView extends SelectListView
     grammars = atom.syntax.getGrammars().filter (grammar) ->
       (grammar isnt atom.syntax.nullGrammar) and
       grammar.name is 'HTML'
-
-    # grammars.sort (grammarA, grammarB) ->
-    #   if grammarA.scopeName is 'text.plain'
-    #     -1
-    #   else if grammarB.scopeName is 'text.plain'
-    #     1
-    #   else
-    #     grammarA.name?.localeCompare?(grammarB.name) ? grammarA.scopeName?.localeCompare?(grammarB.name) ? 1
 
     grammars

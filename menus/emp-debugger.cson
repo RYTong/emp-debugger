@@ -17,4 +17,19 @@
       ]
     ]
   }
+  {
+    'label': 'Emp'
+    'submenu': [
+        { 'label': 'Setting View', 'command': 'emp-debugger:setting-view' }
+        {type: 'separator'}
+        { 'label': 'Create App', 'command': 'emp-debugger:create-app' }
+        { 'label': 'Show Channel', 'command': 'emp-debugger:show-channel' }
+        {type: 'separator'}
+        { 'label': 'Live Preview', 'command': 'emp-debugger:live-preview' }
+        { 'label': 'Enabel View', 'command': 'emp-debugger:enable-view' }
+        { 'label': 'Enabel Lua', 'command': 'emp-debugger:enable-lua' }
+        { 'label': 'View Logs', 'command': 'emp-debugger:view-log' }
+
+    ]
+  }
 ]

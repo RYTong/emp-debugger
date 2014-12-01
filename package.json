@@ -31,6 +31,8 @@
   "dependencies": {
     "minimatch": "~0.3.0",
     "underscore-plus": "1.x",
-    "fuzzaldrin": "^2.1"
+    "fuzzaldrin": "^2.1",
+    "moxie-zip":"*"
+
   }
 }

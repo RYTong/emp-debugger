@@ -4,6 +4,7 @@ EmpAppNodeView = require '../app_wizard/emp-debugger-app-node-view'
 EmpChaManaView = require '../channel_view/emp-channel-manage-view'
 EmpAppMan = require '../emp_app/emp_app_manage'
 EmpAppWizardView = require '../app_wizard/emp-debugger-app-wizard-view'
+EmpAdpPackageView = require '../package/emp-debugger-adapter-package-view'
 os = require 'os'
 emp = require '../exports/emp'
 # path = require 'path'
@@ -62,8 +63,10 @@ class EmpAppManaView extends View
     @emp_node_view = new EmpAppNodeView(this, @emp_app_manage)
     @emp_cha_manage = new EmpChaManaView(this)
     @emp_app_wizard = new EmpAppWizardView(this)
+    @emp_adp_package = new EmpAdpPackageView(this)
 
     @app_local_view.after(@emp_node_view)
+    @app_detail.after(@emp_adp_package)
     @app_detail.after(@emp_cha_manage)
     @app_detail.after(@emp_app_wizard)
 

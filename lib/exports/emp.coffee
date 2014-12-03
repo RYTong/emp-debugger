@@ -86,6 +86,12 @@ module.exports =
   ADAPTER_UNION_PACKAGE_NAME: "batch-normal-package.zip"
   DEFAULT_ZIP_FULE_NAME:"tmp.zip"
 
+  # channel 插件包相关定义
+  PACKAGE_EXTENSION_BEAM:".beam"
+  PACKAGE_EXTENSION_BEAM_TYPE:"beam"
+  PACKAGE_CHANNEL_EBIN_DIR: "ebin"
+  PACKAGE_CHANNEL_CS_DIR: "public/cs/channels"
+
   # channel 管理页面分页名称
   GEN_VIEW:'gen_view'
   ADD_CHA_VIEW:'add_cha_view'
@@ -125,6 +131,7 @@ module.exports =
   OFF_EXTENSION_CS: "cs"
   OFF_EXTENSION_JSON: "json"
   OFF_EXTENSION_XHTML:"xhtml"
+
 
   DEFAULT_COL_ITEM:'[{item_id,"$cha_id"},{item_type,$itype},{menu_order,$order}]'
 

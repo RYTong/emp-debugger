@@ -1,6 +1,8 @@
 {$, $$, View} = require 'atom'
 os = require 'os'
 ChaItemView = require './item_view/channel-item-view'
+PackageBarView = require '../package/emp-debugger-package-bar-view'
+PackageAdpView = require '../package/emp-debugger-pkg-adp-view'
 emp =  require '../exports/emp'
 conf_parser = require '../emp_app/conf_parser'
 
@@ -25,10 +27,16 @@ class ChannelItemPanel extends View
               @button class: 'item_btn btn btn-info inline-block-tight', click:'edi_cha','  Edit  '
             @div class: 'item_cbtn_div', =>
               @button class: 'item_btn btn btn-info inline-block-tight', click:'del_cha',' Delete '
+            @div class: 'item_cbtn_div', =>
+              @button class: 'item_btn btn btn-info inline-block-tight', click:'dl_cha',' Download '
+            @div class: 'item_cbtn_div', =>
+              @button class: 'item_btn btn btn-info inline-block-tight', click:'dl_adapter',' Download Adapter'
 
   initialize: (@fa_view) ->
     @on 'click', '.emp_cha_item_tag', (e, element) =>
       @itemClicked(e, element)
+    @emp_package_common_view = new PackageBarView()
+    @emp_package_adapter_view = new PackageAdpView()
     @select_entry = {}
 
   refresh_cha_list:(@new_all_obj) ->
@@ -92,6 +100,29 @@ class ChannelItemPanel extends View
       conf_parser.remove_cha(tmp_cha_str, tmp_id_list)
       @fa_view.after_del_channel(tmp_id_list)
 
+  dl_cha: (e, element) ->
+    console.log " download channel"
+    last_id = null
+    for key, tmp_entry of @select_entry
+      last_id = key
+    # console.log last_id
+    if last_id
+      tmp_obj = @fa_view.all_objs.cha.obj_list[last_id]
+      console.log tmp_obj
+      console.log last_id
+      @emp_package_common_view.show_view(last_id, tmp_obj)
+
+  dl_adapter:(e, element) ->
+    console.log " download channel"
+    last_id = null
+    for key, tmp_entry of @select_entry
+      last_id = key
+    # console.log last_id
+    if last_id
+      tmp_obj = @fa_view.all_objs.cha.obj_list[last_id]
+      console.log tmp_obj
+      console.log last_id
+      @emp_package_adapter_view.show_view(last_id, tmp_obj)
 
   refresh_add_cha: (cha_obj)->
     tmp_item = new ChaItemView(cha_obj)

@@ -7,15 +7,28 @@
 .emp-debugger {
   position: absolute;
   top: 100px;
-  left: 50%;
+  left: 30%;
   width: 500px;
-  background: #fff;
+  // background: #fff;
   color: @text-color;
-  // @base-background-color;
+  background: @base-background-color;
   padding: 0;
-  margin-left: -250px;
+  // margin-left: -250px;
   z-index: 9999;
   box-sizing: border-box;
+
+  .btn.btn-right{
+    right:0px;
+  }
+
+  .file_panel {
+    max-height: 500px;
+    overflow: auto;
+  }
+
+  .extra_panel {
+    max-height: 150px;
+  }
 
   .editor-container {
     margin-bottom: @component-padding;

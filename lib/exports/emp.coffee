@@ -80,9 +80,19 @@ module.exports =
   ADAPTER_PLT_R6: '1080-1920'
   ADAPTER_PLT_R7: '1536-2048'
 
+  # 普通离线资源包，头名称
+  ADAPTER_PACKAGE_HEAD: 'package'
+  ADAPTER_UNION_PACKAGE_CHEAD:"batch-normal__"
+  ADAPTER_UNION_PACKAGE_NAME: "batch-normal-package.zip"
+  DEFAULT_ZIP_FULE_NAME:"tmp.zip"
 
+  # channel 插件包相关定义
+  PACKAGE_EXTENSION_BEAM:".beam"
+  PACKAGE_EXTENSION_BEAM_TYPE:"beam"
+  PACKAGE_CHANNEL_EBIN_DIR: "ebin"
+  PACKAGE_CHANNEL_CS_DIR: "public/cs/channels"
 
-
+  # channel 管理页面分页名称
   GEN_VIEW:'gen_view'
   ADD_CHA_VIEW:'add_cha_view'
   ADD_COL_VIEW:'add_col_view'
@@ -122,6 +132,7 @@ module.exports =
   OFF_EXTENSION_JSON: "json"
   OFF_EXTENSION_XHTML:"xhtml"
 
+
   DEFAULT_COL_ITEM:'[{item_id,"$cha_id"},{item_type,$itype},{menu_order,$order}]'
 
   DEFAULT_CHA_TMP:'\n{channels,[[{id,\"${channel}\"},\r\n'+
@@ -138,6 +149,11 @@ module.exports =
   ADAPTER_REQUEST_PARAMS: "{'$key', $value}"
   DEFAULT_EXT_LUA : '.lua'
   DEFAULT_EXT_XHTML :'.xhtml'
+
+  # 提示信息
+  EMP_PACKAGE_UNION_PKG_SUCCESS:"普通资源整合包，打包成功~"
+  EMP_PACKAGE_PKG_SUCCESS:"普通资源包，打包成功~"
+  EMP_PACKAGE_UNION_PKG_DIR_ENOENT:"打包失败：没有离线资源相关文件~"
 
 module.exports.mk_node_name = (node_name) ->
   default_name = " -sname "

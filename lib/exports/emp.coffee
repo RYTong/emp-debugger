@@ -189,6 +189,12 @@ module.exports.show_error = (err_msg) ->
     detailedMessage:err_msg
     buttons:["Ok"]
 
+module.exports.show_warnning = (warn_msg) ->
+  atom.confirm
+    message:"Warnning"
+    detailedMessage:warn_msg
+    buttons:["Ok"]
+
 module.exports.show_info = (info_msg) ->
   atom.confirm
     message:"Info"

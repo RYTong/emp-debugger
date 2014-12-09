@@ -28,9 +28,9 @@ class ChannelItemPanel extends View
             @div class: 'item_cbtn_div', =>
               @button class: 'item_btn btn btn-info inline-block-tight', click:'del_cha',' Delete '
             @div class: 'item_cbtn_div', =>
-              @button class: 'item_btn btn btn-info inline-block-tight', click:'dl_cha',' Download '
+              @button class: 'item_btn btn btn-info inline-block-tight', click:'dl_cha',' Plugin '
             @div class: 'item_cbtn_div', =>
-              @button class: 'item_btn btn btn-info inline-block-tight', click:'dl_adapter',' Download Adapter'
+              @button class: 'item_btn btn btn-info inline-block-tight', click:'dl_adapter',' Package'
 
   initialize: (@fa_view) ->
     @on 'click', '.emp_cha_item_tag', (e, element) =>
@@ -111,18 +111,22 @@ class ChannelItemPanel extends View
       console.log tmp_obj
       console.log last_id
       @emp_package_common_view.show_view(last_id, tmp_obj)
+    else
+      emp.show_warnning("请选择对应channel~")
 
   dl_adapter:(e, element) ->
-    console.log " download channel"
+    # console.log " download channel"
     last_id = null
     for key, tmp_entry of @select_entry
       last_id = key
     # console.log last_id
     if last_id
       tmp_obj = @fa_view.all_objs.cha.obj_list[last_id]
-      console.log tmp_obj
-      console.log last_id
+      # console.log tmp_obj
+      # console.log last_id
       @emp_package_adapter_view.show_view(last_id, tmp_obj)
+    else
+      emp.show_warnning("请选择对应channel~")
 
   refresh_add_cha: (cha_obj)->
     tmp_item = new ChaItemView(cha_obj)

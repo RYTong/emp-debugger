@@ -4,9 +4,12 @@ dialog = remote.require 'dialog'
 
 path = require 'path'
 fs = require 'fs'
+crypto = require 'crypto'
 emp = require '../exports/emp'
 EmpPkgExtraEle = require './emp-debugger-pkg-extra-element-view'
 ZipWriter = require("moxie-zip").ZipWriter
+Bert = require '../util/bert'
+Cert = require '../util/cert'
 
 project_path = ''
 
@@ -55,6 +58,7 @@ class EmpDebuggerPkgView extends View
 
   initialize: () ->
     project_path = atom.project.getPath()
+    @eft_parser = new Cert()
     # super()
     # console.log "server init view initial"
 
@@ -67,13 +71,13 @@ class EmpDebuggerPkgView extends View
   destroy: ->
     @detach()
 
-  show_view: (cha_id)->
+  show_view: (@cha_id, @cha_obj)->
     # console.log "EmpDebuggerView was toggled!"
     # if @emp_socket_server.get_server() is null
     if @hasParent()
       @detach()
     else
-      @initial_channel_panel(cha_id)
+      @initial_channel_panel(@cha_id, @cha_obj)
       atom.workspaceView.append(this) # unless @emp_socket_server.server isnt null
       # @emp_sub_host.focus()
       # @emp_sub_host.on 'enter', =>
@@ -88,18 +92,77 @@ class EmpDebuggerPkgView extends View
 
   process_pkg: (event, element) ->
     console.log "start pkg"
-    console.log "do nothing now"
-    # zip = new ZipWriter()
-    # zip.addFile(tmp_file_name, tmp_file)
-    #
-    # zip.saveAs(re_pa, () ->
-    #   # union_package_index-=1
-    #   # if union_package_index is 0
-    #   #   emp.show_info emp.EMP_PACKAGE_PKG_SUCCESS
-    #   console.log "zip written."
-    #   )
+    # console.log "do nothing now"
+    # console.log @package_show_entry
+    # console.log @package_extra_entry
+    project_path = atom.project.getPath()
+    zip_file_name = emp.PACKAGE_NORMAL_CHANNEL+".zip"
+    zip_file_name = path.join(project_path,"tmp",zip_file_name)
+    # console.log "zip_name: #{zip_file_name}"
+    zip = new ZipWriter()
 
+    spec_file = @format_spec_file()
+    checksum_file = @format_sign_file(spec_file)
+    zip.addData emp.PACKAGE_CHECKSUM, "{checksum, \"#{checksum_file}\"}"
+    zip.addData emp.PACKAGE_SPEC, spec_file
+
+    for key, tmp_file of @package_show_entry
+      # console.log tmp_file
+      zip.addFile(tmp_file.show_path, tmp_file.rel_path)
+
+    for key, tmp_file of @package_extra_entry
+      # console.log tmp_file
+      zip.addFile(tmp_file.show_path, tmp_file.rel_path)
+    zip.saveAs(zip_file_name, () ->
+      emp.show_info emp.EMP_PACKAGE_PKG_SUCCESS+"包路径:"+path.basename(project_path)+"/tmp"
+      # console.log "zip written."
+      )
+    # @fa_view.destroy()
     @detach()
+
+  format_spec_file:()->
+    # console.log @cha_obj
+    all_files = new Array()
+    for key, tmp_file of @package_show_entry
+      all_files.push "\"#{tmp_file.show_path}\""
+
+    for key, tmp_file of @package_extra_entry
+      all_files.push "\"#{tmp_file.show_path}\""
+
+    all_files = all_files.join ","
+    re_str = "{spec,[{channel,#{@cha_obj.atom_p}},\n\r{files,[#{all_files}]}]}."
+    # console.log re_str
+    re_str
+
+  format_sign_file: (spec_file) ->
+    file_arr = new Array()
+    for key, tmp_file of @package_show_entry
+      # console.log tmp_file
+      # all_files.push "\"#{tmp_file.show_path}\""
+      file_arr.push @format_content(tmp_file)
+
+    for key, tmp_file of @package_extra_entry
+      # console.log tmp_file
+      file_arr.push @format_content(tmp_file)
+
+    file_arr.push @eft_parser.tuple("SPEC",@eft_parser.binary spec_file)
+    re = @eft_parser.encode file_arr
+    # fs.writeFileSync project_path+'/tmp/t.txt', re
+    # console.log file_arr
+    shasum = crypto.createHash 'sha1'
+    shasum.update re
+    shasum.digest 'hex'
+
+
+  format_content:(file_obj) ->
+    try
+      re_con = fs.readFileSync file_obj.rel_path
+      @eft_parser.tuple file_obj.show_path,@eft_parser.binary re_con
+    catch e
+      console.log e
+
+
+
 
   add_else:(e, ele) ->
     console.log "add_else"
@@ -189,13 +252,6 @@ class EmpDebuggerPkgView extends View
           tmp_relative_path = path.join relative_path, tmp_cs_file
           tmp_show_path = path.join "cs", cha_id, tmp_cs_file
           @package_show_entry[tmp_relative_path] = @get_path_entry(tmp_relative_path, emp.OFF_EXTENSION_CS, tmp_show_path)
-
-
-  warn_dialog:(msg) ->
-    # console.log "this a waring dialog"
-    @div class: 'overlay from-top select-list', =>
-      @div class: 'editor editor-colors mini', "I searched for this: #{msg}"
-      @div class: 'error-message', 'Nothing has been found!'
 
   get_path_entry:(relative_path, file_type='default', show_path=relative_path) ->
     {show_path:show_path, rel_path:path.join(project_path,relative_path), type:file_type}

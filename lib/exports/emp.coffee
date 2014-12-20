@@ -91,6 +91,9 @@ module.exports =
   PACKAGE_EXTENSION_BEAM_TYPE:"beam"
   PACKAGE_CHANNEL_EBIN_DIR: "ebin"
   PACKAGE_CHANNEL_CS_DIR: "public/cs/channels"
+  PACKAGE_NORMAL_CHANNEL:"normal_channel"
+  PACKAGE_SPEC:"SPEC"
+  PACKAGE_CHECKSUM:"CHECKSUM"
 
   # channel 管理页面分页名称
   GEN_VIEW:'gen_view'
@@ -187,6 +190,12 @@ module.exports.show_error = (err_msg) ->
   atom.confirm
     message:"Error"
     detailedMessage:err_msg
+    buttons:["Ok"]
+
+module.exports.show_warnning = (warn_msg) ->
+  atom.confirm
+    message:"Warnning"
+    detailedMessage:warn_msg
     buttons:["Ok"]
 
 module.exports.show_info = (info_msg) ->

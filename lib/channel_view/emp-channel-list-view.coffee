@@ -125,6 +125,7 @@ class ChannelListView extends ScrollView
     parse_conf(this)
 
   refresh_view: (cha_json)->
+    # console.log cha_json
     all_objs = JSON.parse(cha_json)
     # console.log "do refresh "
     new_all_obj = @parse_params(all_objs)

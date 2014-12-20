@@ -91,6 +91,9 @@ module.exports =
   PACKAGE_EXTENSION_BEAM_TYPE:"beam"
   PACKAGE_CHANNEL_EBIN_DIR: "ebin"
   PACKAGE_CHANNEL_CS_DIR: "public/cs/channels"
+  PACKAGE_NORMAL_CHANNEL:"normal_channel"
+  PACKAGE_SPEC:"SPEC"
+  PACKAGE_CHECKSUM:"CHECKSUM"
 
   # channel 管理页面分页名称
   GEN_VIEW:'gen_view'

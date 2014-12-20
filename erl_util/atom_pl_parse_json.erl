@@ -668,8 +668,9 @@ parse() ->
       % io:format("~p~n",[ConfFile]),
       check_conf_file(ConfFile),
       ConfC = consult_file(ConfFile),
+      NewConf = process_conf(ConfC),
       %%io:format("P---~p~n, ConfFile--~p~n", [Params, ConfFile]),
-      {_, Result, _} = decode(ConfC),
+      {_, Result, _} = decode(NewConf),
       %%io:format("Result ~p~n", [Result]),
       Result2 = encode(Result),
       io:format("~s", [Result2])
@@ -684,8 +685,9 @@ parse(ConfFile, Re_file) ->
     try
       check_conf_file(ConfFile),
       ConfC = consult_file(ConfFile),
+      NewConf = process_conf(ConfC),
       %%io:format("P---~p~n, ConfFile--~p~n", [Params, ConfFile]),
-      {_, Result, _} = decode(ConfC),
+      {_, Result, _} = decode(NewConf),
       %%io:format("Result ~p~n", [Result]),
       Result2 = encode(Result),
       file:write_file(Re_file, Result2)
@@ -715,11 +717,28 @@ test(ConfFile) ->
     check_conf_file(ConfFile),
     ConfC = consult_file(ConfFile),
     % io:format("ConfFile--~p~n", [ConfFile]),
-    {_, Result, _} = decode(ConfC),
+    NewConf = process_conf(ConfC),
+    {_, Result, _} = decode(NewConf),
     % io:format("Result ~p~n", [Result]),
     Result2 = encode(Result),
     write_tmp_f(ConfFile, Result2),
     Result2.
+
+process_conf(Conf) ->
+  % io:format("~p~n",[Conf]),
+  Channel = proplists:get_value(?CHA, Conf),
+  New_cha = process_channel(Channel,[]),
+  Re_conf = proplists:delete(?CHA, Conf),
+  [{?CHA, New_cha}|Re_conf].
+process_channel([Ele|Next], Acc) ->
+  S_ele = lists:flatten(io_lib:format("~p",[Ele])),
+  process_channel(Next, [[{"atom_p", S_ele}|Ele]|Acc]);
+process_channel([], Acc) ->
+  % io:format("~p~n",[Acc]),
+  Acc.
+
+
+
 
 write_tmp_f(Path, C) ->
     Dir = filename:dirname(Path),

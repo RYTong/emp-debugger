@@ -3,10 +3,13 @@ ZipWriter = require("moxie-zip").ZipWriter
 # os = require 'os'
 path = require 'path'
 fs = require 'fs'
+crypto = require 'crypto'
 # c_process = require 'child_process'
 emp = require '../exports/emp'
+Bert = require('../util/bert').BertClass
+Cert = require '../util/cert'
 
-PackageBarView = require './emp-debugger-package-bar-view'
+PackageBarView = require './emp-debugger-pkg-plugin-view'
 PackageAdpView = require './emp-debugger-pkg-adp-view'
 tmp_offline_path = null
 
@@ -20,9 +23,9 @@ class EmpDebugAdpPackageView extends View
       @div outlet:"emp_cha_btns", class: "emp-setting-con panel-body padded",  =>
         @button class: 'btn btn-else btn-info inline-block-tight', click: 'do_package', "Package Adapters Resource"
         @button class: 'btn btn-else btn-info inline-block-tight', click: 'do_union_package', "Package An Union Package"
-        @button class: 'btn btn-else btn-info inline-block-tight', click: 'show_detail', "test"
-        @button class: 'btn btn-else btn-info inline-block-tight', click: 'show_detail2', "test2"
-
+        # @button class: 'btn btn-else btn-info inline-block-tight', click: 'show_detail', "test"
+        # @button class: 'btn btn-else btn-info inline-block-tight', click: 'show_detail2', "test2"
+        # @button class: 'btn btn-else btn-info inline-block-tight', click: 'show_detail3', "test3"
   initialize: ->
     unless tmp_offline_path = atom.config.get(emp.EMP_OFFLINE_RELATE_DIR)
       tmp_offline_path = emp.EMP_OFFLINE_RELATE_PATH_V
@@ -50,6 +53,20 @@ class EmpDebugAdpPackageView extends View
   show_detail2: ->
     console.log "show_detail2"
     @emp_debugger_adp_pkg.show_view("test")
+
+  show_detail3: ->
+    berts = new Cert()
+    # console.log berts.encode(berts.string("hello"))
+    project_path = atom.project.getPath()
+    tmp_file = path.join project_path,"ebin","test.beam"
+    tmp_con = fs.readFileSync tmp_file, 'utf-8'
+    # re = berts.encode({"test": berts.binary tmp_con})
+    re = berts.encode({"file":[berts.tuple("a",berts.binary "1"), berts.tuple("b",berts.binary "2")]})
+    shasum = crypto.createHash 'sha1'
+    shasum.update re
+    console.log shasum.digest 'hex'
+
+
 
 union_package_index = 0
 union_package_pkgs = []

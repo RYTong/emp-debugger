@@ -1,7 +1,7 @@
 {$, $$, View} = require 'atom'
 os = require 'os'
 ChaItemView = require './item_view/channel-item-view'
-PackageBarView = require '../package/emp-debugger-package-bar-view'
+PackageBarView = require '../package/emp-debugger-pkg-plugin-view'
 PackageAdpView = require '../package/emp-debugger-pkg-adp-view'
 emp =  require '../exports/emp'
 conf_parser = require '../emp_app/conf_parser'

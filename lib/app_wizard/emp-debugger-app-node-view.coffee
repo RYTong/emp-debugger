@@ -23,6 +23,7 @@ class EmpAppNodeView extends View
         @div class: 'controls', =>
           @div class: 'setting-editor-container', =>
             @subview "emp_node_name", new TextEditorView(mini: true, attributes: {id: 'emp_node', type: 'string'},  placeholderText: 'Ewp Node') #fr
+        @label class: "emp-setting-label", "Ewp Cookie"
         @div class: 'controls', =>
           @div class: 'setting-editor-container', =>
             @subview "emp_node_cookie", new TextEditorView(mini: true, attributes: {id: 'emp_cookie', type: 'string'},  placeholderText: 'Ewp Node Cookie') #fr

@@ -274,6 +274,7 @@ class emp_app
     if app_state
       if pid
         pid.stdin.write(erl_str+'\r\n')
+        pid.stdin.write('\r\n')
       else
         emp.show_error("no Pid ~")
     else

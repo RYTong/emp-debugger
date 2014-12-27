@@ -135,10 +135,3 @@
 ![Channel Management](https://raw.githubusercontent.com/wiki/RYTong/emp-debugger/images/feature_10.png)
 
                                   图 1-15 Collection 添加
-
-## Else
-### 将要添加的一些功能
-* 下行报文的自动匹配保存
-* win32 环境下，实现通过节点与Emp App 操作
-* 帮助文档及操作手册添加规划
-To Be Continue ...

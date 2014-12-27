@@ -6,7 +6,6 @@ fs = require 'fs'
 crypto = require 'crypto'
 # c_process = require 'child_process'
 emp = require '../exports/emp'
-Bert = require('../util/bert').BertClass
 Cert = require '../util/cert'
 
 PackageBarView = require './emp-debugger-pkg-plugin-view'

@@ -8,7 +8,6 @@ crypto = require 'crypto'
 emp = require '../exports/emp'
 EmpPkgExtraEle = require './emp-debugger-pkg-extra-element-view'
 ZipWriter = require("moxie-zip").ZipWriter
-Bert = require '../util/bert'
 Cert = require '../util/cert'
 
 project_path = ''

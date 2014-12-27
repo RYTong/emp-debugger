@@ -1,7 +1,7 @@
 {
   "name": "emp-debugger",
   "main": "./lib/emp-debugger",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "实现Emp Editor(Ace)相关功能, 一切从 ctrl-alt-s 开始~",
   "maintainers": [
     {
@@ -32,7 +32,6 @@
     "minimatch": "~0.3.0",
     "underscore-plus": "1.x",
     "fuzzaldrin": "^2.1",
-    "moxie-zip":"*"
-
+    "moxie-zip": "*"
   }
 }

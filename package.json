@@ -2,7 +2,7 @@
   "name": "emp-debugger",
   "main": "./lib/emp-debugger",
   "version": "0.6.0",
-  "description": "实现Emp Editor(Ace)相关功能, 一切从 ctrl-alt-s 开始~",
+  "description": "Emp Debugger 工具集, 一切从 ctrl-alt-s 开始~",
   "maintainers": [
     {
       "name": "Ju Chao",

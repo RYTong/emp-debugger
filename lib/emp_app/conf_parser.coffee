@@ -58,6 +58,9 @@ compile_paser = (callback)->
         erlc_str = 'erlc -o '+ebin_dir+' '+erl_dir+' -noshell -s erlang halt'
     #
         c_process.exec erlc_str, (error, stdout, stderr) ->
+          if stdout
+            console.log "compile:#{stdout}"
+
           if (error instanceof Error)
             console.warn error.message
             console.log stderr

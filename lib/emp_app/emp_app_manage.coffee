@@ -74,7 +74,7 @@ class emp_app
       if (error instanceof Error)
         # throw error
         console.warn error.message
-        show_error("Compile erl error ~")
+        show_error("Make error ~")
       # console.log "compile:#{error}"
       # console.log "compile:#{stdout}"
       format_stdout(stdout)
@@ -114,7 +114,7 @@ class emp_app
         if (error instanceof Error)
           # throw error
           console.warn error.message
-          emp.show_error("Compile erl error ~")
+          emp.show_error("Configure app error ~")
         format_stdout(stdout)
         format_stderr(stderr)
         emp_app_view.hide_loading()

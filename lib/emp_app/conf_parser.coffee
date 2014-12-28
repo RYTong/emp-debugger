@@ -55,7 +55,7 @@ compile_paser = (callback)->
         erl_dir = path.join(__dirname, rel_erl_dir)
         ebin_dir = path.join(__dirname, rel_ebin_dir)
         atom.project.parse_beam_dir = ebin_dir
-        erlc_str = 'erlc -o '+ebin_dir+' '+erl_dir+' -noshell -s erlang halt'
+        erlc_str = 'erlc -o '+ebin_dir+' '+erl_dir
     #
         c_process.exec erlc_str, (error, stdout, stderr) ->
           if stdout

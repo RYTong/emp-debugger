@@ -95,7 +95,7 @@ module.exports.remove_cha = (cha_str, cid_list) ->
       cid_list = "[\""+cid_list.join("\",\"")+"\"]"
       erl_str = "#{emp.parser_beam_file_mod}:remove_channel(\"#{channel_conf}\", #{cid_list})."
       # console.log erl_str
-      tmp_pid.stdin.write(erl_str+'\r\n')
+      tmp_pid.stdin.write(erl_str+'\n')
   else if atom.project.emp_node_state
     tmp_pid = atom.project.emp_node_pid
     if tmp_pid
@@ -103,7 +103,7 @@ module.exports.remove_cha = (cha_str, cid_list) ->
       tmp_node_name = atom.project.emp_node_name
       erl_str = "#{emp.parser_beam_file_mod}:node_fun_call(\'#{tmp_node_name}\', remove_channel, [\"#{channel_conf}\", #{cid_list}])."
       # console.log erl_str
-      tmp_pid.stdin.write(erl_str+'\r\n')
+      tmp_pid.stdin.write(erl_str+'\n')
   else
     parse_beam_dir = atom.project.parse_beam_dir
     t_erl = 'erl -pa '+parse_beam_dir+' -channel_conf '+channel_conf
@@ -115,9 +115,6 @@ module.exports.remove_cha = (cha_str, cid_list) ->
       if stderr
         console.error "compile:#{stderr}"
 
-
-
-
 module.exports.remove_col = (col_str, col_list) ->
   # console.log "~~---------------remove col ~~:#{col_str}"
   channel_conf = atom.project.channel_conf
@@ -127,7 +124,7 @@ module.exports.remove_col = (col_str, col_list) ->
       col_list = "["+col_list.join(",")+"]"
       erl_str = "#{emp.parser_beam_file_mod}:remove_col(\"#{channel_conf}\", #{col_list})."
       # console.log erl_str
-      tmp_pid.stdin.write(erl_str+'\r\n')
+      tmp_pid.stdin.write(erl_str+'\n')
 
   else if atom.project.emp_node_state
     tmp_pid = atom.project.emp_node_pid
@@ -136,7 +133,7 @@ module.exports.remove_col = (col_str, col_list) ->
       col_list = "["+col_list.join(",")+"]"
       erl_str = "#{emp.parser_beam_file_mod}:node_fun_call(\'#{tmp_node_name}\', remove_col, [\"#{channel_conf}\", #{col_list}])."
       # console.log erl_str
-      tmp_pid.stdin.write(erl_str+'\r\n')
+      tmp_pid.stdin.write(erl_str+'\n')
   else
     parse_beam_dir = atom.project.parse_beam_dir
     t_erl = 'erl -pa '+parse_beam_dir+' -channel_conf '+channel_conf

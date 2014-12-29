@@ -101,14 +101,14 @@ class emp_collection
                   \"#{@id}\", \"#{@name}\", \"#{@app}\", #{@type} , \"#{@url}\",
               \"#{@uid}\", #{@state}, #{item_str}]). "
       # console.log erl_str
-      tmp_pid.stdin.write(erl_str+'\r\n')
+      tmp_pid.stdin.write(erl_str+'\n')
     else
       tmp_pid = atom.project.emp_app_pid
       erl_str = "#{emp.parser_beam_file_mod}:add_col(\"#{tmp_conf}\",
                   \"#{@id}\", \"#{@name}\", \"#{@app}\", #{@type} , \"#{@url}\",
               \"#{@uid}\", #{@state}, #{item_str}). "
       # if erl_str = atom.config.get(emp.EMP_IMPORT_MENU_KEY)
-      tmp_pid.stdin.write(erl_str+'\r\n')
+      tmp_pid.stdin.write(erl_str+'\n')
 
   edit_collection: ()->
     if atom.project.emp_app_state
@@ -151,11 +151,11 @@ class emp_collection
               \"#{@uid}\", #{@state}, #{item_str}]). "
 
       # console.log erl_str
-      tmp_pid.stdin.write(erl_str+'\r\n')
+      tmp_pid.stdin.write(erl_str+'\n')
     else
       erl_str = "#{emp.parser_beam_file_mod}:edit_col(\"#{tmp_conf}\",
                   \"#{@id}\", \"#{@name}\", \"#{@app}\", #{@type} , \"#{@url}\",
               \"#{@uid}\", #{@state}, #{item_str}). "
       # console.log erl_str
       tmp_pid = atom.project.emp_app_pid
-      tmp_pid.stdin.write(erl_str+'\r\n')
+      tmp_pid.stdin.write(erl_str+'\n')

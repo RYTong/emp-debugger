@@ -277,7 +277,7 @@ parse_conf = (callback)->
           # console.log('filename provided: ' + filename)
           tmp_fs_watcher.close()
     tmp_pid = atom.project.emp_app_pid
-    tmp_pid.stdin.write(erl_str+'\r\n')
+    tmp_pid.stdin.write(erl_str+'\n')
   else if atom.project.emp_node_state
     result_json_dir = path.join project_path,tmp_json_dir
     emp.mkdir_sync(result_json_dir)
@@ -298,7 +298,7 @@ parse_conf = (callback)->
           tmp_fs_watcher.close()
       #   console.log('filename not ·')
     tmp_pid = atom.project.emp_node_pid
-    tmp_pid.stdin.write(erl_str+'\r\n')
+    tmp_pid.stdin.write(erl_str+'\n')
   else
     t_erl = 'erl -pa '+parser_beam_dir+' -channel_conf '+channel_conf+' -sname testjs -run atom_pl_parse_json parse -noshell -s erlang halt'
     c_process.exec t_erl, (error, stdout, stderr) ->

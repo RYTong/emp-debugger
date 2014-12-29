@@ -1,3 +1,4 @@
+{BufferedProcess,Emitter} = require 'atom'
 path = require 'path'
 fs = require 'fs'
 c_process = require 'child_process'
@@ -142,14 +143,34 @@ class emp_app
         pid = null
         tmp_pid.kill()
 
-      pid = c_process.spawn script_exc, [],  {cwd:cwd}
+      # stdout = (data) ->
+      #   console.log data
+      #   # console.info data.binarySlice()
+      # stderr = (data) ->
+      #   console.error data.binarySlice()
+      # exit = (code) ->
+      #   console.log "exit"
+      #   app_state = false
+      #   # pid.stdin.write('q().\r\n')
+      #   # set_app_stat(false)
+      #   pid.stdin.end()
+      #   emp_app_view.refresh_app_st(app_state)
+      #   console.warn "close over:#{code}"
+
+      # pid = new BufferedProcess({command:script_exc, args:[], options:{cwd:cwd}, stdout:stdout, stderr:stderr, exit:exit})
+      pid = c_process.spawn script_exc, [],  {cwd:cwd, env: process.env}
       app_state = true
       set_app_stat(true)
       pid.stdout.on 'data', (data) ->
         console.info data.binarySlice()
+      # pid.stdout.pipe process.stdout
 
       pid.stderr.on 'data', (data) ->
         console.error data.binarySlice()
+
+      pid.on 'SIGINT', (data) ->
+        console.log "-------------------------"
+        console.log data
 
       pid.on 'close', (code) ->
         app_state = false
@@ -160,6 +181,38 @@ class emp_app
         console.warn "close over:#{code}"
     else
       emp.show_error("Run app error ~")
+
+  # test: ({command, args, options, stdout, stderr, exit}={}) ->
+  #   @emitter = new Emitter
+  #   options ?= {}
+  #   # Related to joyent/node#2318
+  #   if process.platform is 'win32'
+  #     # Quote all arguments and escapes inner quotes
+  #     if args?
+  #       cmdArgs = args.filter (arg) -> arg?
+  #       cmdArgs = cmdArgs.map (arg) =>
+  #         if @isExplorerCommand(command) and /^\/[a-zA-Z]+,.*$/.test(arg)
+  #           # Don't wrap /root,C:\folder style arguments to explorer calls in
+  #           # quotes since they will not be interpreted correctly if they are
+  #           arg
+  #         else
+  #           "\"#{arg.toString().replace(/"/g, '\\"')}\""
+  #     else
+  #       cmdArgs = []
+  #     if /\s/.test(command)
+  #       cmdArgs.unshift("\"#{command}\"")
+  #     else
+  #       cmdArgs.unshift(command)
+  #     cmdArgs = ['/s', '/c', "\"#{cmdArgs.join(' ')}\""]
+  #     cmdOptions = _.clone(options)
+  #     cmdOptions.windowsVerbatimArguments = true
+  #     @process = ChildProcess.spawn(@getCmdPath(), cmdArgs, cmdOptions)
+  #   else
+  #     console.log command
+  #     console.log args
+  #     console.log options
+  #     @process = c_process.spawn(command, args, options)
+  #   @killed = false
 
   stop_app: ->
     # console.log "stop"
@@ -177,7 +230,9 @@ class emp_app
     # console.log "erl:#{erl_str}"
     if app_state
       if pid
-        pid.stdin.write(erl_str+'\r\n')
+        # pid.stdin.resume()
+        pid.stdin.write(erl_str+'\n')
+        # pid.stdin.end()
       else
         emp.show_error("no Pid ~")
     else
@@ -247,7 +302,7 @@ class emp_app
         if erl_str.match(/^[\w\d]*:[\w\d]*/ig)
           erl_str = "#{emp.parser_beam_file_mod}:run_in_remote(\'#{node_name}\', \"#{erl_str}\")."
         console.log "erl:#{erl_str}"
-        npid.stdin.write(erl_str+'\r\n')
+        npid.stdin.write(erl_str+'\n')
       else
         emp.show_error("no Pid ~")
     else
@@ -273,8 +328,11 @@ class emp_app
     # console.log erl_str
     if app_state
       if pid
-        pid.stdin.write(erl_str+'\r\n')
-        pid.stdin.write('\r\n')
+        # pid.stdin.resume()
+        pid.stdin.write(erl_str+'\n')
+
+        # pid.stdin.end()
+        # pid.stdin.write('\r\n')
       else
         emp.show_error("no Pid ~")
     else
@@ -284,7 +342,7 @@ class emp_app
     # ewp_app_manager:all_apps().
     if connect_state
       if npid
-        npid.stdin.write(erl_str+'\r\n')
+        npid.stdin.write(erl_str+'\n')
       else
         emp.show_error("no Pid ~")
     else
@@ -337,7 +395,7 @@ class emp_app
   do_send: (str)->
     console.log "do_else"
     # pid.stdin.write("io:format(\"test ~n\",[]).\r\n")
-    pid.stdin.write('io:format("test ~n",[]). \r\n')
+    pid.stdin.write('io:format("test ~n",[]). \n')
     # pid.stdin.write("1.")
     # pid.stdin.write("q().")
 

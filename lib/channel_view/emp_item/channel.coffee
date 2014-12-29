@@ -147,7 +147,7 @@ class emp_channel
                   \"#{@id}\", \"#{@name}\", \"#{@app}\", \"#{@entry}\", #{views_str}, #{params_str}, #{@state}])."
       # console.log erl_str
       tmp_pid = atom.project.emp_node_pid
-    tmp_pid.stdin.write(erl_str+'\r\n')
+    tmp_pid.stdin.write(erl_str+'\n')
 
   # ---------------------------------------------------------------------------
   # 完成创建 channel
@@ -175,17 +175,17 @@ class emp_channel
     if atom.project.emp_app_state
       tmp_pid = atom.project.emp_app_pid
       if erl_str = atom.config.get(emp.EMP_IMPORT_MENU_KEY)
-        tmp_pid.stdin.write(erl_str+'\r\n')
+        tmp_pid.stdin.write(erl_str+'\n')
 
       if erl_cstr = atom.config.get(emp.EMP_CMAKE_KEY)
-        tmp_pid.stdin.write(erl_cstr+'\r\n')
+        tmp_pid.stdin.write(erl_cstr+'\n')
 
     else if atom.project.emp_node_state
       tmp_pid = atom.project.emp_node_pid
       tmp_node_name = atom.project.emp_node_name
       erl_str = "#{emp.parser_beam_file_mod}:node_fun_call(\'#{tmp_node_name}\', node_refresh_cha, [])."
       # console.log erl_str
-      tmp_pid.stdin.write(erl_str+'\r\n')
+      tmp_pid.stdin.write(erl_str+'\n')
 
 
   # 在channel.conf 中添加channel
@@ -319,7 +319,7 @@ class emp_channel
 
       tmp_rcon = emp.ADAPTER_REQUEST_PARAMS_FORMAT.replace(/\$key/ig, r_key)
       tmp_rcon = tmp_rcon.replace(/\$value/ig, p_name)
-      rkey_con = rkey_con + ',\r\n' + tmp_rcon
+      rkey_con = rkey_con + ',\n' + tmp_rcon
     [param_con, rkey_con]
 
   # @doc 创建变量名称，把首字母修改为大写（符合Erlang 变量命名规范）

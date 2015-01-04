@@ -33,5 +33,8 @@
     "underscore-plus": "1.x",
     "fuzzaldrin": "^2.1",
     "moxie-zip": "*"
+  },
+  "packageDependencies": {
+    "language-emp-view": "*"
   }
 }

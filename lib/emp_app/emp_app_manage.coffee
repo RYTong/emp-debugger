@@ -15,7 +15,7 @@ connect_state = false
 emp_app_start_script='iewp'
 emp_app_make_cmd='make'
 emp_app_config_cmd='configure'
-emp_app_config_arg= ['--with-debug', '--with-mysql']
+emp_app_config_arg= ['--with-debug']
 emp_import_menu = '[{App_name, _}|_]=ewp_app_manager:all_apps(),ewp_channel_util:import_menu(App_name).'
 emp_c_make = '[{App_name, _}|_]=ewp_app_manager:all_apps(), ewp:c_app(App_name).'
 emp_get_app_name = '[{A, _}|_]=ewp_app_manager:all_apps(), A.'

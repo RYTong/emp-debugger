@@ -7,6 +7,7 @@ EmpAppWizardView = require '../app_wizard/emp-debugger-app-wizard-view'
 EmpAdpPackageView = require '../package/emp-debugger-adapter-package-view'
 os = require 'os'
 emp = require '../exports/emp'
+
 # path = require 'path'
 # path_fliter = require '../util/path-loader'
 # relate_view = require './emp-relate-view'
@@ -46,7 +47,6 @@ class EmpAppManaView extends View
               @div class: 'setting-editor-container', =>
                 @subview "emp_app_erl", new TextEditorView(mini: true, attributes: {id: 'emp_erl', type: 'string'},  placeholderText: 'Erlang Source') #fr
             @button outlet:"btn_run", class: 'btn btn-else btn-info inline-block-tight', click: 'run_erl', "Run Erl Term"
-
 
           @div outlet:"emp_app_btns", class: "emp-setting-btn-else ",  =>
             @button outlet:"btn_run_app", class: 'btn btn-else btn-success inline-block-tight', click: 'run_app', "Start App"

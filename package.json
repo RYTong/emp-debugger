@@ -23,6 +23,7 @@
     "emp-debugger:show-channel",
     "emp-debugger:create-app"
   ],
+
   "repository": "https://github.com/RYTong/emp-debugger",
   "license": "MIT",
   "engines": {
@@ -32,9 +33,12 @@
     "minimatch": "~0.3.0",
     "underscore-plus": "1.x",
     "fuzzaldrin": "^2.1",
-    "moxie-zip": "*"
+    "moxie-zip": "*",
+    "language-lua": "git+https://github.com/FireZenk/language-lua.git",
+    "language-erlang": "git+https://github.com/jonathanmarvens/atom-language-erlang.git"
   },
   "packageDependencies": {
-    "language-emp-view": "*"
+    "language-lua": "*",
+    "language-erlang": "*"
   }
 }

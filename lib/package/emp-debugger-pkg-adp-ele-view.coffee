@@ -58,5 +58,5 @@ get_pkg_name = (ext, cha_id, adp_type) ->
   if name_type.length > 1
     zip_file_name = [cha_id ,name_type[0],name_type[1].split("*").join("-")].join(".")+ext
   else
-    zip_file_name = cha_id+name_type[0]+ext
+    zip_file_name = cha_id+"."+name_type[0]+ext
   zip_file_name

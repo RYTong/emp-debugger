@@ -152,7 +152,7 @@ module.exports.edit_col = (col_str) ->
   channel_conf = atom.project.channel_conf
   parse_beam_dir = atom.project.parse_beam_dir
   t_erl = 'erl -pa '+parse_beam_dir+' -channel_conf '+channel_conf
-  t_erl = t_erl+col_str+' -sname ' +emp.mk_node_name() ' -run atom_pl_parse_json edit_col -noshell -s erlang halt'
+  t_erl = t_erl+col_str+' -sname ' +emp.mk_node_name()+' -run atom_pl_parse_json edit_col -noshell -s erlang halt'
   # console.log t_erl
   c_process.exec t_erl, (error, stdout, stderr) ->
     # console.log "compile:#{stdout}"

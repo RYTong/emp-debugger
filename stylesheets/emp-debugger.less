@@ -20,15 +20,56 @@
   .btn.btn-right{
     right:0px;
   }
-
   .file_panel {
-    max-height: 500px;
+    max-height:500px;
     overflow: auto;
+  }
+
+  .table_panel {
+    max-height:500px;
+    width:100%;
+    padding: @component-padding/2;
+    // top:0;
+    // bottom:0;
+    // left:0;
+    // right:9em;
+    border: 1px solid #ccc;
+    background-color: #e7e7e7;
+    overflow: auto;
+
+    // .table_panel {
+    //   margin-left:5px;
+    //   margin-right:5px;
+    //   border:"1";
+    //   frame:"hsides";
+    //   rules:groups;
+    //   left:0;
+    //   right:0;
+    //
+    // }
+  }
+
+  .emp_item_list_div {
+    // top:0;
+    padding: @component-padding/2;
+    top:0;
+    bottom:0;
+    left:0;
+    right:9em;
+    min-width: 0;
+    position: absolute;
+    // overflow:auto;
+    overflow: auto;
+    -webkit-flex-direction: column;
+    border: 1px solid #ccc;
+    background-color: #e7e7e7;
+    box-shadow: -1px 0px 1px -1px #aeaeae inset;
   }
 
   .extra_panel {
     max-height: 150px;
   }
+
 
   .editor-container {
     margin-bottom: @component-padding;
@@ -58,6 +99,19 @@
 .emp-btn-div {
   margin: 10px 5px 10px 5px;
 }
+.emp-btn-div-ab {
+  // position: absolute;
+  // right:10px;
+  // top:5px;
+  min-width:40%;
+  float:right;
+
+  .emp-btn-sel {
+    margin-right: 10px;
+  }
+  // margin: 10px 5px 10px 5px;
+}
+
 
 .emp-btn-ok {
   // right:10px;

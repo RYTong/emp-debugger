@@ -19,11 +19,11 @@ class SettingsPanel extends View
             @ol outlet:"gen_col_list", class: 'list-tree', =>
           @div class:'emp_item_btn_div', =>
             @div class: 'item_cbtn_div', =>
-              @button class: 'item_btn btn btn-info inline-block-tight', click:'add_col', ' Add... '
+              @button class: 'item_btn btn btn-info inline-block-tight', click:'add_col', ' 添加 '
             @div class: 'item_cbtn_div', =>
-              @button class: 'item_btn btn btn-info inline-block-tight', click:'edit_col','  Edit  '
+              @button class: 'item_btn btn btn-info inline-block-tight', click:'edit_col',' 编辑  '
             @div class: 'item_cbtn_div', =>
-              @button class: 'item_btn btn btn-info inline-block-tight', click:'del_col',' Delete '
+              @button class: 'item_btn btn btn-info inline-block-tight', click:'del_col',' 删除 '
 
 
 
@@ -34,6 +34,7 @@ class SettingsPanel extends View
 
   refresh_col_list:(new_all_obj) ->
     # console.log new_all_obj
+    @gen_col_list.empty()
     root_col = new_all_obj.root
     child_col = new_all_obj.child.obj_list
 

@@ -84,7 +84,7 @@ module.exports =
   ADAPTER_PACKAGE_HEAD: 'package'
   ADAPTER_UNION_PACKAGE_CHEAD:"batch-normal__"
   ADAPTER_UNION_PACKAGE_NAME: "batch-normal-package.zip"
-  DEFAULT_ZIP_FULE_NAME:"tmp.zip"
+  DEFAULT_ZIP_FULE_NAME:"default.zip"
 
   # channel 插件包相关定义
   PACKAGE_EXTENSION_BEAM:".beam"

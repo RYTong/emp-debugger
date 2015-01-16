@@ -14,6 +14,8 @@ tmp_offline_path = null
 project_path = null
 only_flag=true
 
+# PackageAllView = require '../package/emp-debugger-pkg-batch-view'
+
 module.exports =
 class EmpDebugAdpPackageView extends View
 
@@ -24,7 +26,7 @@ class EmpDebugAdpPackageView extends View
       @div outlet:"emp_cha_btns", class: "emp-setting-con panel-body padded",  =>
         @button class: 'btn btn-else btn-info inline-block-tight', click: 'do_package', "Package Adapters Resource"
         @button class: 'btn btn-else btn-info inline-block-tight', click: 'do_union_package', "Package An Union Package"
-        # @button class: 'btn btn-else btn-info inline-block-tight', click: 'show_detail', "test"
+        # @button class: 'btn btn-else btn-info inline-block-tight', click: 'dl_al_adapter', "test"
         # @button class: 'btn btn-else btn-info inline-block-tight', click: 'show_detail2', "test2"
         # @button class: 'btn btn-else btn-info inline-block-tight', click: 'show_detail3', "test3"
   initialize: ->
@@ -33,6 +35,7 @@ class EmpDebugAdpPackageView extends View
 
     @emp_debugger_bar = new PackageBarView()
     @emp_debugger_adp_pkg = new PackageAdpView()
+    # @emp_package_all_view = new PackageAllView()
     project_path = atom.project.getPath()
     this
 
@@ -124,7 +127,7 @@ gather_common_files = (adapter_dir)->
     union_package_index = re_dir.length
     delete re_dir.length
 
-    console.log re_dir
+    # console.log re_dir
     for key, value of re_dir
       if value.length isnt 0
         create_adapter_zip(key, value)

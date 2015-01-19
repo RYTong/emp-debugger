@@ -11,6 +11,10 @@ Cert = require '../util/cert'
 PackageBarView = require './emp-debugger-pkg-plugin-view'
 PackageAdpView = require './emp-debugger-pkg-adp-view'
 tmp_offline_path = null
+project_path = null
+only_flag=true
+
+# PackageAllView = require '../package/emp-debugger-pkg-batch-view'
 
 module.exports =
 class EmpDebugAdpPackageView extends View
@@ -22,7 +26,7 @@ class EmpDebugAdpPackageView extends View
       @div outlet:"emp_cha_btns", class: "emp-setting-con panel-body padded",  =>
         @button class: 'btn btn-else btn-info inline-block-tight', click: 'do_package', "Package Adapters Resource"
         @button class: 'btn btn-else btn-info inline-block-tight', click: 'do_union_package', "Package An Union Package"
-        # @button class: 'btn btn-else btn-info inline-block-tight', click: 'show_detail', "test"
+        # @button class: 'btn btn-else btn-info inline-block-tight', click: 'dl_al_adapter', "test"
         # @button class: 'btn btn-else btn-info inline-block-tight', click: 'show_detail2', "test2"
         # @button class: 'btn btn-else btn-info inline-block-tight', click: 'show_detail3', "test3"
   initialize: ->
@@ -31,6 +35,8 @@ class EmpDebugAdpPackageView extends View
 
     @emp_debugger_bar = new PackageBarView()
     @emp_debugger_adp_pkg = new PackageAdpView()
+    # @emp_package_all_view = new PackageAllView()
+    project_path = atom.project.getPath()
     this
 
   # 打普通资源包
@@ -40,6 +46,7 @@ class EmpDebugAdpPackageView extends View
     gather_common_files(offline_path)
 
   #  打普通资源整合包，即把普通资源报再压缩为一个压缩包
+
   do_union_package: ->
     project_path = atom.project.getPath()
     offline_path = path.join project_path, tmp_offline_path
@@ -69,24 +76,47 @@ class EmpDebugAdpPackageView extends View
 
 union_package_index = 0
 union_package_pkgs = []
+tmp_path = null
 package_union_package = (adapter_dir)->
   try
     #  全局变量初始化
     # 通过判断 union_package_index，来判断生成 综合包的时机
-    union_package_pkgs = []
-    union_package_index = 0
+    if only_flag
+      only_flag = false
+      union_package_pkgs = []
+      union_package_index = 0
 
-    re_dir = check_dir(adapter_dir)
-    union_package_index = re_dir.length
-    delete re_dir.length
+      re_dir = check_dir(adapter_dir)
+      union_package_index = re_dir.length
+      delete re_dir.length
+      # console.log re_dir
+
+      project_path?= atom.project.getPath()
+      tmp_path?= path.join project_path, "tmp"
+      # console.log tmp_path
+      emp.mkdir_sync tmp_path
+
+      tmp_arr = []
+      for key, value of re_dir
+        if value.length isnt 0
+          tmp_arr.push {k:key, v:value}
 
 
-    for key, value of re_dir
-      if value.length isnt 0
-        create_adapter_zip(key, value, emp.ADAPTER_UNION_PACKAGE_CHEAD, true)
-      else
-        union_package_index -= 1
+      create_adapter_buffer(tmp_arr)
+    else
+      console.log "now is packageing~"
+
+
+    # for key, value of re_dir
+    #   if value.length isnt 0
+    #     create_adapter_buffer(key, value, emp.ADAPTER_UNION_PACKAGE_CHEAD)
+    #   else
+    #     union_package_index -= 1
+
+    # common_zip(union_package_pkgs, emp.ADAPTER_UNION_PACKAGE_NAME)
+
   catch e
+      only_flag = true
       console.error e
       emp.show_error(e)
 
@@ -97,6 +127,7 @@ gather_common_files = (adapter_dir)->
     union_package_index = re_dir.length
     delete re_dir.length
 
+    # console.log re_dir
     for key, value of re_dir
       if value.length isnt 0
         create_adapter_zip(key, value)
@@ -187,7 +218,7 @@ check_file  = (dir_acc, re_acc) ->
 
 
 
-create_adapter_zip = (package_type, file_list, extra_header="", sync_flag=false) ->
+create_adapter_zip = (package_type, file_list) ->
   # console.log "create adapter zip :#{package_type}"
   project_path = atom.project.getPath()
 
@@ -195,7 +226,7 @@ create_adapter_zip = (package_type, file_list, extra_header="", sync_flag=false)
   emp.mkdir_sync tmp_path
   package_type.split("/").join(".")
 
-  f_name = extra_header+([emp.ADAPTER_PACKAGE_HEAD].concat package_type.split("/")).join(".")
+  f_name = ([emp.ADAPTER_PACKAGE_HEAD].concat package_type.split("/")).join(".")
   fe_name = f_name + ".zip"
   re_pa = path.join tmp_path, fe_name
   zip = new ZipWriter()
@@ -204,38 +235,70 @@ create_adapter_zip = (package_type, file_list, extra_header="", sync_flag=false)
     tmp_file_name = path.join f_name, path.basename(path.dirname tmp_file), tmp_file_name
     console.log tmp_file_name
     zip.addFile(tmp_file_name, tmp_file)
-  if sync_flag
-    union_package_pkgs.push(re_pa)
-    zip.saveAs(re_pa, () ->
-      union_package_index-=1
-      #  console.log union_package_index
-      if union_package_index is 0
-        common_zip(union_package_pkgs, emp.ADAPTER_UNION_PACKAGE_NAME)
-      console.log "zip written."
-      )
-  else
-    zip.saveAs(re_pa, () ->
-      union_package_index-=1
-      if union_package_index is 0
-        emp.show_info emp.EMP_PACKAGE_PKG_SUCCESS
-      console.log "zip written."
-      )
+  zip.saveAs(re_pa, () ->
+    union_package_index-=1
+    if union_package_index is 0
+      emp.show_info emp.EMP_PACKAGE_PKG_SUCCESS
+    console.log "zip written."
+    )
   re_pa
 
+create_adapter_buffer = (re_arr) ->
+  # console.log "create adapter zip :#{package_type}"
+  # console.log re_arr
+  if re_arr.length
+    tmp_obj = re_arr.pop()
+    package_type = tmp_obj.k
+    file_list = tmp_obj.v
+
+    package_type.split("/").join(".")
+    f_name = emp.ADAPTER_UNION_PACKAGE_CHEAD+([emp.ADAPTER_PACKAGE_HEAD].concat package_type.split("/")).join(".")
+    fe_name = f_name + ".zip"
+    re_pa = path.join tmp_path, fe_name
+    zip = new ZipWriter()
+    for tmp_file in file_list
+      tmp_file_name = path.basename tmp_file
+      tmp_file_name = path.join f_name, path.basename(path.dirname tmp_file), tmp_file_name
+      # console.log tmp_file_name
+      zip.addFile(tmp_file_name, tmp_file)
+
+    # union_package_pkgs.push(re_pa)
+    zip.toBuffer((tmp_buf) ->
+        console.log re_pa
+        # console.log tmp_buf
+        # console.log union_package_pkgs
+        union_package_pkgs.push({name:re_pa, buf:tmp_buf})
+        create_adapter_buffer(re_arr)
+        # console.log union_package_pkgs
+      )
+  else
+    only_flag = true
+    common_zip(union_package_pkgs, emp.ADAPTER_UNION_PACKAGE_NAME)
+  # console.log "--------"
+  # zip.saveAs(re_pa, () ->
+  #   union_package_index-=1
+  #   #  console.log union_package_index
+  #   if union_package_index is 0
+  #     common_zip(union_package_pkgs, emp.ADAPTER_UNION_PACKAGE_NAME)
+  #   console.log "zip written."
+  #   )
+
+  # re_pa
 
 common_zip = (file_list, zip_name = emp.DEFAULT_ZIP_FULE_NAME) ->
+  # console.log file_list
   project_path = atom.project.getPath()
   tmp_path = path.join project_path, "tmp"
   re_pa = path.join tmp_path, zip_name
 
   zip = new ZipWriter()
-  for tmp_file in file_list
-    tmp_file_name = path.basename tmp_file
+  for tmp_obj in file_list
+    tmp_file_name = path.basename tmp_obj.name
     # tmp_dir_name = path.dirname tmp_file
     # tmp_file_name = path.join path.basename(path.dirname tmp_file), tmp_file_name
-    zip.addFile(tmp_file_name, tmp_file)
-  zip.toBuffer((buf) ->
-    )
+    zip.addData(tmp_file_name, tmp_obj.buf)
+  # zip.toBuffer((buf) ->
+  #   )
 
   zip.saveAs(re_pa, () ->
      console.log "zip written."

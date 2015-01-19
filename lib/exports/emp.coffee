@@ -84,7 +84,7 @@ module.exports =
   ADAPTER_PACKAGE_HEAD: 'package'
   ADAPTER_UNION_PACKAGE_CHEAD:"batch-normal__"
   ADAPTER_UNION_PACKAGE_NAME: "batch-normal-package.zip"
-  DEFAULT_ZIP_FULE_NAME:"tmp.zip"
+  DEFAULT_ZIP_FULE_NAME:"default.zip"
 
   # channel 插件包相关定义
   PACKAGE_EXTENSION_BEAM:".beam"
@@ -158,7 +158,7 @@ module.exports =
   EMP_PACKAGE_PKG_SUCCESS:"普通资源包，打包成功~"
   EMP_PACKAGE_UNION_PKG_DIR_ENOENT:"打包失败：没有离线资源相关文件~"
 
-module.exports.mk_node_name = (node_name) ->
+module.exports.mk_node_name = (node_name="") ->
   default_name = " -sname "
   tmp_re = node_name.split("@")
   def_node_name = "atom_js" + Math.round(Math.random()*100)

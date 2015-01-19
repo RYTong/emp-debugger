@@ -1,6 +1,12 @@
 ![EMP](https://raw.githubusercontent.com/wiki/RYTong/emp-debugger/images/emp.png)
 # Emp Debugger Package Change Log
 
+## Now
+1. 修复bug, 修改多次点击channel wizard时候, channel和col树重复显示
+2. 修改编辑Colection 时候的报错
+3. 重定义部分按键显示内容
+4. 添加 全部打包(资源包)功能
+
 ## Version 0.6.3
 1. 修复bug, 去掉App 初始化时的`--with-mysql` 参数.
 2. 修复bug #31. 为控制面板添加最小宽度.

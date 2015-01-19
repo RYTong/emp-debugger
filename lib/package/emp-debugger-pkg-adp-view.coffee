@@ -102,6 +102,8 @@ check_dir = (adapter_dir, cha_id) ->
           # console.log key,re_dir[key]
           if re_common_arr
             re_dir[key] = re_dir[key].concat re_common_arr
+        if tmp_common_arr
+          re_dir[emp.ADAPTER_PLT_D] = tmp_common_arr
     re_dir
   else
     throw emp.EMP_PACKAGE_UNION_PKG_DIR_ENOENT

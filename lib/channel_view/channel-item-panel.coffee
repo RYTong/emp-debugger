@@ -3,6 +3,7 @@ os = require 'os'
 ChaItemView = require './item_view/channel-item-view'
 PackageBarView = require '../package/emp-debugger-pkg-plugin-view'
 PackageAdpView = require '../package/emp-debugger-pkg-adp-view'
+PackageAllView = require '../package/emp-debugger-pkg-batch-view'
 emp =  require '../exports/emp'
 conf_parser = require '../emp_app/conf_parser'
 
@@ -22,25 +23,30 @@ class ChannelItemPanel extends View
             @ol outlet:"gen_cha_list", class: 'list-tree', =>
           @div class:'emp_item_btn_div', =>
             @div class: 'item_cbtn_div', =>
-              @button class: 'item_btn btn btn-info inline-block-tight', click:'add_cha',' Add... '
+              @button class: 'item_btn btn btn-info inline-block-tight', click:'add_cha',' 添加... '
             @div class: 'item_cbtn_div', =>
-              @button class: 'item_btn btn btn-info inline-block-tight', click:'edi_cha','  Edit  '
+              @button class: 'item_btn btn btn-info inline-block-tight', click:'edi_cha','  编辑  '
             @div class: 'item_cbtn_div', =>
-              @button class: 'item_btn btn btn-info inline-block-tight', click:'del_cha',' Delete '
+              @button class: 'item_btn btn btn-info inline-block-tight', click:'del_cha',' 删除 '
             @div class: 'item_cbtn_div', =>
-              @button class: 'item_btn btn btn-info inline-block-tight', click:'dl_cha',' Plugin '
+              @button class: 'item_btn btn btn-info inline-block-tight', click:'dl_cha',' 插件包 '
             @div class: 'item_cbtn_div', =>
-              @button class: 'item_btn btn btn-info inline-block-tight', click:'dl_adapter',' Package'
+              @button class: 'item_btn btn btn-info inline-block-tight', click:'dl_adapter',' 资源包 '
+            @div class: 'item_cbtn_div', =>
+              @button class: 'item_btn btn btn-info inline-block-tight', click:'dl_al_adapter','批量下载'
+
 
   initialize: (@fa_view) ->
     @on 'click', '.emp_cha_item_tag', (e, element) =>
       @itemClicked(e, element)
     @emp_package_common_view = new PackageBarView()
     @emp_package_adapter_view = new PackageAdpView()
+    @emp_package_all_view = new PackageAllView()
     @select_entry = {}
 
   refresh_cha_list:(@new_all_obj) ->
     # console.log new_all_obj
+    @gen_cha_list.empty()
     cha_obj = @new_all_obj.cha.obj_list
     for n, obj of cha_obj
       tmp_item = new ChaItemView(obj)
@@ -127,6 +133,12 @@ class ChannelItemPanel extends View
       @emp_package_adapter_view.show_view(last_id, tmp_obj)
     else
       emp.show_warnning("请选择对应channel~")
+
+  dl_al_adapter:(e, element) ->
+    # console.log "dl all adapter"
+    cha_obj = @new_all_obj.cha.obj_list
+    # console.log cha_obj
+    @emp_package_all_view.show_view(this, cha_obj)
 
   refresh_add_cha: (cha_obj)->
     tmp_item = new ChaItemView(cha_obj)

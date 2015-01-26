@@ -51,9 +51,11 @@ module.exports =
   CHANNEL_PROXY: 'channel_proxy'
   EMP_CHANNEL_URI : 'emp://wizard'
   EMP_APP_URI : 'emp://app_wizard'
+  EMP_TEMP_URI : 'emp://template_management_wizard'
 
   CHA_WIZARD_VIEW: 'EmpView'
   APP_WIZARD_VIEW: 'EmpAppView'
+  TEMP_WIZARD_VIEW: 'EmpTemplateView'
 
   CHA_CODE_DIR:'src'
   CHA_PUBLIC_DIR:'public'

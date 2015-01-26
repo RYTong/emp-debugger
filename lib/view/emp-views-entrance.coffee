@@ -1,10 +1,30 @@
 
 EmpChannelWizardView = require '../channel_view/emp-channel-wizard-view'
 EmpCreateAppWizardView = require '../app_wizard/emp-app-wizard-view'
+EmpTmpManaWizardView = require '../template/emp-template-management-view'
 
 empChannelWizardView = null
 empAppWizardView = null
+empTmpManagementView = null
 emp = require '../exports/emp'
+
+
+# -------------------use for template management -------------------------
+create_tmp_management = (params) ->
+  empTmpManagementView = new EmpTmpManaWizardView(params)
+
+open_temp_wizard_panel = ->
+  atom.workspaceView.open(emp.EMP_TEMP_URI)
+  # empTmpManagementView.add_new_panel()
+
+temp_deserializer =
+  name: emp.TEMP_WIZARD_VIEW
+  version: 1
+  deserialize: (state) ->
+    console.log "emp template  deserialize"
+    create_tmp_management(state) if state.constructor is Object
+
+atom.deserializers.add(temp_deserializer)
 
 # -------------------use for app -------------------------
 create_app_wizard_view = (params) ->
@@ -22,6 +42,7 @@ app_deserializer =
     create_app_wizard_view(state) if state.constructor is Object
 
 atom.deserializers.add(app_deserializer)
+
 
 # -------------------use for channel -------------------------
 
@@ -54,6 +75,9 @@ module.exports =
         create_cha_wizard_view({uri})
       else if uri is emp.EMP_APP_URI
         create_app_wizard_view({uri})
+      else if uri is emp.EMP_TEMP_URI
+        create_tmp_management({uri})
+
 
     atom.workspaceView.command "emp-debugger:show-channel", ->
       # console.log "open emp view"
@@ -62,5 +86,10 @@ module.exports =
       # console.log "open emp view"
       open_app_wizard_panel()
 
+    atom.workspaceView.command "emp-debugger:temp-management", ->
+      # console.log "open emp view"
+      open_temp_wizard_panel()
+
 module.exports.open_cha_wizard = open_cha_wizard_panel
 module.exports.open_app_wizard = open_app_wizard_panel
+module.exports.open_temp_wizard = open_temp_wizard_panel

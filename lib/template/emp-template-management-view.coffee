@@ -7,7 +7,7 @@ path = require 'path'
 emp = require '../exports/emp'
 
 module.exports =
-class EmpAppWizardView extends ScrollView
+class EmpTmpManagementView extends ScrollView
 
   app_version:'5.3'
   app_name:''
@@ -25,7 +25,7 @@ class EmpAppWizardView extends ScrollView
           @div outlet:"emp_logo", class: 'atom-banner'
         @div class: 'detail-panels', =>
           @div class:'detail-ch-panels', =>
-            @div class: 'block panels-heading icon icon-gear', "Create A Application..."
+            @div class: 'block panels-heading icon icon-gear', "Emp Template Management..."
 
             @div class:'detail-body', =>
               @div class:'detail-con', =>
@@ -94,9 +94,9 @@ class EmpAppWizardView extends ScrollView
 
   # Returns an object that can be retrieved when package is activated
   serialize: ->
-    deserializer: emp.APP_WIZARD_VIEW
+    deserializer: emp.TEMP_WIZARD_VIEW
     version: 1
-    activePanelName: @activePanelName ? emp.APP_WIZARD_VIEW
+    activePanelName: @activePanelName ? emp.TEMP_WIZARD_VIEW
     uri: @uri
 
   # Tear down any state and detach
@@ -104,7 +104,7 @@ class EmpAppWizardView extends ScrollView
     @detach()
 
   toggle: ->
-    # console.log "EmpChannelWizardView was toggled!"
+    console.log "Emp template manage was toggled!"
     if @hasParent()
       @detach()
     # else

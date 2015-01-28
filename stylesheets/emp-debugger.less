@@ -74,8 +74,8 @@
   .editor-container {
     margin-bottom: @component-padding;
 
-    .editor.mini,
-    .editor.mini.is-focused {
+    atom-text-editor[mini],
+    atom-text-editor[mini].is-focused::shadow {
       // color: @text-color;
       color: #333333;
       background-color: #fff;

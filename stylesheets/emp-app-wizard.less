@@ -120,8 +120,8 @@
               color: @text-color;
               font-size: 13px;
               margin:@component-padding/2;
-              .editor.mini,
-              .editor.mini.is-focused {
+              atom-text-editor[mini],
+              atom-text-editor[mini].is-focused::shadow  {
                 // color: @text-color;
                 color: #333333;
                 background-color: #FAFFFF;
@@ -239,8 +239,8 @@
   .editor-container {
     margin-bottom: @component-padding;
 
-    .editor.mini,
-    .editor.mini.is-focused {
+    atom-text-editor[mini],
+    atom-text-editor[mini].is-focused {
       color: @text-color;
       background-color: #fff;
       padding: 6px 12px;

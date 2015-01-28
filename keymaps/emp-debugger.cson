@@ -7,7 +7,7 @@
 
 # For more detailed documentation see
 # https://atom.io/docs/latest/advanced/keymaps
-'.workspace':
+'atom-workspace':
   # 'ctrl-alt-o': 'emp-debugger:toggle'
   # 'ctrl-alt-p': 'emp-debugger:convert'
   # 'ctrl-alt-i': 'emp-debugger:debug-server'

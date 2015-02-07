@@ -28,7 +28,7 @@ module.exports =
     # console.log "active"
     # atom.workspaceView.command "emp-debugger:convert", => @convert()
     # atom.workspaceView.command "emp-debugger:debug server", => @init()
-    atom.workspaceView.command "emp-debugger:live-preview", => @live_preview()
+
     # atom.workspaceView.command "emp-debugger:close-server", => @close()
     # atom.workspaceView.command "emp-debugger:enable_view", => @enable_view()
     # @empDebuggerInitView = new empDebuggerInitView(state.empDebuggerInitViewState)
@@ -40,6 +40,10 @@ module.exports =
     @empEnableLuaView = new EmpEnableLuaView(n_state.empEnableLuaViewState, @emp_socket_server)
     @empDebuggerSettingView = new EmpDebuggerSettingView(n_state.empDebuggerSettingViewState,
                                   @emp_socket_server, @empDebuggerLogView, this)
+
+    atom.commands.add "atom-workspace","emp-debugger:live-preview", => @live_preview()
+    # atom.commands.add "atom-workspace","emp-debugger:setting-view", => @set_conf()
+
     EmpViewManage.activate()
     conf_parser.initial_parser()
 

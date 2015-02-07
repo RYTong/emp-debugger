@@ -1,4 +1,4 @@
-{$, $$, View, TextEditorView} = require 'atom'
+{$, $$, View, TextEditorView, Disposable, CompositeDisposable} = require 'atom'
 # EmpEditView = require './emp-edit-view'
 EmpAppMan = require '../emp_app/emp_app_manage'
 EmpBarView = require './emp-setting-bar'
@@ -102,11 +102,14 @@ class EmpDebuggerSettingView extends View
                   @option value: "#990099", "紫"
                   @option value: "#000033", "黑"
 
+
   initialize: (serializeState, @emp_socket_server, @empDebuggerLogView, @fa_view) ->
     # console.log 'server state view initial'
     bar_view = new EmpBarView(this)
     @emp_setting_panel.before(bar_view)
-    atom.workspaceView.command "emp-debugger:setting-view", => @set_conf()
+    @disposable = new CompositeDisposable
+
+    @disposable.add atom.commands.add "atom-workspace","emp-debugger:setting-view", => @set_conf()
     @server_host = atom.config.get(EMP_DEBUG_HOST_KEY)
     @server_port = atom.config.get(EMP_DEBUG_PORT_KEY)
 
@@ -114,6 +117,7 @@ class EmpDebuggerSettingView extends View
     @emp_socket_server.set_conf_view(this)
     @defailt_host = @emp_socket_server.get_default_host()
     @default_port = @emp_socket_server.get_default_port()
+
 
   show_app: ->
     # console.log "fa show ~~"
@@ -144,12 +148,18 @@ class EmpDebuggerSettingView extends View
 
   # Returns an object that can be retrieved when package is activated
   serialize: ->
+    # attached: @panel?.isVisible()
 
   # Tear down any state and detach
   destroy: ->
     @detach()
 
+  detach: ->
+    @disposables?.dispose()
+
   set_conf: ->
+    # console.log "panel visible:"
+    # console.log @panel?.isVisible()
     if @first_show
       @first_show = false
       if @hasParent()
@@ -161,23 +171,49 @@ class EmpDebuggerSettingView extends View
         @show_state = true
     else
       if @show_state
+        # @panel.hide()
         this.hide()
         @show_state = false
       else
+        # @panel.show()
         this.show()
         @show_state = true
 
 
   attach: ->
-    atom.workspaceView.prependToRight(this)
-    @init_server_conf_pane()
-    @init_server_conf()
+
+
+    # @panel = atom.workspace.addRightPanel(item:this,visible:true)
+    @panel = atom.workspaceView.appendToRight(this)
+        # atom.workspaceView.prependToRight(this)
+
+    @disposable.add new Disposable =>
+      @panel.destroy()
+      @panel = null
+    # @init_server_conf_pane()
+    # @init_server_conf()
 
   init_server_conf_pane: ->
     if @emp_socket_server.get_server_sate()
       @hide_conf_pane()
+
     else
       @hide_state_pane()
+      # @conf_detail.html $$ ->
+      #   @div class: "emp-setting-con panel-body padded", =>
+      #     @div class: "block conf-heading icon icon-gear", "Server Setting"
+      #
+      #   # ------------------------ server conf pane ------------------------
+      #   @div outlet:"emp_conf_pane", class: "emp-setting-con panel-body padded", =>
+      #     @label class: "emp-setting-label", "Host "
+      #     @div class: 'controls', =>
+      #       @div class: 'setting-editor-container', =>
+      #         @subview "emp_set_host", new TextEditorView(mini: true, attributes: {id: 'emp_host', type: 'string'},  placeholderText: 'Editor Server 监听的地址') #from editor view class
+      #     @label class: "emp-setting-label", "Port "
+      #     @div class: 'controls', =>
+      #       @div class: 'setting-editor-container', =>
+      #         @subview "emp_set_port", new TextEditorView(mini: true, attributes: {id: 'emp_port', type: 'string'}, placeholderText: '同Client交互的端口')
+      #     @button class: 'btn btn-else btn-success inline-block-tight ', click: 'start_server', "Start Server"
 
   init_server_conf: ->
     @init_default_value()

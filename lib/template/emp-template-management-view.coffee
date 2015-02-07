@@ -18,49 +18,60 @@ class EmpTmpManagementView extends ScrollView
 
 
   @content: ->
-    @div class: 'emp-app-wizard pane-item', tabindex: -1, =>
-      @div class:'wizard-panels', =>
-      #   @div outlet:"emp_logo", class: 'atom-banner'
-        @div class: 'wizard-logo', outlet: 'wizard_logo', =>
-          @div outlet:"emp_logo", class: 'atom-banner'
-        @div class: 'detail-panels', =>
-          @div class:'detail-ch-panels', =>
-            @div class: 'block panels-heading icon icon-gear', "Emp Template Management..."
-
-            @div class:'detail-body', =>
-              @div class:'detail-con', =>
-                @div class:'info-div', =>
-                  @label class: 'info-label', 'App名称*:'
-                  @subview "app_name_editor", new TextEditorView(mini: true,attributes: {id: 'app_name', type: 'string'},  placeholderText: 'Application Name')
-
-                @div class:'info-div', =>
-                  @label class: 'info-label', 'App 路径*:'
-                  @subview "app_path", new TextEditorView(mini: true,attributes: {id: 'app_path', type: 'string'},  placeholderText: 'Application Path')
-                  @button class: 'path-btn btn btn-info inline-block-tight', click:'select_apath',' Chose Path '
-
-                @div class:'info-div', =>
-                  @label class: 'info-label', 'EWP Path: (建议不要为空否则需要手动修改configure,iewp,yaws.conf 文件)'
-                  @subview "ewp_path", new TextEditorView(mini: true,attributes: {id: 'ewp_path', type: 'string'},  placeholderText: 'Ewp Path')
-                  @button class: 'path-btn btn btn-info inline-block-tight', click:'select_epath',' Chose Path '
-
-            @div class: 'footer-div', =>
-              @div class: 'footer-detail', =>
-                @button class: 'footer-btn btn btn-info inline-block-tight', click:'do_cancel','  Cancel  '
-                @button class: 'footer-btn btn btn-info inline-block-tight', click:'do_submit',' Ok '
+    @div class: 'emp-channel-wizard pane-item', tabindex: -1, =>
+      @div class: 'config-menu', outlet: 'sidebar', =>
+        @div outlet:"emp_logo", class: 'atom-banner'
+        @div outlet: "loadingElement", class: 'alert alert-info loading-area icon icon-hourglass', "Loading config"
+        @ul class: 'panels-menu nav nav-pills nav-stacked', outlet: 'panelMenu', =>
+          @div class: 'panel-menu-separator', outlet: 'menuSeparator'
+        # @div class: 'panel-menu-separator', outlet: 'menuSeparator'
+        @div class: 'button-area', =>
+          @button class: 'btn btn-default icon icon-link-external', outlet: 'openDotAtom', 'Open ~/.channel'
+      @div class: 'panels padded', outlet: 'panels'
+    #   
+    # @div class: 'emp-app-wizard pane-item', tabindex: -1, =>
+    #   @div class:'wizard-panels', =>
+    #   #   @div outlet:"emp_logo", class: 'atom-banner'
+    #     @div class: 'wizard-logo', outlet: 'wizard_logo', =>
+    #       @div outlet:"emp_logo", class: 'atom-banner'
+    #     @div class: 'detail-panels', =>
+    #       @div class:'detail-ch-panels', =>
+    #         @div class: 'block panels-heading icon icon-gear', "Emp Template Management..."
+    #
+    #         @div class:'detail-body', =>
+    #           @div class:'detail-con', =>
+    #             @div class:'info-div', =>
+    #               @label class: 'info-label', 'App名称*:'
+    #               @subview "app_name_editor", new TextEditorView(mini: true,attributes: {id: 'app_name', type: 'string'},  placeholderText: 'Application Name')
+    #
+    #             @div class:'info-div', =>
+    #               @label class: 'info-label', 'App 路径*:'
+    #               @subview "app_path", new TextEditorView(mini: true,attributes: {id: 'app_path', type: 'string'},  placeholderText: 'Application Path')
+    #               @button class: 'path-btn btn btn-info inline-block-tight', click:'select_apath',' Chose Path '
+    #
+    #             @div class:'info-div', =>
+    #               @label class: 'info-label', 'EWP Path: (建议不要为空否则需要手动修改configure,iewp,yaws.conf 文件)'
+    #               @subview "ewp_path", new TextEditorView(mini: true,attributes: {id: 'ewp_path', type: 'string'},  placeholderText: 'Ewp Path')
+    #               @button class: 'path-btn btn btn-info inline-block-tight', click:'select_epath',' Chose Path '
+    #
+    #         @div class: 'footer-div', =>
+    #           @div class: 'footer-detail', =>
+    #             @button class: 'footer-btn btn btn-info inline-block-tight', click:'do_cancel','  Cancel  '
+    #             @button class: 'footer-btn btn btn-info inline-block-tight', click:'do_submit',' Ok '
 
 
   initialize: ({@uri}={}) ->
     super
     # console.log "app wizard view"
-    if @default_app_path = atom.config.get(emp.EMP_APP_WIZARD_APP_P)
-      # console.log "exist"
-      @app_path.getEditor().setText(@default_app_path)
-    if tmp_ewp_path = atom.config.get(emp.EMP_APP_WIZARD_EWP_P)
-      # console.log "exist ewp"
-      @default_ewp_path = tmp_ewp_path
-      @ewp_path.getEditor().setText(@default_ewp_path)
-    else
-      @ewp_path.getEditor().setText(@default_ewp_path)
+    # if @default_app_path = atom.config.get(emp.EMP_APP_WIZARD_APP_P)
+    #   # console.log "exist"
+    #   @app_path.getEditor().setText(@default_app_path)
+    # if tmp_ewp_path = atom.config.get(emp.EMP_APP_WIZARD_EWP_P)
+    #   # console.log "exist ewp"
+    #   @default_ewp_path = tmp_ewp_path
+    #   @ewp_path.getEditor().setText(@default_ewp_path)
+    # else
+    #   @ewp_path.getEditor().setText(@default_ewp_path)
     # @focus()
 
 
@@ -103,14 +114,6 @@ class EmpTmpManagementView extends ScrollView
   destroy: ->
     @detach()
 
-  toggle: ->
-    console.log "Emp template manage was toggled!"
-    if @hasParent()
-      @detach()
-    # else
-      atom.workspaceView.append(this)
-      # @add_new_panel()
-      # @parse_conf()
   focus: ->
     # super
     @app_name_editor.focus()
@@ -132,7 +135,7 @@ class EmpTmpManagementView extends ScrollView
 
   do_cancel: ->
     # console.log "do_submit "
-    atom.workspaceView.trigger 'core:close'
+    atom.workspace.getActivePane().destroyActiveItem()
 
   do_submit: ->
     # console.log "do do_submit"

@@ -103,14 +103,14 @@ class EmpAppWizardView extends ScrollView
   destroy: ->
     @detach()
 
-  toggle: ->
-    # console.log "EmpChannelWizardView was toggled!"
-    if @hasParent()
-      @detach()
-    # else
-      atom.workspaceView.append(this)
-      # @add_new_panel()
-      # @parse_conf()
+  # toggle: ->
+  #   # console.log "EmpChannelWizardView was toggled!"
+  #   if @hasParent()
+  #     @detach()
+  #   # else
+  #     atom.workspaceView.append(this)
+  #     # @add_new_panel()
+  #     # @parse_conf()
   focus: ->
     # super
     @app_name_editor.focus()
@@ -132,7 +132,8 @@ class EmpAppWizardView extends ScrollView
 
   do_cancel: ->
     # console.log "do_submit "
-    atom.workspaceView.trigger 'core:close'
+    # atom.workspaceView.trigger 'core:close'
+    atom.workspace.getActivePane().destroyActiveItem()
 
   do_submit: ->
     # console.log "do do_submit"

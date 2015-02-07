@@ -105,14 +105,14 @@ class EmpChannelWizardView extends ScrollView
   destroy: ->
     @detach()
 
-  toggle: ->
-    # console.log "EmpChannelWizardView was toggled!"
-    if @hasParent()
-      @detach()
-    # else
-      atom.workspaceView.append(this)
-      @add_new_panel()
-      # @parse_conf()
+  # toggle: ->
+  #   # console.log "EmpChannelWizardView was toggled!"
+  #   if @hasParent()
+  #     @detach()
+  #   # else
+  #     atom.workspaceView.append(this)
+  #     @add_new_panel()
+  #     # @parse_conf()
 #
   add_new_panel_f: ->
     @emp_channel_list_view.refresh_channel_view() unless !@emp_channel_list_view

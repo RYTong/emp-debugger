@@ -52,8 +52,8 @@
   .editor-container {
     margin-bottom: @component-padding;
 
-    .editor.mini,
-    .editor.mini.is-focused {
+    atom-text-editor[mini],
+    atom-text-editor[mini].is-focused::shadow {
       color: @text-color;
       background-color: #fff;
       padding: 6px 12px;
@@ -429,8 +429,8 @@
             font-size: 1em;
             color: @text-color;
             font-size: 13px;
-            .editor.mini,
-            .editor.mini.is-focused {
+            atom-text-editor[mini],
+            atom-text-editor[mini].is-focused::shadow {
               // color: @text-color;
               color: #333333;
               background-color: #FAFFFF;
@@ -468,8 +468,8 @@
           color: @text-color;
           font-size: 13px;
           margin:@component-padding/2;
-          .editor.mini,
-          .editor.mini.is-focused {
+          atom-text-editor[mini],
+          atom-text-editor[mini].is-focused::shadow {
             // color: @text-color;
             color: #333333;
             background-color: #FAFFFF;
@@ -744,8 +744,8 @@
                     margin-left:@component-padding/4;
                     margin-right:@component-padding/4;
 
-                    .editor.mini,
-                    .editor.mini.is-focused {
+                    atom-text-editor[mini],
+                    atom-text-editor[mini].is-focused::shadow {
                       // color: @text-color;
                       color: #333333;
                       background-color: #FAFFFF;
@@ -794,8 +794,8 @@
                       -webkit-flex: 0.3;
                       margin-left:@component-padding/4;
                       margin-right:@component-padding/4;
-                      .editor.mini,
-                      .editor.mini.is-focused {
+                      atom-text-editor[mini],
+                      atom-text-editor[mini].is-focused::shadow {
                         // color: @text-color;
                         color: #333333;
                         background-color: #FAFFFF;
@@ -902,8 +902,8 @@
                   display: -webkit-flex;
                   -webkit-flex: 0.4;
                   margin:@component-padding/4;
-                  .editor.mini,
-                  .editor.mini.is-focused {
+                  atom-text-editor[mini],
+                  atom-text-editor[mini].is-focused::shadow {
                     // color: @text-color;
                     color: #333333;
                     background-color: #FAFFFF;

@@ -1,4 +1,4 @@
-'.text.html':
+'.source.xhtml':
   'editor':
     'commentStart': '<!-- '
     'commentEnd': ' -->'
@@ -18,7 +18,12 @@
         |<\\?(php)?\\s+(else(if)?|end(if|for(each)?|while))
         |\\}
       )'
-'.text.html .meta.tag:not(.entity.other.attribute-name, .punctuation.definition.tag.begin, .source, .entity.name.tag, .string, .invalid.illegal.incomplete.html)':
+  'editor':
+    'commentStart': '-- '
+    'increaseIndentPattern': '\\b(else|elseif|(local\\s+)?function|then|do|repeat)\\b((?!end).)*$|\\{\\s*$'
+    'decreaseIndentPattern': '^\\s*(elseif|else|end|\\})\\s*$'
+
+'.source.xhtml .meta.tag:not(.entity.other.attribute-name, .punctuation.definition.tag.begin, .source, .entity.name.tag, .string, .invalid.illegal.incomplete.html)':
   'editor':
     'completions': [
       'ABBR'

@@ -1,12 +1,12 @@
-'scopeName': 'text.emp.basic'
+'scopeName': 'source.xhtml'
 'fileTypes': [
+  'xhtml'
   'htm'
   'html'
   'kit'
   'shtml'
   'tmpl'
   'tpl'
-  'xhtml'
   'cs'
 ]
 'firstLineMatch': '<(?i:(!DOCTYPE\\s*)?html)'
@@ -168,7 +168,7 @@
         'end': '(</)((?i:script))'
         'patterns': [
           {
-            'include': 'text.emp.basic'
+            'include': 'source.xhtml'
           }
         ]
       }

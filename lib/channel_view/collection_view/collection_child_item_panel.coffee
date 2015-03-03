@@ -55,8 +55,8 @@ class ItemsPanel extends View
     @used_item = {}
     @select_entry ={}
     @select_unentry = {}
-    @cha_objs = all_objs.cha.obj_list
-    @col_objs = all_objs.col
+    @cha_objs = all_objs?.cha?.obj_list
+    @col_objs = all_objs?.col
 
     if @col_obj.items.length > 0
       for obj in @col_obj.items

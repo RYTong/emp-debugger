@@ -1,4 +1,5 @@
-{$, $$, ScrollView, TextEditorView} = require 'atom'
+{$, $$, ScrollView} = require 'atom'
+{TextEditorView} = require 'atom-space-pen-views'
 remote = require 'remote'
 dialog = remote.require 'dialog'
 fs = require 'fs'
@@ -54,22 +55,22 @@ class EmpAppWizardView extends ScrollView
     # console.log "app wizard view"
     if @default_app_path = atom.config.get(emp.EMP_APP_WIZARD_APP_P)
       # console.log "exist"
-      @app_path.getEditor().setText(@default_app_path)
+      @app_path.setText(@default_app_path)
     if tmp_ewp_path = atom.config.get(emp.EMP_APP_WIZARD_EWP_P)
       # console.log "exist ewp"
       @default_ewp_path = tmp_ewp_path
-      @ewp_path.getEditor().setText(@default_ewp_path)
+      @ewp_path.setText(@default_ewp_path)
     else
-      @ewp_path.getEditor().setText(@default_ewp_path)
+      @ewp_path.setText(@default_ewp_path)
     # @focus()
 
 
   select_apath: (e, element)->
-    tmp_path = @app_path.getEditor().getText()
+    tmp_path = @app_path.getText()
     @promptForPath(@app_path, tmp_path)
 
   select_epath: (e, element)->
-    tmp_path = @ewp_path.getEditor().getText()
+    tmp_path = @ewp_path.getText()
     @promptForPath(@ewp_path, tmp_path)
 
   promptForPath: (fa_view, def_path) ->
@@ -83,7 +84,7 @@ class EmpAppWizardView extends ScrollView
   refresh_path: (new_path, fa_view)->
     if new_path
       # console.log new_path
-      fa_view.getEditor().setText(new_path[0])
+      fa_view.setText(new_path[0])
 
 
   show_dialog: ->
@@ -138,12 +139,12 @@ class EmpAppWizardView extends ScrollView
   do_submit: ->
     # console.log "do do_submit"
     try
-      unless @app_name = @app_name_editor.getEditor().getText().trim()
+      unless @app_name = @app_name_editor.getText().trim()
         throw("工程名称不能为空！")
-      unless @app_dir = @app_path.getEditor().getText().trim()
+      unless @app_dir = @app_path.getText().trim()
         throw("工程路径不能为空！")
       atom.config.set(emp.EMP_APP_WIZARD_APP_P, @app_dir)
-      if @ewp_dir = @ewp_path.getEditor().getText().trim()
+      if @ewp_dir = @ewp_path.getText().trim()
         atom.config.set(emp.EMP_APP_WIZARD_EWP_P, @ewp_dir)
       else
         @ewp_dir = ""

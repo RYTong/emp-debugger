@@ -1,4 +1,4 @@
-{$, $$, ScrollView, TextEditorView} = require 'atom'
+{$, $$, ScrollView} = require 'atom'
 remote = require 'remote'
 dialog = remote.require 'dialog'
 fs = require 'fs'
@@ -28,7 +28,7 @@ class EmpTmpManagementView extends ScrollView
         @div class: 'button-area', =>
           @button class: 'btn btn-default icon icon-link-external', outlet: 'openDotAtom', 'Open ~/.channel'
       @div class: 'panels padded', outlet: 'panels'
-    #   
+    #
     # @div class: 'emp-app-wizard pane-item', tabindex: -1, =>
     #   @div class:'wizard-panels', =>
     #   #   @div outlet:"emp_logo", class: 'atom-banner'

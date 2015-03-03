@@ -1,4 +1,4 @@
-{$, $$, View, TextEditorView} = require 'atom'
+{$, $$, View} = require 'atom'
 remote = require 'remote'
 dialog = remote.require 'dialog'
 ZipWriter = require("moxie-zip").ZipWriter

@@ -81,7 +81,7 @@ class EmpChannelWizardView extends ScrollView
     @active_panel.show()
     for editorElement, index in @active_panel.find(".editor")
       $(editorElement).view().redraw()
-    @active_panel.focus()
+    @active_panel.focus?()
     # @add_new_panel()
 
 
@@ -141,8 +141,8 @@ class EmpChannelWizardView extends ScrollView
         @panels.children().hide()
         @panels.append(@active_panel) unless $.contains(@panels[0], @active_panel[0])
         @active_panel.show()
-        for editorElement, index in @active_panel.find(".editor")
-          $(editorElement).view().redraw()
+        # for editorElement, index in @active_panel.find(".editor")
+        #   $(editorElement).view().redraw()
         @active_panel.focus()
 
   focus: ->

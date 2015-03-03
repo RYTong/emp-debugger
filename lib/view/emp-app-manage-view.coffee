@@ -1,4 +1,5 @@
-{$, $$, View, TextEditorView} = require 'atom'
+{$, $$, View} = require 'atom'
+{TextEditorView} = require 'atom-space-pen-views'
 # EmpEditView = require './emp-edit-view'
 EmpAppNodeView = require '../app_wizard/emp-debugger-app-node-view'
 EmpChaManaView = require '../channel_view/emp-channel-manage-view'
@@ -164,7 +165,7 @@ class EmpAppManaView extends View
     @emp_node_view.show()
 
   run_erl: ->
-    erl_str = @emp_app_erl.getEditor().getText()
+    erl_str = @emp_app_erl.getText()
     @emp_app_manage.run_erl(erl_str)
 
 

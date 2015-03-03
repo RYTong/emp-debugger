@@ -1,4 +1,5 @@
-{$, $$, View, TextEditorView} = require 'atom'
+{$, $$, View} = require 'atom'
+{TextEditorView} = require 'atom-space-pen-views'
 # EmpEditView = require '../../view/emp-edit-view'
 emp = require '../../exports/emp'
 item_obj = require '../emp_item/channel_adapter_param'
@@ -37,7 +38,7 @@ class AdapterArgPanel extends View
     @detach()
 
   submit_detail: ->
-    tmp_key = @arg_key.getEditor().getText().trim()
-    tmp_rkey = @ra_key.getEditor().getText().trim()
+    tmp_key = @arg_key.getText().trim()
+    tmp_rkey = @ra_key.getText().trim()
     tmp_type = @off_param.val()
     new item_obj(tmp_key, tmp_rkey, tmp_type)

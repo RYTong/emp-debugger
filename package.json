@@ -33,8 +33,7 @@
     "underscore-plus": "1.x",
     "fuzzaldrin": "^2.1",
     "moxie-zip": "*",
-    "language-lua": "git+https://github.com/FireZenk/language-lua.git",
-    "language-erlang": "git+https://github.com/jonathanmarvens/atom-language-erlang.git"
+    "atom-space-pen-views": "^2.0.2"
   },
   "packageDependencies": {
     "language-lua": "*",

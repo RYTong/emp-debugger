@@ -1,4 +1,4 @@
-{$, $$, View, TextEditorView} = require 'atom'
+{$, $$, View} = require 'atom'
 ZipWriter = require("moxie-zip").ZipWriter
 path = require 'path'
 emp = require '../exports/emp'

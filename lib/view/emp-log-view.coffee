@@ -1,7 +1,6 @@
+{Disposable, CompositeDisposable} = require 'atom'
+{$, $$, View} = require 'atom-space-pen-views'
 emp_log = require '../debugger/emp_view_log'
-{$, $$, View} = require 'atom'
-# GutterView = require '../../../../jcrom/atom/src/gutter-view'
-
 
 module.exports =
 class EmpDebuggerLogView extends View
@@ -53,37 +52,29 @@ class EmpDebuggerLogView extends View
   log_map: {}
 
   @content: ->
-    # @div class: 'key-binding-resolver tool-panel pannel panel-bottom padding', =>
     @div class: 'emp-log-pane tool-panel pannel panel-bottom padding', =>
+      @div class: 'log-console-resize-handle', mousedown: 'resizeStarted', dblclick: 'resizeToMin'
       @div class: 'emp_bar panel-heading padded', =>
         @span 'Log From The Script Of Views: '
-        # @span outlet: 'keystroke', 'Press any key'
+      # @ul class: 'log-console list-group', outlet:'listView'
       @div outlet:"emp_log_panel", class:'emp-log-panel', =>
-        @div outlet:"emp_log_view", id:'ewp_log_view', class:'emp-log-view', =>
-          # @div class:'emp-log-view-scr', =>
-        # @subview 'gutter', new GutterView
-          # @div outlet: 'index_pane', class: 'emp_gutter', =>
+        @div outlet:"emp_log_view", id:'emp_log_view', class:'emp-log-view', =>
           @div outlet: 'emp_lineNumber', class: 'line-numbers'
-          # @div outlet: 'log_pane', class: 'emp_body', =>
           @div outlet: 'log_detail', id:'emp_log_row', class: 'emp-log-row'
-            # @div outlet: 'emp_scrollbar', class: 'emp_scrollbar', =>
-            #   @div
 
   initialize: ()->
     @line_number = 1
-    # @log_map["test"] = new emp_log("test", @get_color())
-    # @log_map["test"].put_log("\nasdasd `    asda;")
-    # @log_map["test"].put_log("------\nasdasd\n\n test functione")
-    # @log_map["test"].put_log("------\nasdasd\n\n test functione")
-    # @log_map["test"].put_log("------\nasdasd\n\n test functione")
-    atom.workspaceView.command "emp-debugger:view-log", => @toggle()
-    # @on 'click', '.source', (event) -> atom.workspaceView.open(event.target.innerText)
+    @disposable = new CompositeDisposable
+    @disposable.add atom.workspaceView.command "emp-debugger:view-log", => @toggle()
 
   serialize: ->
     attached: @hasParent()
 
   destroy: ->
     @detach()
+
+  detach: ->
+    @disposable?.dispose()
 
   set_conf_view: (@emp_conf_view)->
 
@@ -108,9 +99,12 @@ class EmpDebuggerLogView extends View
         this.show()
         @show_state = true
 
-
   attach: ->
-    atom.workspaceView.prependToBottom(this)
+    # atom.workspaceView.prependToBottom(this)
+    @panel = atom.workspace.addBottomPanel(item:this,visible:true)
+    @disposable.add new Disposable =>
+      @panel.destroy()
+      @panel = null
     @initial_height()
     @update()
     @update_ln()
@@ -148,7 +142,7 @@ class EmpDebuggerLogView extends View
 
     # console.log @log_detail.context.scrollHeight
     # console.log
-    $('#ewp_log_view').stop().animate({scrollTop:@log_detail.context.scrollHeight}, 1000)
+    $('#emp_log_view').stop().animate({scrollTop:@log_detail.context.scrollHeight}, 1000)
 
     # $("#log_content").stop().animate({
     #   scrollTop: document.getElementById("log_content").scrollHeight
@@ -204,10 +198,11 @@ class EmpDebuggerLogView extends View
           # @div class: "emp-log-line", =>
           #   @span class: "emp-log-con", style:"color:#{show_color};", "#{log}"
     # @log_detail.stop().animate({scrollTop:@log_detail.context.scrollHeight}, 1000)
-    $('#ewp_log_view').stop().animate({scrollTop:@log_detail.context.scrollHeight}, 1000)
+    $('#emp_log_view').stop().animate({scrollTop:@log_detail.context.scrollHeight}, 1000)
 
 
   store_log: (client_id, log) ->
+    console.log @log_map
     if !@log_map[client_id]
       tmp_color = @get_color()
       @log_map[client_id] = new emp_log(client_id, tmp_color)
@@ -221,6 +216,7 @@ class EmpDebuggerLogView extends View
 
   refresh_conf_view: (client_id, color)->
     # unless !emp_conf_view
+    console.log @emp_conf_view
     @emp_conf_view.refresh_log_view(client_id, color) unless !@emp_conf_view
 
   remove_client_log: (client_id)->
@@ -347,3 +343,38 @@ class EmpDebuggerLogView extends View
           "Show"
       else
         "Hide"
+
+  # -------------------------------------------------------------------------
+  #日志界面高度计算处理
+  resizeStarted: ->
+    $(document).on('mousemove', @resizeTreeView)
+    $(document).on('mouseup', @resizeStopped)
+
+  resizeStopped: ->
+    $(document).off('mousemove', @resizeTreeView)
+    $(document).off('mouseup', @resizeStopped)
+
+  resizeTreeView: (e) =>
+    {pageY, which} = e
+    # console.log e
+    return @resizeStopped() unless which is 1
+    height = $(document.body).height()-pageY
+
+    return if height < 25
+    # console.log height
+    @height(height)
+    @emp_log_panel.css("max-height", height)
+
+  resizeToMin: ->
+    height = 70
+    @height(height)
+    @emp_log_panel.css("max-height", height)
+    @emp_log_view.scrollToBottom()
+
+  # -------------------------------------------------------------------------
+  test: ->
+    @log_map["test"] = new emp_log("test", @get_color())
+    @log_map["test"].put_log("\nasdasd `    asda;")
+    @log_map["test"].put_log("------\nasdasd\n\n test functione")
+    @log_map["test"].put_log("------\nasdasd\n\n test functione")
+    @log_map["test"].put_log("------\nasdasd\n\n test functione")

@@ -1,5 +1,5 @@
-{$, $$, View, Disposable, CompositeDisposable} = require 'atom'
-{TextEditorView} = require 'atom-space-pen-views'
+{Disposable, CompositeDisposable} = require 'atom'
+{$, $$, View,TextEditorView} = require 'atom-space-pen-views'
 # EmpEditView = require './emp-edit-view'
 EmpAppMan = require '../emp_app/emp_app_manage'
 EmpBarView = require './emp-setting-bar'
@@ -86,6 +86,7 @@ class EmpDebuggerSettingView extends View
                 @button outlet: "emp_clearlog", class: 'btn btn-else btn-info inline-block-tight icon icon-trashcan', click: 'clear_log', "Clear Log"
                 @button outlet: "emp_pauselog", class: 'btn btn-else btn-info inline-block-tight icon icon-playback-pause', click: 'pause_log', "Pause Log"
                 @button outlet: "emp_closelog", class: 'btn btn-else btn-info inline-block-tight icon icon-squirrel', click: 'close_log', "Close Log"
+                # @button outlet: "emp_closelog", class: 'btn btn-else btn-info inline-block-tight icon icon-squirrel', click: 'test_log', "test Log"
               @div class: "emp-set-div-content", =>
                 @label class: "emp-setting-label", "ClientID: "
                 @select outlet: "emp_client_list", class: "form-control", =>
@@ -202,7 +203,7 @@ class EmpDebuggerSettingView extends View
     @detach()
 
   detach: ->
-    @disposables?.dispose()
+    @disposable?.dispose()
 
   set_conf: ->
     # console.log "panel visible:"
@@ -229,7 +230,6 @@ class EmpDebuggerSettingView extends View
 
   attach: ->
 
-
     # @panel = atom.workspace.addRightPanel(item:this,visible:true)
     @panel = atom.workspaceView.appendToRight(this)
         # atom.workspaceView.prependToRight(this)
@@ -243,7 +243,6 @@ class EmpDebuggerSettingView extends View
   init_server_conf_pane: ->
     if @emp_socket_server.get_server_sate()
       @hide_conf_pane()
-
     else
       @hide_state_pane()
       # @conf_detail.html $$ ->
@@ -482,3 +481,8 @@ class EmpDebuggerSettingView extends View
       arrayValue = (value or '').split(',')
       value = (val.trim() for val in arrayValue when val)
     value
+
+  test_log: ->
+    console.log "do test log panel "
+    tmp_editor = atom.workspace.openSync()
+    tmp_editor.setText "asdasd"

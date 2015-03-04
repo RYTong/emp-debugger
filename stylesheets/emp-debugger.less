@@ -156,9 +156,12 @@
   margin: 5px 5px 5px 10px;
 }
 
-
-
-
+.log-console-resize-handle {
+  height: 6px;
+  cursor: row-resize;
+  z-index: 3;
+  margin-top: -3px;
+}
 
 .emp-log-pane {
   // position: absolute;
@@ -171,14 +174,13 @@
   line-height: 1.3;
 
     .emp_bar {
-      // display: -webkit-flex;
-      // -webkit-user-select: none;
       margin: 0;
     }
+
     .emp-log-panel {
       -webkit-flex: 1;
       display: -webkit-flex;
-      min-height: 0;
+      man-height: 50px;
       min-width: 0;
       position: relative;
       .emp-log-view {

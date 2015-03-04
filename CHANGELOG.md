@@ -2,6 +2,13 @@
 # Emp Debugger Package Change Log
 
 ## Now
+1. 重构 log 界面, 框体高度可变
+
+
+## Version 0.6.5
+1. 升级 API 到 API1.0 版本,解决输入框不显示的 bug
+
+## Version 0.6.4
 1. 修复bug, 修改多次点击channel wizard时候, channel和col树重复显示
 2. 修改编辑Colection 时候的报错
 3. 重定义部分按键显示内容

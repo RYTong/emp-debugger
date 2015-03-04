@@ -1,4 +1,5 @@
-{$, $$, View, TextEditorView} = require 'atom'
+{$, $$, View} = require 'atom'
+{TextEditorView} = require 'atom-space-pen-views'
 path = require 'path'
 fs = require 'fs'
 # EmpEditView = require '../../view/emp-edit-view'
@@ -62,8 +63,8 @@ class AddGenPanel extends View
       @is_edit = true
       @cha_id.hide()
       @cha_id_title.after(@new_id_label(extra_param.id))
-      @cha_name.getEditor().setText(extra_param.name)
-      @cha_app.getEditor().setText(extra_param.app)
+      @cha_name.setText(extra_param.name)
+      @cha_app.setText(extra_param.app)
       # @cha_name.getEditor().setText(extra_param.name)
       if extra_param.entry is emp.CHANNEL_NEW_CALLBACK
         @channel_entry.val(emp.CHANNEL_NEW_CALLBACK)
@@ -72,12 +73,13 @@ class AddGenPanel extends View
       if !extra_param.state
         @cha_state.prop('checked', false)
     else
-      @cha_id.getEditor().on 'contents-modified', =>
-        @cha_obj.id = @cha_id.getEditor().getText().trim()
+
+      @cha_id.getModel().onDidStopChanging =>
+        @cha_obj.id = @cha_id.getText().trim()
 
 
       if tmp_app_name = atom.config.get(emp.EMP_TMPORARY_APP_NAME)
-        @cha_app.getEditor().setText(tmp_app_name)
+        @cha_app.setText(tmp_app_name)
 
     @adapter_view = new AdapterView(@cha_obj, extra_param)
     @params_view = new ParamView(@cha_obj, extra_param)
@@ -105,12 +107,12 @@ class AddGenPanel extends View
   do_submit: ->
     try
       if !@is_edit
-        unless tmp_id = @cha_id.getEditor().getText().trim()
+        unless tmp_id = @cha_id.getText().trim()
           throw("频道Id不能为空！")
         @cha_obj.id = tmp_id
-      unless tmp_name = @cha_name.getEditor().getText().trim()
+      unless tmp_name = @cha_name.getText().trim()
         throw("频道Name不能为空！")
-      unless tmp_app = @cha_app.getEditor().getText().trim()
+      unless tmp_app = @cha_app.getText().trim()
         throw("频道所属App不能为空！")
       tmp_entry = @channel_entry.val()
       tmp_state = @cha_state.prop('checked')

@@ -1,4 +1,5 @@
-{$, $$, View, TextEditorView, Disposable, CompositeDisposable} = require 'atom'
+{$, $$, View, Disposable, CompositeDisposable} = require 'atom'
+{TextEditorView} = require 'atom-space-pen-views'
 # EmpEditView = require './emp-edit-view'
 EmpAppMan = require '../emp_app/emp_app_manage'
 EmpBarView = require './emp-setting-bar'
@@ -48,11 +49,11 @@ class EmpDebuggerSettingView extends View
               @label class: "emp-setting-label", "Host "
               @div class: 'controls', =>
                 @div class: 'setting-editor-container', =>
-                  @subview "emp_set_host", new TextEditorView(mini: true, attributes: {id: 'emp_host', type: 'string'},  placeholderText: 'Editor Server 监听的地址') #from editor view class
+                  @subview 'emp_set_host', new TextEditorView(mini: true, attributes: {id: 'emp_host', type: 'string'},  placeholderText: 'Editor Server 监听的地址') #from editor view class
               @label class: "emp-setting-label", "Port "
               @div class: 'controls', =>
                 @div class: 'setting-editor-container', =>
-                  @subview "emp_set_port", new TextEditorView(mini: true, attributes: {id: 'emp_port', type: 'string'}, placeholderText: '同Client交互的端口')
+                  @subview 'emp_set_port', new TextEditorView(mini: true, attributes: {id: 'emp_port', type: 'string'}, placeholderText: '同Client交互的端口')
               @button class: 'btn btn-else btn-success inline-block-tight ', click: 'start_server', "Start Server"
 
             # ------------------------ server state pane ------------------------
@@ -117,6 +118,52 @@ class EmpDebuggerSettingView extends View
     @emp_socket_server.set_conf_view(this)
     @defailt_host = @emp_socket_server.get_default_host()
     @default_port = @emp_socket_server.get_default_port()
+    # @do_test()
+
+  do_test: ->
+    # @on 'click', '.entry', (e) =>
+    #   # This prevents accidental collapsing when a .entries element is the event target
+    #   # return if e.target.classList.contains('entries')
+    #
+    #   @entryClicked(e) unless e.shiftKey or e.metaKey or e.ctrlKey
+
+    @on 'mousedown', '.entry', (e) =>
+      @onMouseDown(e)
+
+    @on 'mousedown', '.emp-setting-panel', (e) => @resizeStarted(e)
+
+  entryClicked: (e) ->
+    entry = e.currentTarget
+    isRecursive = e.altKey or false
+    switch e.originalEvent?.detail ? 1
+      when 1
+        @selectEntry(entry)
+        @openSelectedEntry(false) if entry instanceof FileView
+        entry.toggleExpansion(isRecursive) if entry instanceof DirectoryView
+      when 2
+        if entry instanceof FileView
+          @unfocus()
+        else if DirectoryView
+          entry.toggleExpansion(isRecursive)
+
+    false
+
+  resizeStarted: =>
+    $(document).on('mousemove', @resizeTreeView)
+    $(document).on('mouseup', @resizeStopped)
+
+  resizeStopped: =>
+    $(document).off('mousemove', @resizeTreeView)
+    $(document).off('mouseup', @resizeStopped)
+
+  resizeTreeView: ({pageX, which}) =>
+    return @resizeStopped() unless which is 1
+
+    # if atom.config.get('tree-view.showOnRightSide')
+    #   width = $(document.body).width() - pageX
+    # else
+    width = pageX
+    @width(width)
 
 
   show_app: ->
@@ -190,8 +237,8 @@ class EmpDebuggerSettingView extends View
     @disposable.add new Disposable =>
       @panel.destroy()
       @panel = null
-    # @init_server_conf_pane()
-    # @init_server_conf()
+    @init_server_conf_pane()
+    @init_server_conf()
 
   init_server_conf_pane: ->
     if @emp_socket_server.get_server_sate()
@@ -233,20 +280,21 @@ class EmpDebuggerSettingView extends View
     if @server_port is undefined
       @server_port = @default_port
       atom.config.set(EMP_DEBUG_PORT_KEY, @server_port)
-    @emp_set_port.getEditor().setText(@server_port)
-    @emp_set_host.getEditor().setText(@server_host)
+    @emp_set_port.setText(@server_port)
+    @emp_set_host.setText(@server_host)
 
 
   init_server_listen: ->
-    @emp_set_port.getEditor().on 'contents-modified', =>
-      tmp_port = @emp_set_port.getEditor().getText()
+    # console.log @emp_set_port.getModel()
+    @emp_set_port.getModel().onDidStopChanging =>
+      tmp_port = @emp_set_port.getText()
       # console.log tmp_port
       if @server_port isnt tmp_port
         @server_port = tmp_port
         atom.config.set(EMP_DEBUG_PORT_KEY, @server_port)
 
-    @emp_set_host.getEditor().on 'contents-modified', =>
-      tmp_host = @emp_set_host.getEditor().getText()
+    @emp_set_host.getModel().onDidStopChanging =>
+      tmp_host = @emp_set_host.getText()
       # console.log tmp_host
       if @server_host isnt tmp_host
         @server_host = tmp_host

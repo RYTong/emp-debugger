@@ -1,4 +1,5 @@
-{$, $$, View, TextEditorView} = require 'atom'
+{$, $$, View} = require 'atom'
+{TextEditorView} = require 'atom-space-pen-views'
 # EmpEditView = require '../../view/emp-edit-view'
 emp = require '../../exports/emp'
 arg_view = require './adapter_item_arg_view'
@@ -40,23 +41,23 @@ class AdapterItemPanel extends View
     initial_flag = false
     if typeof(val) is 'string'
       initial_flag = true
-      @trancode.getEditor().setText(key)
-      @view_name.getEditor().setText(val)
+      @trancode.setText(key)
+      @view_name.setText(val)
     else if typeof(val) is 'object'
       initial_flag = true
-      @trancode.getEditor().setText(key)
-      @adapter.getEditor().setText(val.adapter)
-      @procedure.getEditor().setText(val.procedure)
-      @view_name.getEditor().setText(val.view)
+      @trancode.setText(key)
+      @adapter.setText(val.adapter)
+      @procedure.setText(val.procedure)
+      @view_name.setText(val.view)
 
-    @trancode.getEditor().on 'contents-modified', =>
+    @trancode.getModel().onDidStopChanging =>
       if initial_flag
         initial_flag = false
       else
-        @trancode_detail = @trancode.getEditor().getText().trim()
+        @trancode_detail = @trancode.getText().trim()
         if @trancode_detail
           @view_detail = @cha_obj.id + '_' + @trancode_detail
-          @view_name.getEditor().setText(@view_detail)
+          @view_name.setText(@view_detail)
 
   focus: ->
     @trancode.focus()
@@ -73,10 +74,10 @@ class AdapterItemPanel extends View
 
   submit_detail: ->
     # console.log "adapter submit_detail"
-    tmp_tran = @trancode.getEditor().getText().trim()
-    tmp_ada = @adapter.getEditor().getText().trim()
-    tmp_pro = @procedure.getEditor().getText().trim()
-    tmp_view = @view_name.getEditor().getText().trim()
+    tmp_tran = @trancode.getText().trim()
+    tmp_ada = @adapter.getText().trim()
+    tmp_pro = @procedure.getText().trim()
+    tmp_view = @view_name.getText().trim()
     ada_obj = new adapter_obj(tmp_tran, tmp_ada, tmp_pro, tmp_view, @cha_obj.id)
     @get_params(ada_obj)
     ada_obj

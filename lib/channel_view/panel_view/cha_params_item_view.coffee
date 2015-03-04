@@ -1,4 +1,5 @@
-{$, $$, View, TextEditorView} = require 'atom'
+{$, $$, View} = require 'atom'
+{TextEditorView} = require 'atom-space-pen-views'
 # EmpEditView = require '../../view/emp-edit-view'
 emp = require '../../exports/emp'
 
@@ -19,8 +20,8 @@ class ParamsItemPanel extends View
   initialize: (key, val)->
     @ex_state = true
     if key
-      @ekey.getEditor().setText(key)
-      @evalue.getEditor().setText(""+val)
+      @ekey.setText(key)
+      @evalue.setText(""+val)
     this
 
 
@@ -33,6 +34,6 @@ class ParamsItemPanel extends View
 
 
   submit_detail: ->
-    tmp_key = @ekey.getEditor().getText().trim()
-    tmp_value = @evalue.getEditor().getText().trim()
+    tmp_key = @ekey.getText().trim()
+    tmp_value = @evalue.getText().trim()
     {key:tmp_key, value:tmp_value}

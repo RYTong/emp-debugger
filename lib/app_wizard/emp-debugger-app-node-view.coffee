@@ -1,4 +1,5 @@
-{$, $$, View, TextEditorView} = require 'atom'
+{$, $$, View} = require 'atom'
+{TextEditorView} = require 'atom-space-pen-views'
 # EmpEditView = require './emp-edit-view'
 os = require 'os'
 emp = require '../exports/emp'
@@ -62,14 +63,14 @@ class EmpAppNodeView extends View
     tmp_node_name = atom.config.get(emp.EMP_NODE_NAME)
     tmp_node_cookie = atom.config.get(emp.EMP_NODE_COOKIE)
     if tmp_node_name
-      @emp_node_name.getEditor().setText(tmp_node_name)
+      @emp_node_name.setText(tmp_node_name)
     else
-      @emp_node_name.getEditor().setText(emp.EMP_NODE_NAME)
+      @emp_node_name.setText(emp.EMP_NODE_NAME)
 
     if tmp_node_cookie
-      @emp_node_cookie.getEditor().setText(tmp_node_cookie)
+      @emp_node_cookie.setText(tmp_node_cookie)
     else
-      @emp_node_cookie.getEditor().setText(emp.EMP_NODE_COOKIE)
+      @emp_node_cookie.setText(emp.EMP_NODE_COOKIE)
 
     this
 
@@ -80,10 +81,10 @@ class EmpAppNodeView extends View
   connect_node: ->
     console.log "connect_node"
     try
-      unless tmp_node_name = @emp_node_name.getEditor().getText().trim()
+      unless tmp_node_name = @emp_node_name.getText().trim()
         throw("节点名称不能为空！可以通过 node(). 查看其他erlang shell节点名~")
       tmp_node_cookie = ''
-      unless tmp_node_cookie = @emp_node_cookie.getEditor().getText().trim()
+      unless tmp_node_cookie = @emp_node_cookie.getText().trim()
         tmp_node_cookie = emp.EMP_NODE_COOKIE
       @emp_app_manage.connect_node(tmp_node_name, tmp_node_cookie, this)
 
@@ -108,7 +109,7 @@ class EmpAppNodeView extends View
 
   run_erl: ->
     console.log "run erl"
-    erl_str = @emp_node_erl.getEditor().getText().trim()
+    erl_str = @emp_node_erl.getText().trim()
     if erl_str
       console.log erl_str
     else

@@ -1,4 +1,4 @@
-{$, $$, View, TextEditorView} = require 'atom'
+{$, $$, View} = require 'atom'
 
 module.exports =
 class EmpPkgEtraEleView extends View

@@ -1,4 +1,5 @@
-{$, $$, View, TextEditorView} = require 'atom'
+{$, $$, View} = require 'atom'
+{TextEditorView} = require 'atom-space-pen-views'
 path = require 'path'
 # EmpEditView = require '../item-editor-view'
 emp = require '../../exports/emp'
@@ -73,14 +74,14 @@ class AddGenPanel extends View
       @col_id.hide()
       # console.log tmp_col_obj
       @id_info_label.after(@new_id_label(tmp_col_obj.id))
-      @col_name.getEditor().setText(tmp_col_obj.name)
-      @col_app.getEditor().setText(tmp_col_obj.app)
+      @col_name.setText(tmp_col_obj.name)
+      @col_app.setText(tmp_col_obj.app)
 
-      @col_url.getEditor().setText(tmp_col_obj.url)
+      @col_url.setText(tmp_col_obj.url)
       if tmp_col_obj.user_id
-        @col_uid.getEditor().setText(tmp_col_obj.user_id)
+        @col_uid.setText(tmp_col_obj.user_id)
       else
-        @col_uid.getEditor().setText(tmp_col_obj.uid)
+        @col_uid.setText(tmp_col_obj.uid)
 
       @collecion_type.val(tmp_col_obj.type)
       @col_obj.id = tmp_col_obj.id
@@ -91,7 +92,7 @@ class AddGenPanel extends View
       @items_panel = new ItemsPanel(@fa_view.all_objs, @col_obj)
     else
       if tmp_app_name = atom.config.get(emp.EMP_TMPORARY_APP_NAME)
-        @col_app.getEditor().setText(tmp_app_name)
+        @col_app.setText(tmp_app_name)
 
       @items_panel = new ItemsPanel(@fa_view.all_objs, @col_obj)
       # @params_view = new ParamView(@cha_obj)
@@ -126,19 +127,19 @@ class AddGenPanel extends View
     try
       # console.log @fa_view.all_objs
       if !@is_edit
-        unless tmp_id = @col_id.getEditor().getText().trim()
+        unless tmp_id = @col_id.getText().trim()
           throw("集合Id不能为空！")
         @col_obj.id = tmp_id
-      unless tmp_name = @col_name.getEditor().getText().trim()
+      unless tmp_name = @col_name.getText().trim()
         throw("集合Name不能为空！")
-      unless tmp_app = @col_app.getEditor().getText().trim()
+      unless tmp_app = @col_app.getText().trim()
         throw("集合所属App不能为空！")
       # console.log @col_obj
       @col_obj.app = tmp_app
       @col_obj.name = tmp_name
       @col_obj.type = parseInt(@collecion_type.val())
-      @col_obj.url = @col_obj.set_url(@col_url.getEditor().getText())
-      @col_obj.uid = @col_obj.set_uid(@col_uid.getEditor().getText())
+      @col_obj.url = @col_obj.set_url(@col_url.getText())
+      @col_obj.uid = @col_obj.set_uid(@col_uid.getText())
       @col_obj.set_state(@col_state.prop('checked'))
       # console.log "bbbbdo sumbmit "
       @items_panel.submit_detail()

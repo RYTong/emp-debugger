@@ -51,21 +51,26 @@ class EmpDebuggerLogView extends View
               "#FFFF00", "#FFFF33", "#FFFF66", "#FFFF99", "#FFFFCC"]
   log_map: {}
 
+
+
   @content: ->
     @div class: 'emp-log-pane tool-panel pannel panel-bottom padding', =>
       @div class: 'log-console-resize-handle', mousedown: 'resizeStarted', dblclick: 'resizeToMin'
       @div class: 'emp_bar panel-heading padded', =>
         @span 'Log From The Script Of Views: '
+        @div class:'bar_div', =>
+          @button class: 'btn btn_right', click: 'clear_log', 'Clear'
       # @ul class: 'log-console list-group', outlet:'listView'
-      @div outlet:"emp_log_panel", class:'emp-log-panel', =>
+      @div outlet:"emp_log_panel", class:'emp-log-panel',  =>
         @div outlet:"emp_log_view", id:'emp_log_view', class:'emp-log-view', =>
           @div outlet: 'emp_lineNumber', class: 'line-numbers'
-          @div outlet: 'log_detail', id:'emp_log_row', class: 'emp-log-row'
+          @div outlet: 'log_detail', id:'emp_log_row', class: 'emp-log-row native-key-bindings',tabindex: -1
 
   initialize: ()->
     @line_number = 1
     @disposable = new CompositeDisposable
     @disposable.add atom.workspaceView.command "emp-debugger:view-log", => @toggle()
+    # @test()
 
   serialize: ->
     attached: @hasParent()
@@ -132,11 +137,11 @@ class EmpDebuggerLogView extends View
     for name, view_logs of tmp_log_map
       @log_detail.append $$ ->
         tmp_color = view_logs.get_color()
-        # @div class: "emp-log-line", =>
         @pre class: "emp-log-con", style:"color:#{tmp_color}; padding:0px;", "########################## CLIENT:#{view_logs.get_id()} ##########################"
+        # @p class: "emp-log-con", style:"color:#{tmp_color};padding:0px;", "########################## CLIENT:#{view_logs.get_id()} ##########################"
+
         for tmp_log in view_logs.get_log()
           for log in tmp_log.split("\n")
-            # console.log "|#{log}| ,#{tmp_color}"
             if log isnt "" and log isnt " "
               @pre class: "emp-log-con",style:"color:#{tmp_color};padding:0px;", "#{log}"
 
@@ -189,15 +194,15 @@ class EmpDebuggerLogView extends View
 
   update_log: (client_id, log_ga, show_color)->
     @log_detail.append $$ ->
-      # @div class: "emp-log-line", =>
       @pre id:"log_#{client_id}", class: "emp-log-con", style:"color:#{show_color};padding:0px;", "######################### CLIENT:#{client_id} ##########################"
+
       for log in log_ga.split("\n")
-        # console.log "|#{log}|"
+        console.log "|#{log}|"
         if log isnt "" and log isnt " "
           @pre id:"log_#{client_id}",class: "emp-log-con",style:"color:#{show_color};padding:0px;", "#{log}"
           # @div class: "emp-log-line", =>
-          #   @span class: "emp-log-con", style:"color:#{show_color};", "#{log}"
-    # @log_detail.stop().animate({scrollTop:@log_detail.context.scrollHeight}, 1000)
+          # @p class: "emp-log-con", style:"color:#{show_color};padding:0px;", "#{log}"
+
     $('#emp_log_view').stop().animate({scrollTop:@log_detail.context.scrollHeight}, 1000)
 
 
@@ -207,6 +212,7 @@ class EmpDebuggerLogView extends View
       tmp_color = @get_color()
       @log_map[client_id] = new emp_log(client_id, tmp_color)
       @refresh_conf_view(client_id, tmp_color)
+      # @show_live_log(client_id, log, tmp_color)
     if !@stop_state and !@first_show and @show_state
       @log_map[client_id].put_log(log)
       # console.log "print"
@@ -373,8 +379,9 @@ class EmpDebuggerLogView extends View
 
   # -------------------------------------------------------------------------
   test: ->
-    @log_map["test"] = new emp_log("test", @get_color())
-    @log_map["test"].put_log("\nasdasd `    asda;")
-    @log_map["test"].put_log("------\nasdasd\n\n test functione")
-    @log_map["test"].put_log("------\nasdasd\n\n test functione")
-    @log_map["test"].put_log("------\nasdasd\n\n test functione")
+    @store_log("test", "\nasdasd `    asda;")
+    @store_log("test", "------\nasdasd\n\n test functione")
+    @store_log("test", "------\nasdasd\n\n test functione")
+    @store_log("test", "------\nasdasd\n\n test functione")
+    @store_log("test", "------\nasdasd\n\n test functione")
+    @store_log("test", "------\nasdasd\n\n test functione")

@@ -157,7 +157,7 @@
 }
 
 .log-console-resize-handle {
-  height: 6px;
+  height: 10px;
   cursor: row-resize;
   z-index: 3;
   margin-top: -3px;
@@ -175,12 +175,28 @@
 
     .emp_bar {
       margin: 0;
+      // padding-top:5px;
+      // padding-bottom:5px;
+      position:relative;
+
+      .bar_div {
+        position:absolute;
+        top:5px;
+        min-width: 50px;
+        right:5px;
+        // padding:5px;
+
+        .btn_right {
+          right:0px;
+          top:0px;
+        }
+      }
     }
 
     .emp-log-panel {
       -webkit-flex: 1;
       display: -webkit-flex;
-      man-height: 50px;
+      // min-height: 50px;
       min-width: 0;
       position: relative;
       .emp-log-view {
@@ -195,7 +211,7 @@
         overflow: auto;
         cursor: text;
         display: -webkit-flex;
-        -webkit-user-select: none;
+        // -webkit-user-select: none;
 
         .emp_body {
           // background-color:#FF33CC;
@@ -217,12 +233,7 @@
         }
 
         .emp-log-row {
-          // background-color:#FF33CC;
-          // overflow-x: hidden;
-          // overflow-y: hidden;
-          // -webkit-flex: 1;
           top:0;
-          // bottom:0;
           right:0;
           left:3em;
           min-width: 0;
@@ -230,12 +241,12 @@
           opacity: 0.6;
           overflow:auto;
 
-
           .emp-log-con{
             color:#FFFFFF;
             // word-wrap:normal;
             vertical-align: top;
             padding:0;
+            margin:0;
             // height:auto;
             // display:block;
             right:0;
@@ -273,6 +284,7 @@
           top:0;
           cusor:default;
           z-index:4;
+          -webkit-user-select: none;
 
           text-align: right;
           cursor: default;

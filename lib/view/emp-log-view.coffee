@@ -55,8 +55,8 @@ class EmpDebuggerLogView extends View
 
   @content: ->
     @div class: 'emp-log-pane tool-panel pannel panel-bottom padding', =>
-      @div class: 'log-console-resize-handle', mousedown: 'resizeStarted', dblclick: 'resizeToMin'
-      @div class: 'emp_bar panel-heading padded', =>
+      # @div class: 'log-console-resize-handle', mousedown: 'resizeStarted', dblclick: 'resizeToMin'
+      @div class: 'emp_bar panel-heading padded', mousedown: 'resizeStarted', dblclick: 'resizeToMin',=>
         @span 'Log From The Script Of Views: '
         @div class:'bar_div', =>
           @button class: 'btn btn_right', click: 'clear_log', 'Clear'
@@ -69,7 +69,20 @@ class EmpDebuggerLogView extends View
   initialize: ()->
     @line_number = 1
     @disposable = new CompositeDisposable
-    @disposable.add atom.workspaceView.command "emp-debugger:view-log", => @toggle()
+    @disposable.add atom.commands.add "atom-workspace","emp-debugger:view-log", => @toggle()
+    atom.commands.add "core:move-up", => console.log "this is a roll ----------"
+    # @emp_log_view.on "core:move-up", =>
+
+    # @emp_log_view.scrollUp (e) =>
+      # console.log "up up up up up up "
+    # @emp_log_view.scroll (e)=>
+      # console.log e
+      # console.log b
+      # console.log c
+      # console.log @emp_log_view
+      # console.log @emp_log_view.scrollTop
+      # console.log "---emp_log_view scroll"
+
     # @test()
 
   serialize: ->
@@ -147,7 +160,10 @@ class EmpDebuggerLogView extends View
 
     # console.log @log_detail.context.scrollHeight
     # console.log
-    $('#emp_log_view').stop().animate({scrollTop:@log_detail.context.scrollHeight}, 1000)
+    # console.log @log_detail.indexOf
+    # @log_detail.scrollToBottom()
+    @emp_log_view.scrollToBottom()
+    # $('#emp_log_view').stop().animate({scrollTop:@log_detail.context.scrollHeight}, 1000)
 
     # $("#log_content").stop().animate({
     #   scrollTop: document.getElementById("log_content").scrollHeight
@@ -197,17 +213,18 @@ class EmpDebuggerLogView extends View
       @pre id:"log_#{client_id}", class: "emp-log-con", style:"color:#{show_color};padding:0px;", "######################### CLIENT:#{client_id} ##########################"
 
       for log in log_ga.split("\n")
-        console.log "|#{log}|"
+        # console.log "|#{log}|"
         if log isnt "" and log isnt " "
           @pre id:"log_#{client_id}",class: "emp-log-con",style:"color:#{show_color};padding:0px;", "#{log}"
           # @div class: "emp-log-line", =>
           # @p class: "emp-log-con", style:"color:#{show_color};padding:0px;", "#{log}"
-
-    $('#emp_log_view').stop().animate({scrollTop:@log_detail.context.scrollHeight}, 1000)
+    # console.log @log_detail.context
+    @emp_log_view.scrollToBottom()
+    # $('#emp_log_view').stop().animate({scrollTop:@log_detail.context.scrollHeight}, 1000)
 
 
   store_log: (client_id, log) ->
-    console.log @log_map
+    # console.log @log_map
     if !@log_map[client_id]
       tmp_color = @get_color()
       @log_map[client_id] = new emp_log(client_id, tmp_color)
@@ -222,7 +239,7 @@ class EmpDebuggerLogView extends View
 
   refresh_conf_view: (client_id, color)->
     # unless !emp_conf_view
-    console.log @emp_conf_view
+    # console.log @emp_conf_view
     @emp_conf_view.refresh_log_view(client_id, color) unless !@emp_conf_view
 
   remove_client_log: (client_id)->

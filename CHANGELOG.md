@@ -1,9 +1,9 @@
 ![EMP](https://raw.githubusercontent.com/wiki/RYTong/emp-debugger/images/emp.png)
 # Emp Debugger Package Change Log
 
-## Now
+## Version 0.6.5
 1. 重构 log 界面, 框体高度可变
-
+2. 是 log 内容可以被本地按键操作
 
 ## Version 0.6.5
 1. 升级 API 到 API1.0 版本,解决输入框不显示的 bug

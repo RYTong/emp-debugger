@@ -26,16 +26,8 @@ module.exports =
   activate:(state) ->
     n_state = state
     # console.log "active"
-    # atom.workspaceView.command "emp-debugger:convert", => @convert()
-    # atom.workspaceView.command "emp-debugger:debug server", => @init()
-
-    # atom.workspaceView.command "emp-debugger:close-server", => @close()
-    # atom.workspaceView.command "emp-debugger:enable_view", => @enable_view()
-    # @empDebuggerInitView = new empDebuggerInitView(state.empDebuggerInitViewState)
     @empDebuggerLogView = new EmpDebuggerLogView(n_state.empDebuggerLogViewState)
     @emp_socket_server = new EmpSocketServer(@empDebuggerLogView)
-    # @empDebuggerInitView = new EmpDebuggerInitView(n_state.empDebuggerInitViewState, @emp_socket_server)
-    # @empDebuggerStateView = new EmpDebuggerStateView(n_state.empDebuggerStateViewState, @emp_socket_server, @empDebuggerLogView)
     @empEnableView = new EmpEnableView(n_state.empEnableViewState, @emp_socket_server)
     @empEnableLuaView = new EmpEnableLuaView(n_state.empEnableLuaViewState, @emp_socket_server)
     @empDebuggerSettingView = new EmpDebuggerSettingView(n_state.empDebuggerSettingViewState,

@@ -17,7 +17,6 @@ class emp_socket
   default_host: 'default'
   default_port: '7003'
 
-
   constructor: (tmp_log_storage)->
     # console.log "init socket~"
     emp_client_map = new emp_clients_map(tmp_log_storage)

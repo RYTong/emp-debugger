@@ -136,6 +136,7 @@ module.exports =
   OFF_EXTENSION_CS: "cs"
   OFF_EXTENSION_JSON: "json"
   OFF_EXTENSION_XHTML:"xhtml"
+  OFF_EXTENSION_LUA:"lua"
 
 
   DEFAULT_COL_ITEM:'[{item_id,"$cha_id"},{item_type,$itype},{menu_order,$order}]'
@@ -154,6 +155,10 @@ module.exports =
   ADAPTER_REQUEST_PARAMS: "{'$key', $value}"
   DEFAULT_EXT_LUA : '.lua'
   DEFAULT_EXT_XHTML :'.xhtml'
+
+  DEFAULT_TEMP_HEADER:'<!--<atom_emp_related_file_info>${atom_related_info}</atom_emp_related_file_info>-->\n'
+  DEFAULT_LUATEMP_HEADER:'--<atom_emp_related_file_info>${atom_related_info}</atom_emp_related_file_info>--\n'
+  DEFAULT_HEADER:'<atom_emp_related_file_info>${atom_related_info}</atom_emp_related_file_info>\n'
 
   # 提示信息
   EMP_PACKAGE_UNION_PKG_SUCCESS:"普通资源整合包，打包成功~"

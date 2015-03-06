@@ -1,8 +1,9 @@
-{$, $$, View, SelectListView, EditorView} = require 'atom'
+{$, $$, View, SelectListView} = require 'atom-space-pen-views'
 path = require 'path'
 emp = require '../exports/emp'
 relate_view = require './emp-relate-view'
 path_fliter = require '../util/path-loader'
+fs = require 'fs'
 
 relate_all_views = null
 tmp_offline_path = null
@@ -16,7 +17,8 @@ class EnableView extends SelectListView
     # console.log 'enable view process initial'
     super
     @addClass('overlay from-top')
-    @setMaxItems(20)
+    # @setMaxItems(20)
+    @autoDetect = index: 'Auto Detect'
 
     unless tmp_offline_path = atom.config.get(emp.EMP_OFFLINE_RELATE_DIR)
       tmp_offline_path = emp.EMP_OFFLINE_RELATE_PATH_V
@@ -25,7 +27,7 @@ class EnableView extends SelectListView
     # @subscribe atom.project, 'path-changed', =>
     #   console.log "path changed -----------"
 
-    atom.workspaceView.command "emp-debugger:enable-view", => @enable_view()
+    atom.commands.add "atom-workspace","emp-debugger:enable-view", => @enable_view()
 
 
   # Returns an object that can be retrieved when package is activated
@@ -34,11 +36,11 @@ class EnableView extends SelectListView
   # Tear down any state and detach
   destroy: ->
     @cancel()
-    @remove()
+    # @remove()
 
   enable_view: ->
     # console.log "enable_view"
-    if @hasParent()
+    if @panel?
       @cancel()
     else
       path_fliter.load_all_path tmp_offline_path, emp.EMP_VIEW_FILTER_IGNORE, (paths) ->
@@ -47,7 +49,7 @@ class EnableView extends SelectListView
 
       @setItems(@get_view_items())
       @storeFocusedElement()
-      atom.workspaceView.append(this)
+      @panel = atom.workspace.addModalPanel(item:this)
       @focusFilterEditor()
 
   get_view_items: ->
@@ -62,6 +64,7 @@ class EnableView extends SelectListView
       len -= 1
       re_map[index] = tmp_map[len]
       index += 1
+    # console.log re_map
     re_map
 
   # Public: Get the property name to use when filtering items.
@@ -77,7 +80,7 @@ class EnableView extends SelectListView
   # Returns the property name to fuzzy filter by.
   getFilterKey: ->
     # console.log "get key"
-    'index'
+    'show_name'
 
   # Public: Create a view for the given model item.
   #
@@ -118,53 +121,51 @@ class EnableView extends SelectListView
   # Returns a DOM element, jQuery object, or {View}.
   confirmed: (item) ->
     # console.log("#{item.index} was selected")
-    # console.log item.readed
+    # console.log item
     item.set_view_readed()
-    @cancel()
     @initial_new_pane(item)
+    @cancel()
 
-  confirmSelection: ->
-    # console.log "selections~"
-    item = @getSelectedItem()
-    if item?
-      @confirmed(item)
-    else
-      @cancel()
 
   cancelled: ->
-    @filterEditorView.getEditor().setText('')
-    @filterEditorView.updateDisplay()
+    @panel?.destroy()
+    @panel = null
 
   # initial a new editor pane
   initial_new_pane: (item)->
     tmp_editor = null
     # atom.open({pathsToOpen: [pathToOpen], newWindow: true})
     if dest_file_path = item.dir
-      tmp_name = item.name
-      com_filter_arr = []
-      # console.log relate_all_views
-      # console.log tmp_name
-      re_path_arr = path_fliter.filter_path(relate_all_views, tmp_name)
-      # console.log re_path_arr
-      for tmp_item in re_path_arr
-        if tmp_item.name is  tmp_name
-          com_filter_arr.push(tmp_item)
-      if com_filter_arr.length <= 1
-        project_path = atom.project.getPath()
-        tmp_file_path = path.join project_path, dest_file_path
-        # test_path = path.join project_path, 'test.xhtml'
+      project_path = atom.project.getPath()
+      tmp_file_path = path.join project_path, dest_file_path
+      if fs.existsSync tmp_file_path
         @create_editor tmp_file_path, item
       else
-        unless @path_view?
-          @path_view = new relate_view(tmp_offline_path, emp.EMP_VIEW_FILTER_IGNORE)
-        @path_view.enable_view(com_filter_arr, item, this.create_editor)
+        tmp_name = item.name
+        com_filter_arr = []
+        # console.log relate_all_views
+        # console.log tmp_name
+        re_path_arr = path_fliter.filter_path(relate_all_views, tmp_name)
+        # console.log re_path_arr
+        for tmp_item in re_path_arr
+          if tmp_item.name is  tmp_name
+            com_filter_arr.push(tmp_item)
+        if com_filter_arr.length < 1
+          tmp_editor = atom.workspace.openSync()
+          @store_info(tmp_editor, item)
+        else if com_filter_arr.length is 1
+          @create_editor tmp_item.dir, item
+        else
+          unless @path_view?
+            @path_view = new relate_view(tmp_offline_path, emp.EMP_VIEW_FILTER_IGNORE)
+          @path_view.enable_view(com_filter_arr, item, this.create_editor)
     else
       tmp_editor = atom.workspace.openSync()
       @store_info(tmp_editor, item)
 
   create_editor:(tmp_file_path, item) ->
     changeFocus = true
-    tmp_editor = atom.workspaceView.openSync(tmp_file_path, { changeFocus })
+    tmp_editor = atom.workspace.openSync(tmp_file_path, { changeFocus })
     tmp_editor["emp_live_view"] = item
     tmp_editor["emp_live_script_name"] = null
     tmp_editor["emp_live_script"] = null

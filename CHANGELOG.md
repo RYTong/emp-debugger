@@ -1,9 +1,20 @@
 ![EMP](https://raw.githubusercontent.com/wiki/RYTong/emp-debugger/images/emp.png)
 # Emp Debugger Package Change Log
 
+## Version 0.6.6
+1. 修改 现实可用 lua 文件调用时报错的 bug
+2. 限定 log 界面 按键操作范围,使 ctrl-a 局限于 log pane 内(如果当前页面有其他的几面元素,请尽量关闭).
+3. 添加文件关联按键. 如果你的模板或者 lua 文件不是通过 atom 创建的.
+    但是你也想在调试时关联Debugger 下行报文和文件实体, 那么你可以在上送报文之前在报文中添加文件关联语句.
+4. 优化文件关联匹配规则, 现在分为以下几种情况
+  * 已添加文件关联语句,并存在对应关联文件,则直接打开文件
+  * 已添加文件关联语句,不存在对应关联文件,则查找对应名称文件(若多个则选择)打开
+  * 未添加文件关联语句,如果为 lua, 则查找对应名称文件. xhtml 直接打开匿名编辑器
+
+
 ## Version 0.6.5
 1. 重构 log 界面, 框体高度可变
-2. 是 log 内容可以被本地按键操作
+2. log 内容可以被本地按键操作
 
 ## Version 0.6.5
 1. 升级 API 到 API1.0 版本,解决输入框不显示的 bug

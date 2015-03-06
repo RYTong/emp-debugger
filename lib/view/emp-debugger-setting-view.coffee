@@ -4,6 +4,7 @@
 EmpAppMan = require '../emp_app/emp_app_manage'
 EmpBarView = require './emp-setting-bar'
 EmpAppManaView = require './emp-app-manage-view'
+EmpSnippetsView = require '../debugger/emp_debugger_snippets_view'
 
 PANE_DENUG = 'debug'
 PANE_APP = 'emp'
@@ -32,7 +33,6 @@ class EmpDebuggerSettingView extends View
 
   default_color_name: 'default'
   default_color_value: '#FFFFFF'
-
 
   @content: ->
     # console.log 'constructor'
@@ -104,11 +104,14 @@ class EmpDebuggerSettingView extends View
                   @option value: "#990099", "紫"
                   @option value: "#000033", "黑"
 
-
   initialize: (serializeState, @emp_socket_server, @empDebuggerLogView, @fa_view) ->
     # console.log 'server state view initial'
     bar_view = new EmpBarView(this)
     @emp_setting_panel.before(bar_view)
+    snippet_view = new EmpSnippetsView(this)
+    @log_detail.after snippet_view
+
+
     @disposable = new CompositeDisposable
 
     @disposable.add atom.commands.add "atom-workspace","emp-debugger:setting-view", => @set_conf()

@@ -1,4 +1,4 @@
-{$, $$, View, SelectListView, EditorView} = require 'atom'
+{$, $$, View, SelectListView, EditorView} = require 'atom-space-pen-views'
 path = require 'path'
 path_loader = require '../util/path-loader'
 project_path = ''
@@ -11,7 +11,8 @@ class EnableRView extends SelectListView
     super
     project_path = atom.project.getPath()
     @addClass('overlay from-top')
-    @setMaxItems(20)
+    # @setMaxItems(20)
+    @autoDetect = index: 'Auto Detect'
     # atom.workspaceView.command "emp-debugger:enable-view", =>
     # @enable_view()
 
@@ -22,11 +23,10 @@ class EnableRView extends SelectListView
   # Tear down any state and detach
   destroy: ->
     @cancel()
-    @remove()
 
   enable_view: (@paths, @view_item,  @callback)->
     # console.log "enable_view"
-    if @hasParent()
+    if @panel?
       @cancel()
     else
       @populate()
@@ -34,7 +34,7 @@ class EnableRView extends SelectListView
 
   attach: ->
     @storeFocusedElement()
-    atom.workspaceView.append(this)
+    @panel = atom.workspace.addModalPanel(item:this)
     @focusFilterEditor()
 
   populate: ->
@@ -58,7 +58,7 @@ class EnableRView extends SelectListView
   #
   # Returns the property name to fuzzy filter by.
   getFilterKey: ->
-    console.log "get key"
+    # console.log "get key"
     'name'
 
   # Public: Create a view for the given model item.
@@ -89,20 +89,12 @@ class EnableRView extends SelectListView
     # console.log("#{item.index} was selected")
     # console.log item.readed
     # item.set_view_readed()
-    @cancel()
     @initial_new_pane(item)
-
-  confirmSelection: ->
-    # console.log "selections~"
-    item = @getSelectedItem()
-    if item?
-      @confirmed(item)
-    else
-      @cancel()
+    @cancel()
 
   cancelled: ->
-    @filterEditorView.getEditor().setText('')
-    @filterEditorView.updateDisplay()
+    @panel?.destroy()
+    @panel = null
 
 
   # initial a new editor pane

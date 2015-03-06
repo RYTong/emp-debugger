@@ -1,4 +1,4 @@
-{$, $$, View, SelectListView, EditorView} = require 'atom'
+{$, $$, View, SelectListView} = require 'atom-space-pen-views'
 emp = require '../exports/emp'
 relate_view = require './emp-relate-view'
 path_fliter = require '../util/path-loader'
@@ -13,11 +13,12 @@ class EnableLuaView extends SelectListView
     # console.log 'enable view process initial'
     super
     @addClass('overlay from-top')
-    @setMaxItems(20)
+    # @setMaxItems(20)
+    @autoDetect = index: 'Auto Detect'
     unless tmp_offline_path = atom.config.get(emp.EMP_OFFLINE_RELATE_DIR)
       tmp_offline_path = emp.EMP_OFFLINE_RELATE_PATH_V
 
-    atom.workspaceView.command "emp-debugger:enable-lua", => @enable_lua()
+    atom.commands.add "atom-workspace","emp-debugger:enable-lua", => @enable_lua()
 
 
   # Returns an object that can be retrieved when package is activated
@@ -26,11 +27,11 @@ class EnableLuaView extends SelectListView
   # Tear down any state and detach
   destroy: ->
     @cancel()
-    @remove()
+    # @remove()
 
   enable_lua: ->
-    console.log "enable_view"
-    if @hasParent()
+    # console.log "enable_view"
+    if @panel?
       @cancel()
     else
       path_fliter.load_all_path tmp_offline_path, emp.EMP_SCRIPT_FILTER_IGNORE, (paths) ->
@@ -39,7 +40,7 @@ class EnableLuaView extends SelectListView
 
       @setItems(@get_script_items())
       @storeFocusedElement()
-      atom.workspaceView.append(this)
+      @panel = atom.workspace.addModalPanel(item:this)
       @focusFilterEditor()
 
   get_script_items: ->
@@ -101,50 +102,48 @@ class EnableLuaView extends SelectListView
     # console.log("#{item.index} was selected")
     # console.log item.readed
     item.set_readed()
-    @cancel()
     @initial_new_pane(item)
-
-  confirmSelection: ->
-    # console.log "selections~"
-    item = @getSelectedItem()
-    if item?
-      @confirmed(item)
-    else
-      @cancel()
+    @cancel()
 
   cancelled: ->
-    @filterEditorView.getEditor().setText('')
-    @filterEditorView.updateDisplay()
+    @panel?.destroy()
+    @panel = null
 
 
   # initial a new editor pane
   initial_new_pane: (item)->
     tmp_name = item.script_name
-    com_filter_arr = []
-    # console.log relate_all_views
-    # console.log tmp_name
-    re_path_arr = path_fliter.filter_path(relate_all_views, tmp_name)
-    # console.log re_path_arr
-    for tmp_item in re_path_arr
-      if tmp_item.name is  tmp_name
-        com_filter_arr.push(tmp_item)
-
-    if com_filter_arr.length is 0
-      tmp_editor = atom.workspace.openSync()
-      @store_info(tmp_editor, item)
-    else if com_filter_arr.length is 1
-      tmp_item = com_filter_arr.pop()
-      @create_editor tmp_item.dir, item
+    if dest_file_path = item.dir
+      project_path = atom.project.getPath()
+      tmp_file_path = path.join project_path, dest_file_path
+      if fs.existsSync tmp_file_path
+        @create_editor tmp_file_path, item
     else
-      unless @path_view?
-        @path_view = new relate_view(tmp_offline_path, emp.EMP_SCRIPT_FILTER_IGNORE)
-      @path_view.enable_view(com_filter_arr, item, this.create_editor)
+      com_filter_arr = []
+      # console.log relate_all_views
+      # console.log tmp_name
+      re_path_arr = path_fliter.filter_path(relate_all_views, tmp_name)
+      # console.log re_path_arr
+      for tmp_item in re_path_arr
+        if tmp_item.name is  tmp_name
+          com_filter_arr.push(tmp_item)
+
+      if com_filter_arr.length is 0
+        tmp_editor = atom.workspace.openSync()
+        @store_info(tmp_editor, item)
+      else if com_filter_arr.length is 1
+        tmp_item = com_filter_arr.pop()
+        @create_editor tmp_item.dir, item
+      else
+        unless @path_view?
+          @path_view = new relate_view(tmp_offline_path, emp.EMP_SCRIPT_FILTER_IGNORE)
+        @path_view.enable_view(com_filter_arr, item, this.create_editor)
 
 
 
   create_editor:(tmp_file_path, item) ->
     changeFocus = true
-    tmp_editor = atom.workspaceView.openSync(tmp_file_path, { changeFocus })
+    tmp_editor = atom.workspace.openSync(tmp_file_path, { changeFocus })
 
     tmp_editor["emp_live_view"] = item.fa_view.view
     tmp_editor["emp_live_script_name"] = item.script_name

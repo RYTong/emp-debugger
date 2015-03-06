@@ -389,7 +389,7 @@ class emp_channel
       if !fs.existsSync tmp_xhtml_file
         tmp_xhtml_template = xhtml_template.replace(/\$\{trancode\}/ig, tmp_tran)
         tmp_relate_file = path.join relate_dir, ext_xhtml, tmp_xhtml_name
-        tmp_xhtml_template = tmp_xhtml_template.replace(/\$\{atom_related_info\}/ig, tmp_relate_file)
+        tmp_xhtml_template = tmp_xhtml_template.replace(/\$\{atom_related_info\}/ig, emp.DEFAULT_TEMP_HEADER.replace(/\$\{atom_related_info\}/ig,tmp_relate_file))
 
         if next_obj = tmp_arr.pop()
           tmp_xhtml_template = tmp_xhtml_template.replace(emp.EMP_ENTRANCE_NEXT_TRANCODE, next_obj.trancode)

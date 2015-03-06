@@ -20,8 +20,6 @@ class emp_client_script
       # console.log re
       new_re = re[0].replace(/\<*\/*atom_emp_related_file_info\>*/ig, "")
       new_name = path.basename(new_re)
-      console.log new_name
-      console.log @script_name
       if @script_name is new_name
       # @dir = path.dirname(new_re)
         @dir = new_re

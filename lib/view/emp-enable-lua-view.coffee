@@ -1,4 +1,4 @@
-{$, $$, View, SelectListView, EditorView} = require 'atom'
+{$, $$, View, SelectListView} = require 'atom-space-pen-views'
 emp = require '../exports/emp'
 relate_view = require './emp-relate-view'
 path_fliter = require '../util/path-loader'
@@ -13,7 +13,8 @@ class EnableLuaView extends SelectListView
     # console.log 'enable view process initial'
     super
     @addClass('overlay from-top')
-    @setMaxItems(20)
+    # @setMaxItems(20)
+    @autoDetect = index: 'Auto Detect'
     unless tmp_offline_path = atom.config.get(emp.EMP_OFFLINE_RELATE_DIR)
       tmp_offline_path = emp.EMP_OFFLINE_RELATE_PATH_V
 
@@ -26,11 +27,11 @@ class EnableLuaView extends SelectListView
   # Tear down any state and detach
   destroy: ->
     @cancel()
-    @remove()
+    # @remove()
 
   enable_lua: ->
     # console.log "enable_view"
-    if @hasParent()
+    if @panel?
       @cancel()
     else
       path_fliter.load_all_path tmp_offline_path, emp.EMP_SCRIPT_FILTER_IGNORE, (paths) ->
@@ -39,7 +40,7 @@ class EnableLuaView extends SelectListView
 
       @setItems(@get_script_items())
       @storeFocusedElement()
-      atom.workspaceView.append(this)
+      @panel = atom.workspace.addModalPanel(item:this)
       @focusFilterEditor()
 
   get_script_items: ->
@@ -101,20 +102,12 @@ class EnableLuaView extends SelectListView
     # console.log("#{item.index} was selected")
     # console.log item.readed
     item.set_readed()
-    @cancel()
     @initial_new_pane(item)
-
-  confirmSelection: ->
-    # console.log "selections~"
-    item = @getSelectedItem()
-    if item?
-      @confirmed(item)
-    else
-      @cancel()
+    @cancel()
 
   cancelled: ->
-    @filterEditorView.getEditor().setText('')
-    @filterEditorView.updateDisplay()
+    @panel?.destroy()
+    @panel = null
 
 
   # initial a new editor pane

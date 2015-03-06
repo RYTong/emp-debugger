@@ -38,7 +38,7 @@ module.exports.load_path = (dir, tmp_file, tmp_ignore_name, callback) ->
 
 
 module.exports.load_all_path = (dir, tmp_ignore_name, callback) ->
-  console.log "this is load all path"
+  # console.log "this is load all path"
   dir ?= "public/www/resource_dev"
   tmp_ignore_name ?= ["*.json", "*.lua", "*.png", "*.jpg", "*.css"]
 

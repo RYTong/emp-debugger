@@ -1,4 +1,4 @@
-{$, $$, View} = require 'atom'
+{$, $$, View} = require 'atom-space-pen-views'
 # os = require 'os'
 # path = require 'path'
 # c_process = require 'child_process'

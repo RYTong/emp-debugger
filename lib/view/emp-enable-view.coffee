@@ -1,4 +1,4 @@
-{$, $$, View, SelectListView} = require 'atom'
+{$, $$, View, SelectListView} = require 'atom-space-pen-views'
 path = require 'path'
 emp = require '../exports/emp'
 relate_view = require './emp-relate-view'
@@ -17,7 +17,8 @@ class EnableView extends SelectListView
     # console.log 'enable view process initial'
     super
     @addClass('overlay from-top')
-    @setMaxItems(20)
+    # @setMaxItems(20)
+    @autoDetect = index: 'Auto Detect'
 
     unless tmp_offline_path = atom.config.get(emp.EMP_OFFLINE_RELATE_DIR)
       tmp_offline_path = emp.EMP_OFFLINE_RELATE_PATH_V
@@ -35,11 +36,11 @@ class EnableView extends SelectListView
   # Tear down any state and detach
   destroy: ->
     @cancel()
-    @remove()
+    # @remove()
 
   enable_view: ->
     # console.log "enable_view"
-    if @hasParent()
+    if @panel?
       @cancel()
     else
       path_fliter.load_all_path tmp_offline_path, emp.EMP_VIEW_FILTER_IGNORE, (paths) ->
@@ -48,7 +49,7 @@ class EnableView extends SelectListView
 
       @setItems(@get_view_items())
       @storeFocusedElement()
-      atom.workspaceView.append(this)
+      @panel = atom.workspace.addModalPanel(item:this)
       @focusFilterEditor()
 
   get_view_items: ->
@@ -63,6 +64,7 @@ class EnableView extends SelectListView
       len -= 1
       re_map[index] = tmp_map[len]
       index += 1
+    # console.log re_map
     re_map
 
   # Public: Get the property name to use when filtering items.
@@ -78,7 +80,7 @@ class EnableView extends SelectListView
   # Returns the property name to fuzzy filter by.
   getFilterKey: ->
     # console.log "get key"
-    'index'
+    'show_name'
 
   # Public: Create a view for the given model item.
   #
@@ -121,21 +123,13 @@ class EnableView extends SelectListView
     # console.log("#{item.index} was selected")
     # console.log item
     item.set_view_readed()
-    @cancel()
     @initial_new_pane(item)
+    @cancel()
 
-  confirmSelection: ->
-    # console.log "selections~"
-    item = @getSelectedItem()
-    if item?
-      @confirmed(item)
-    else
-      @cancel()
 
   cancelled: ->
-    @filterEditorView.getEditor().setText('')
-    @filterEditorView.updateDisplay()
-    # @cancel()
+    @panel?.destroy()
+    @panel = null
 
   # initial a new editor pane
   initial_new_pane: (item)->
@@ -152,7 +146,7 @@ class EnableView extends SelectListView
         # console.log relate_all_views
         # console.log tmp_name
         re_path_arr = path_fliter.filter_path(relate_all_views, tmp_name)
-        console.log re_path_arr
+        # console.log re_path_arr
         for tmp_item in re_path_arr
           if tmp_item.name is  tmp_name
             com_filter_arr.push(tmp_item)

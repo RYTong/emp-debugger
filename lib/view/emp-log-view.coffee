@@ -70,7 +70,7 @@ class EmpDebuggerLogView extends View
     @line_number = 1
     @disposable = new CompositeDisposable
     @disposable.add atom.commands.add "atom-workspace","emp-debugger:view-log", => @toggle()
-    atom.commands.add "core:move-up", => console.log "this is a roll ----------"
+    # atom.commands.add "core:move-up", => console.log "this is a roll ----------"
     # @emp_log_view.on "core:move-up", =>
 
     # @emp_log_view.scrollUp (e) =>

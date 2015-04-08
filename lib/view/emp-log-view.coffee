@@ -210,7 +210,7 @@ class EmpDebuggerLogView extends View
 
   update_log: (client_id, log_ga, show_color)->
     @log_detail.append $$ ->
-      @pre id:"log_#{client_id}", class: "emp-log-con", style:"color:#{show_color};padding:0px;", "######################### CLIENT:#{client_id} ##########################"
+      # @pre id:"log_#{client_id}", class: "emp-log-con", style:"color:#{show_color};padding:0px;", "######################### CLIENT:#{client_id} ##########################"
 
       for log in log_ga.split("\n")
         # console.log "|#{log}|"

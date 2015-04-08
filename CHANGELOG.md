@@ -1,6 +1,9 @@
 ![EMP](https://raw.githubusercontent.com/wiki/RYTong/emp-debugger/images/emp.png)
 # Emp Debugger Package Change Log
 
+## Version 0.6.8
+1. 去掉 lua 日志开头标示
+
 ## Version 0.6.6
 1. 修改 现实可用 lua 文件调用时报错的 bug
 2. 限定 log 界面 按键操作范围,使 ctrl-a 局限于 log pane 内(如果当前页面有其他的几面元素,请尽量关闭).

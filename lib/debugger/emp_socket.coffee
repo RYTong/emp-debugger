@@ -10,10 +10,10 @@ emp_client_map = null
 log_storage = null
 emp_server_state = false
 emp_conf_view = null
+timeout = 14400000
 module.exports =
 class emp_socket
 
-  timeout = 14400000
   default_host: 'default'
   default_port: '7003'
 
@@ -64,7 +64,8 @@ class emp_socket
       emp_conf_view.remove_client(remotePort) unless !emp_conf_view
 
 
-    socket.setTimeout @timeout,  ->
+    console.log timeout
+    socket.setTimeout timeout,  ->
       console.log( 'Client connect timeout~')
       socket.end()
 

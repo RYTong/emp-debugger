@@ -27,7 +27,7 @@ class EmpAppManaView extends View
   @content: ->
     # console.log 'constructor'
     @div outlet:"emp_app_view", class:'emp-setting-server', =>
-      @div outlet: 'app_detail', class: 'emp-setting-row', =>
+      @div outlet: 'app_detail', class: 'emp-setting-row-app', =>
         @div class: "emp-setting-con panel-body padded", =>
           @div class: "block conf-heading icon icon-gear", "App Management"
 

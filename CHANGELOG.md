@@ -1,6 +1,9 @@
 ![EMP](https://raw.githubusercontent.com/wiki/RYTong/emp-debugger/images/emp.png)
 # Emp Debugger Package Change Log
 
+## Version 0.6.11
+1. 修改控制台样式, 修复重叠问题
+
 ## Version 0.6.10
 1. 修改因为超时时间设置引起的报错
 

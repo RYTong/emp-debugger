@@ -10,7 +10,7 @@ module.exports =
 class EmpDebugAppWizardView extends View
 
   @content: ->
-    @div outlet: 'cha_detail', class: 'emp-setting-row', =>
+    @div outlet: 'cha_detail', class: 'emp-setting-row-one', =>
       @div class: "emp-setting-con panel-body padded", =>
         @div class: "block conf-heading icon icon-gear", "Create App Wizard"
       @div outlet:"emp_cha_btns", class: "emp-setting-con panel-body padded",  =>

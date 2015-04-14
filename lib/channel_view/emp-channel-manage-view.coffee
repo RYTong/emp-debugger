@@ -12,7 +12,7 @@ class EmpChannelManaView extends View
 
   @content: ->
     # console.log 'constructor'
-    @div outlet: 'cha_detail', class: 'emp-setting-row', =>
+    @div outlet: 'cha_detail', class: 'emp-setting-row-one', =>
       @div class: "emp-setting-con panel-body padded", =>
         @div class: "block conf-heading icon icon-gear", "Channel Management"
       @div outlet:"emp_cha_btns", class: "emp-setting-con panel-body padded",  =>

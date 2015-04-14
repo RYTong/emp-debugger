@@ -20,7 +20,7 @@ module.exports =
 class EmpDebugAdpPackageView extends View
 
   @content: ->
-    @div outlet: 'cha_detail', class: 'emp-setting-row', =>
+    @div outlet: 'cha_detail', class: 'emp-setting-row-two', =>
       @div class: "emp-setting-con panel-body padded", =>
         @div class: "block conf-heading icon icon-gear", "Adapter Package"
       @div outlet:"emp_cha_btns", class: "emp-setting-con panel-body padded",  =>

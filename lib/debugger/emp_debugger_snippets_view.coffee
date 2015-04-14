@@ -8,7 +8,7 @@ module.exports =
 class EmpSnippetsView extends View
 
   @content: ->
-    @div class: 'emp-setting-row', =>
+    @div class: 'emp-setting-row-snip', =>
       @div class: "emp-setting-con panel-body padded", =>
         @div class: "block conf-heading icon icon-gear", "添加调试文件关联"
 

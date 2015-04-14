@@ -40,7 +40,7 @@ class EmpDebuggerSettingView extends View
       @div outlet:"emp_setting_panel", class:'emp-setting-panel', =>
         @div outlet:"emp_setting_view", class:'emp-setting-server',  =>
           # ------------------------ server setting pane ------------------------
-          @div outlet: 'conf_detail', class: 'emp-setting-row', =>
+          @div outlet: 'conf_detail', class: 'emp-setting-row-server', =>
             @div class: "emp-setting-con panel-body padded", =>
               @div class: "block conf-heading icon icon-gear", "Server Setting"
 
@@ -72,7 +72,7 @@ class EmpDebuggerSettingView extends View
                 @button class: 'btn btn-else btn-info inline-block-tight', click: 'show_enable_lua', "Enable Lua"
 
           # ------------------------ log config pane ------------------------
-          @div outlet: 'log_detail', class: 'emp-setting-row', =>
+          # @div outlet: 'log_detail', class: 'emp-setting-row', =>
             @div class: "emp-setting-con panel-body padded", =>
               @div class: "block conf-heading icon icon-gear", "Log Setting"
 
@@ -109,7 +109,7 @@ class EmpDebuggerSettingView extends View
     bar_view = new EmpBarView(this)
     @emp_setting_panel.before(bar_view)
     snippet_view = new EmpSnippetsView(this)
-    @log_detail.after snippet_view
+    @conf_detail.after snippet_view
 
 
     @disposable = new CompositeDisposable

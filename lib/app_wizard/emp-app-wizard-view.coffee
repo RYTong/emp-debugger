@@ -31,11 +31,11 @@ class EmpAppWizardView extends ScrollView
             @div class:'detail-body', =>
               @div class:'detail-con', =>
                 @div class:'info-div', =>
-                  @label class: 'info-label', 'App名称*:'
+                  @label class: 'info-label', 'App Name*:'
                   @subview "app_name_editor", new TextEditorView(mini: true,attributes: {id: 'app_name', type: 'string'},  placeholderText: 'Application Name')
 
                 @div class:'info-div', =>
-                  @label class: 'info-label', 'App 路径*:'
+                  @label class: 'info-label', 'App Path*:'
                   @subview "app_path", new TextEditorView(mini: true,attributes: {id: 'app_path', type: 'string'},  placeholderText: 'Application Path')
                   @button class: 'path-btn btn btn-info inline-block-tight', click:'select_apath',' Chose Path '
 

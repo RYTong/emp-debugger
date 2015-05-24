@@ -28,24 +28,24 @@ class AddGenPanel extends View
           @div class:'div-con ', =>
             @div class:'cha_detail_div', =>
               @div class: 'info-div', =>
-                @label outlet:"cha_id_title",class: 'info-label', '频道ID*: '
+                @label outlet:"cha_id_title",class: 'info-label', '频道ID(Channel Id)*: '
                 @subview "cha_id", new TextEditorView(mini: true, attributes: {id: 'cha_id', type: 'string'},  placeholderText: 'Channel ID') #from editor view class
               @div class: 'info-div', =>
-                @label class: 'info-label', '频道名称*'
+                @label class: 'info-label', '频道名称(Channel Name)*'
                 @subview "cha_name", new TextEditorView(mini: true, attributes: {id: 'cha_name', type: 'string'},  placeholderText: 'Channel Name') #from editor view class
               @div class: 'info-div', =>
-                @label class: 'info-label', '所属App'
+                @label class: 'info-label', '所属App(App Name)'
                 @subview "cha_app", new TextEditorView(mini: true, attributes: {id: 'cha_app', type: 'string'},  placeholderText: 'App') #from editor view class
             @div class: 'info-div', =>
-              @label class: 'info-label', '频道配型'
+              @label class: 'info-label', '频道配型(Channel Type)'
               @select outlet: "channel_entry", class: "form-control", =>
-                @option value: emp.CHANNEL_ADAPTER, selected:"selected", "适配"
-                @option value: emp.CHANNEL_NEW_CALLBACK, "新回调"
+                @option value: emp.CHANNEL_ADAPTER, selected:"selected", "适配(Adapter)"
+                @option value: emp.CHANNEL_NEW_CALLBACK, "新回调(New Callback)"
             @div outlet:'cha_state_info', class: 'info-div info-font', =>
-              @label class: 'info-label', '频道状态:'
+              @label class: 'info-label', '频道状态(Channel State):'
               # @div class: 'checkbox', =>
               @input outlet:'cha_state', type: 'checkbox', checked:'true'
-              @text "开启"
+              @text "开启(On)"
             # @div outlet:'entry_params', class:'entry_div'
             @div outlet:'cha_params', class:'cha_parma_div'
 

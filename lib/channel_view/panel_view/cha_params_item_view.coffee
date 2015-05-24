@@ -10,10 +10,10 @@ class ParamsItemPanel extends View
     @div class:'p_param_div', =>
       @ul outlet:"item_ul", class:'off_ul', =>
         @li class:'off_li', =>
-          @span "参数名称:"
+          @span "参数名称(Parameter Name):"
           @subview "ekey", new TextEditorView(mini: true, attributes: {id: 'key', type: 'string'},  placeholderText: 'Key')
         @li class:'off_li', =>
-          @span "参数值:"
+          @span "参数值(Parameter Value):"
           @subview "evalue", new TextEditorView(mini: true, attributes: {id: 'value', type: 'string'},  placeholderText: 'Value')
         @button class: 'off_ul_btn btn btn-info inline-block-tight', click:'destroy',' Delete '
 

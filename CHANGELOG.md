@@ -1,6 +1,10 @@
 ![EMP](https://raw.githubusercontent.com/wiki/RYTong/emp-debugger/images/emp.png)
 # Emp Debugger Package Change Log
 
+## Version 0.6.12
+1. 修改5.2 emp app 脚本, 重定义外联 lua 引用路径
+2. 修改部分插件空间名为英文.
+
 ## Version 0.6.11
 1. 修改控制台样式, 修复重叠问题
 

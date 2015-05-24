@@ -207,7 +207,7 @@
   .col-list-panel {
     // -webkit-flex: 0.5;
     // -webkit-flex-direction: column;
-    margin: @component-padding;
+    margin: 0 @component-padding/2 0 @component-padding/2;
     top:0;
     right:0;
     left:0;
@@ -295,7 +295,7 @@
   .cha-list-panel {
     // -webkit-flex: 0.5;
     // -webkit-flex-direction: column;
-    margin: 0 @component-padding @component-padding @component-padding;
+    margin: 0 @component-padding/2 @component-padding/2 @component-padding/2;
     top:50%;
     right:0;
     left:0;
@@ -307,7 +307,7 @@
 
 
     .div-body {
-      // padding-top: @component-padding/2;
+      padding-top: @component-padding/2;
       -webkit-flex-flow: column;
       display: -webkit-flex;
       -webkit-flex: 1;
@@ -318,7 +318,8 @@
       position: relative;
 
       .div-con {
-        margin: @component-padding/2;
+        // margin: @component-padding/2;
+        margin: @component-padding/2 0 @component-padding/2 0;
         position: absolute;
         top: 0;
         right: 0;
@@ -335,7 +336,7 @@
           top:0;
           bottom:0;
           left:0;
-          right:9em;
+          right:11.5em;
           min-width: 0;
           position: absolute;
           // overflow:auto;
@@ -351,7 +352,7 @@
           padding: 0 @component-padding/2 0 @component-padding/2;
           top:0;
           bottom:0;
-          right:0.5em;
+          right:0em;
           min-width: 8em;
           position: absolute;
 

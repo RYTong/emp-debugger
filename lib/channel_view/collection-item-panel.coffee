@@ -19,11 +19,11 @@ class SettingsPanel extends View
             @ol outlet:"gen_col_list", class: 'list-tree', =>
           @div class:'emp_item_btn_div', =>
             @div class: 'item_cbtn_div', =>
-              @button class: 'item_btn btn btn-info inline-block-tight', click:'add_col', ' 添加 '
+              @button class: 'item_btn btn btn-info inline-block-tight', click:'add_col', ' Add '
             @div class: 'item_cbtn_div', =>
-              @button class: 'item_btn btn btn-info inline-block-tight', click:'edit_col',' 编辑  '
+              @button class: 'item_btn btn btn-info inline-block-tight', click:'edit_col',' Edit '
             @div class: 'item_cbtn_div', =>
-              @button class: 'item_btn btn btn-info inline-block-tight', click:'del_col',' 删除 '
+              @button class: 'item_btn btn btn-info inline-block-tight', click:'del_col',' Delete '
 
 
 

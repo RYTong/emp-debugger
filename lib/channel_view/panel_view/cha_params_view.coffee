@@ -10,7 +10,7 @@ class ChaParamsPanel extends View
 
   @content: ->
     @div =>
-      @label class: 'param-label', '频道参数:'
+      @label class: 'param-label', '频道参数(Channel Parameters):'
       @button class: 'off_ul_btn btn btn-info inline-block-tight', click:'add_params_btn',' add new params...'
 
       @div outlet:'item_list', class: 'params_con_body'

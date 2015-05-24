@@ -15,6 +15,8 @@ class EmpSnippetsView extends View
       @div outlet:"emp_log_pane", class: "emp-setting-con panel-body padded", =>
         @div class: "emp-set-div-content", =>
           @label class: "emp-setting-label", "如果当前 lua 或者 xhtml 文件并非由 Atom 创建,同时您想使用文件关联保存功能, 请点击这里添加文件关联语句. "
+          @label class: "emp-setting-label", "If the lua and xthml isn't created by emp-debugger.And you wants the down-debugger-file assosiate with the file entry, you can use this button."
+
         @div class: "emp-set-div-content", =>
           @button class: 'btn btn-else btn-info inline-block-tight', click: 'add_snippet', "Add Snippet"
 

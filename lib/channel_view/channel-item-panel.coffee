@@ -23,17 +23,17 @@ class ChannelItemPanel extends View
             @ol outlet:"gen_cha_list", class: 'list-tree', =>
           @div class:'emp_item_btn_div', =>
             @div class: 'item_cbtn_div', =>
-              @button class: 'item_btn btn btn-info inline-block-tight', click:'add_cha',' 添加... '
+              @button class: 'item_btn btn btn-info inline-block-tight', click:'add_cha',' Add... '
             @div class: 'item_cbtn_div', =>
-              @button class: 'item_btn btn btn-info inline-block-tight', click:'edi_cha','  编辑  '
+              @button class: 'item_btn btn btn-info inline-block-tight', click:'edi_cha',' Edit  '
             @div class: 'item_cbtn_div', =>
-              @button class: 'item_btn btn btn-info inline-block-tight', click:'del_cha',' 删除 '
+              @button class: 'item_btn btn btn-info inline-block-tight', click:'del_cha',' Delete '
             @div class: 'item_cbtn_div', =>
-              @button class: 'item_btn btn btn-info inline-block-tight', click:'dl_cha',' 插件包 '
+              @button class: 'item_btn btn btn-info inline-block-tight', click:'dl_cha',' Plugin Package '
             @div class: 'item_cbtn_div', =>
-              @button class: 'item_btn btn btn-info inline-block-tight', click:'dl_adapter',' 资源包 '
+              @button class: 'item_btn btn btn-info inline-block-tight', click:'dl_adapter',' Resource Package '
             @div class: 'item_cbtn_div', =>
-              @button class: 'item_btn btn btn-info inline-block-tight', click:'dl_al_adapter','批量下载'
+              @button class: 'item_btn btn btn-info inline-block-tight', click:'dl_al_adapter','Batch Download'
 
 
   initialize: (@fa_view) ->

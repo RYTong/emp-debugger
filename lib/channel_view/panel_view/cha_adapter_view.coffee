@@ -19,17 +19,17 @@ class AdapterPanel extends View
       @div class: 'off_use_div',  =>
         @div class: 'checkbox_ucolumn', =>
           @input outlet:'off_use_code', type: 'checkbox', checked:'true'
-          @text "生成辅助代码"
+          @text "生成辅助代码(Create Erlang Code)"
         @div class: 'checkbox_ucolumn', =>
           @input outlet:'off_use_cs', type: 'checkbox', checked:'true'
-          @text "生成CS模板"
+          @text "生成CS模板(Create Cs Templates)"
         @div class: 'checkbox_ucolumn', =>
           @input outlet:'off_use_off', type: 'checkbox', checked:'true'
-          @text "生成离线资源文件"
+          @text "生成离线资源文件(Create Offline Resouce)"
 
       @div outlet:'off_info', class: 'off_info_div',  =>
       # @div class: 'info-div', =>
-        @label class: 'info-label', '平台'
+        @label class: 'info-label', '平台(Platform)'
         @select outlet: "off_plat", class: "form-control", =>
 
           @option value: emp.ADAPTER_PLT_D, selected:"selected", "Default"
@@ -38,7 +38,7 @@ class AdapterPanel extends View
           # @option value: emp.ADAPTER_PLT_A, "Android"
           # @option value: emp.ADAPTER_PLT_W, "Wphone"
       # @div class: 'info-div', =>
-        @label outlet:'testt', class: 'info-label', '分辨率'
+        @label outlet:'testt', class: 'info-label', '分辨率(Resolution)'
         # @select outlet: "off_rel", class: "form-control", =>
         # @subview "off_rel", class:'form-control', new EmpSelView([{name:'1', value:'1'},{name:'2', value:'2'},{name:'3', value:'3'}])
         # @div class: 'form-control select-list popover-list', =>

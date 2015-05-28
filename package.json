@@ -1,7 +1,7 @@
 {
   "name": "emp-debugger",
   "main": "./lib/emp-debugger",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "Emp Debugger 工具集, 一切从 ctrl-alt-s 开始~",
   "maintainers": [
     {
@@ -23,7 +23,6 @@
     "emp-debugger:create-app",
     "emp-debugger:create-temp"
   ],
-
   "repository": "https://github.com/RYTong/emp-debugger",
   "license": "MIT",
   "engines": {

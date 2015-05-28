@@ -1,0 +1,10 @@
+定义菜单及模拟数据。在`menu`目录下创建菜单(collection/channel)层次目录及模拟数据文件。例如：
+    menu
+    ├── ebank_virtual_root
+    └── ebank_ipad_virtual_root
+        └── level1
+            └── level2
+                └── $transfer
+                    ├── MB001.json
+                    ├── MB003.json
+                    └── MB008.json

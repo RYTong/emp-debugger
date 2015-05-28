@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--<atom_emp_related_file_info>/public/www/entrance.xhtml</atom_emp_related_file_info>-->
+<content>
+  <head>
+    <script type="text/x-lua" src="RYTL.lua"></script>
+    <!-- 离线资源-->
+    <!-- <script type="text/x-lua" src="unit_fun.lua" ></script> -->
+    <!-- 服务端资源-->
+    <script type="text/x-lua" src="//ebank/resource_dev/common/lua/unit_fun.lua"></script>
+    <script type="text/x-lua">
+      <![CDATA[
+
+        local first_cha_id = "channel";
+        local first_tran_code = "MB008";
+
+        local globalData = nil;
+        local Content = nil;
+        --[[此回调方法中做返回错误json的判断，如果正确则将数据放入全局变量并请求界面进入下个界面]]--
+
+        function page_callback(params)
+            if params["responseCode"] == 1599 then
+                location:replace(params["responseBody"],replace_callback,nil);
+            elseif params["responseCode"] == 200 then
+                local page = params["responseBody"];
+                history:add(page);
+                location:replace(page,replace_callback,nil);
+                data = json:objectFromJSON(globalTable[first_tran_code]);
+                ctrl = document:getElementsByName("message");
+                ctrl[1]:setPropertyByName("value", data["return"]["message"]);
+            else
+                window:hide(loadingtag);
+                window:alert("该离线资源还没有下载完成");
+            end
+        end;
+
+        function callback_login(params)
+            local ret_code,ret_msg = error_judge(params);
+            if ret_code == -1 then
+                window:alert(ret_msg);
+                return;
+            else
+                local trancode = params["trancode"];
+                globalTable[trancode] = params["responseBody"];
+                --[[ 添加Channel之后,替换下列的channelId 和channelView ]]--
+                invoke_page(first_cha_id.."/xhtml/"..first_tran_code..".xhtml",page_callback,nil);
+            end;
+        end;
+        --window:alert("please!");
+        --在获取数据的回调中做界面的跳转，这样能保证数据写入的及时性
+        --替换下列channelID
+        invoke_trancode(first_cha_id, first_tran_code, {id=first_cha_id,tranCode= first_tran_code}, callback_login, {trancode=first_tran_code});
+
+      ]]>
+    </script>
+</head>
+<body >
+</body>
+</content>

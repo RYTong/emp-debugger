@@ -13,16 +13,17 @@
     "url": "https://github.com/RYTong/emp-debugger/issues"
   },
   "author": "Ju chao <cqjcrom@gmail.com>",
-  "activationCommands": {
-    "atom-workspace":"emp-debugger:toggle",
-    "atom-workspace":"emp-debugger:live-preview",
-    "atom-workspace":"emp-debugger:enable-view",
-    "atom-workspace":"emp-debugger:view-log",
-    "atom-workspace":"emp-debugger:setting-view",
-    "atom-workspace":"emp-debugger:enable-lua",
-    "atom-workspace":"emp-debugger:show-channel",
-    "atom-workspace":"emp-debugger:create-app"
-  },
+  "activationEvents": [
+    "emp-debugger:live-preview",
+    "emp-debugger:enable-view",
+    "emp-debugger:view-log",
+    "emp-debugger:setting-view",
+    "emp-debugger:enable-lua",
+    "emp-debugger:show-channel",
+    "emp-debugger:create-app",
+    "emp-debugger:create-temp"
+  ],
+
   "repository": "https://github.com/RYTong/emp-debugger",
   "license": "MIT",
   "engines": {

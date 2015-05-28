@@ -8,6 +8,10 @@ module.exports =
 
   EMP_APP_WIZARD_APP_P :'emp-debugger.Default-App-Wizard-App-Path'
   EMP_APP_WIZARD_EWP_P :'emp-debugger.Default-App-Wizard-Ewp-Path'
+  EMP_TEMP_WIZARD_NAME :'emp-debugger.Default-Template-App-Name'
+  EMP_TEMP_WIZARD_PATH :'emp-debugger.Default-Template-App-Path'
+  EMP_TEMP_WIZARD_PORT :'emp-debugger.Default-Template-App-Port'
+  EMP_TEMP_WIZARD_APORT :'emp-debugger.Default-Template-App-APort'
 
   EMP_NODE_NAME :'emp-debugger.Default-EMP-NODE-NAME'
   EMP_NODE_COOKIE :'emp-debugger.Default-EMP-NODE-COOKIE'
@@ -51,7 +55,7 @@ module.exports =
   CHANNEL_PROXY: 'channel_proxy'
   EMP_CHANNEL_URI : 'emp://wizard'
   EMP_APP_URI : 'emp://app_wizard'
-  EMP_TEMP_URI : 'emp://template_management_wizard'
+  EMP_TEMP_URI : 'emp://template_wizard'
 
   CHA_WIZARD_VIEW: 'EmpView'
   APP_WIZARD_VIEW: 'EmpAppView'
@@ -124,6 +128,8 @@ module.exports =
   STATIC_ERL_FUN_TEMPLATE : "/channel_adapter_erl_function.tmp"
   STATIC_CS_TEMPLATE : "/channel_adapter_cs_template.tmp"
   STATIC_OFF_TEMPLATE : "/channel_adapter_xHtml_template.tmp"
+
+  STATIC_APP_FRONT_TEMP:"/templates/temp_app/"
 
   COMMON_DIR_LIST :["images", "css", "lua", "xhtml","channels"]
   OFF_CHA_DIR_LIST : ["xhtml", "css", "lua", "images", "json"]

@@ -3,7 +3,7 @@
   'atom-text-editor': [
     {
       'label': 'Toggle emp-debugger'
-      'command': 'emp-debugger:toggle'
+      'command': 'emp-debugger:setting-view'
     }
   ]
 
@@ -16,6 +16,7 @@
         { 'label': 'Setting View', 'command': 'emp-debugger:setting-view' }
         {type: 'separator'}
         { 'label': 'Create App', 'command': 'emp-debugger:create-app' }
+        { 'label': 'Create Template App', 'command': 'emp-debugger:create-temp' }
         { 'label': 'Show Channel', 'command': 'emp-debugger:show-channel' }
 
       ]
@@ -27,6 +28,7 @@
         { 'label': 'Setting View', 'command': 'emp-debugger:setting-view' }
         {type: 'separator'}
         { 'label': 'Create App', 'command': 'emp-debugger:create-app' }
+        { 'label': 'Create Template App', 'command': 'emp-debugger:create-temp' }
         { 'label': 'Show Channel', 'command': 'emp-debugger:show-channel' }
         {type: 'separator'}
         { 'label': 'Live Preview', 'command': 'emp-debugger:live-preview' }

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--<atom_emp_related_file_info>/public/www/page_test.xhtml</atom_emp_related_file_info>-->
+<content>
+    <head>
+        <style>
+            .body {background-color:#ffffff;}
+            .title {left:100px;top:5px;color:#000000;font-size:18px;}
+            .wrap {width:320px;background-color:#FFFFFF;}
+            .inputurl {left:3px;width:260px;height:40px;top:200px;}
+            .buttoncss {width:55px;height:40px;top:200px;background-image:url(backButtonBg.png);}
+        </style>
+        <script type="text/x-lua" src="RYTL.lua"></script>
+        <script type="text/x-lua">
+            <![CDATA[
+                ryt = RYTL:new{};
+
+                globalTable = {};
+
+                save_list = {};
+
+                ewp_debug = false;
+
+                page_ewp_debug = true;
+
+                loadingtag = 3;
+                --[[根据是否为开发模式请求返回数据，开发模式为请求获取静态数据，生产模式为请求其他数据]]--
+                function invoke_trancode(channelid, trancode, params, fun_callback, callback_params)
+                    if ewp_debug then
+                        -- get sample data for debug
+                        local path = "name="..utility:escapeURI("channels/"..channelid.."/json/"..trancode..".json");
+                        ryt:post(nil, "/test_s/get_json_data", path, fun_callback, callback_params, false);
+                    else
+                        -- params格式{header, url, data, callback, parameters, synchronous}
+                        local post = to_post_body(params);
+                        --window:alert("the request is launching!");
+                        ryt:post(nil, "channel_s/run", post, fun_callback, callback_params, false);
+                    end;
+                end;
+
+                --[[params 参数格式为{trancode="mb001",accno= "12314"}]]--
+                function to_post_body(params)
+                    local post = "";
+                    local ret_post;
+                    if params then
+                        for key,value in pairs(params) do
+                            post = post .. key .. "=" ..utility:escapeURI(value) .. "&";
+                        end;
+                        ret_post = string.sub(post,1,string.len(post)-1);
+                    else
+                        ret_post = "";
+                    end;
+                    return ret_post;
+                end;
+
+                --[[params为请求返回数据，判断返回数据是否错误]]--
+                function error_judge(params)
+                    if params["responseCode"] == 200 then
+                        local jsonData = params["responseBody"];
+                        local jsonObj = json:objectFromJSON(jsonData);
+                        if jsonObj["return"]["error_code"] ~= "000000" then
+                            local error_msg = jsonObj["return"]["error_msg"];
+                            return -1,error_msg;
+                        else
+                            return 0,"";
+                        end;
+                    else
+                        local error_msg = "网络请求失败，请重试！";
+                        return -1,error_msg;
+                    end;
+                end;
+
+                --[[根据是否为开发模式获取界面，开发模式为请求获取静态界面，生产模式为直接读取客户端本地界面]]--
+                function invoke_page(ebank_file,fun_callback,fun_params)
+                    local page =nil;
+                    if page_ewp_debug then
+                        local path = "name="..utility:escapeURI("channels/"..ebank_file);
+                        ryt:post(nil, "test_s/get_page", path, fun_callback, fun_params, false)
+                    else
+                        page = file:read(ebank_file, "text");
+                        history:add(page);
+                        location:replace(page);
+                        window:hide(loadingtag);
+                    end
+                end;
+
+                --[[请求获取静态界面回调方法]]--
+                function page_callback(params)
+                    local page = params["responseBody"];
+                    history:add(page);
+                    location:replace(page);
+                    window:hide(loadingtag);
+                end;
+
+                function callback(responsedata)
+                    if responsedata["responseCode"] == 200 then
+                        history:add(responsedata["responseBody"]);
+                        location:replace(responsedata["responseBody"]);
+                    else
+                        ryt:alert("网络请求失败！");
+                    end;
+                end;
+
+                local input = document:getElementsByProperty{name="url"};
+
+                function update()
+                    local url = input[1]:getPropertyByName("value");
+                    local restr = "name="..url;
+                    ryt:post(nil, "test_s/get_json_data", restr, callback, {},false);
+                end;
+            ]]>
+        </script>
+    </head>
+    <body name='body'>
+        <label class='title' >Hello Emp </label>
+        <input type="text" class='inputurl' name='url' value="entrance.xhtml" />
+        <input type="button" class="buttoncss" value="访问" onclick="update()"/>
+    </body>
+</content>

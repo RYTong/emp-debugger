@@ -1,7 +1,11 @@
 # See https://atom.io/docs/latest/creating-a-package#menus for more details
 'context-menu':
-  '.overlayer':
-      'Enable emp-debugger': 'emp-debugger:toggle'
+  'atom-text-editor': [
+    {
+      'label': 'Toggle emp-debugger'
+      'command': 'emp-debugger:setting-view'
+    }
+  ]
 
 'menu': [
   {
@@ -12,6 +16,7 @@
         { 'label': 'Setting View', 'command': 'emp-debugger:setting-view' }
         {type: 'separator'}
         { 'label': 'Create App', 'command': 'emp-debugger:create-app' }
+        { 'label': 'Create Template App', 'command': 'emp-debugger:create-temp' }
         { 'label': 'Show Channel', 'command': 'emp-debugger:show-channel' }
 
       ]
@@ -23,6 +28,7 @@
         { 'label': 'Setting View', 'command': 'emp-debugger:setting-view' }
         {type: 'separator'}
         { 'label': 'Create App', 'command': 'emp-debugger:create-app' }
+        { 'label': 'Create Template App', 'command': 'emp-debugger:create-temp' }
         { 'label': 'Show Channel', 'command': 'emp-debugger:show-channel' }
         {type: 'separator'}
         { 'label': 'Live Preview', 'command': 'emp-debugger:live-preview' }

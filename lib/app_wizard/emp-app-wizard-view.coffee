@@ -120,7 +120,7 @@ class EmpAppWizardView extends ScrollView
     @uri
 
   getTitle: ->
-    "Create An Emp App Wizard"
+    "Create An EMP App Wizard"
 
   isEqual: (other) ->
     other instanceof EmpChannelWizardView

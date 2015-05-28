@@ -19,6 +19,7 @@
   'ctrl-alt-p': 'emp-debugger:enable-lua'
   'ctrl-alt-q': 'emp-debugger:show-channel'
   'ctrl-alt-w': 'emp-debugger:create-app'
+  'ctrl-alt-r': 'emp-debugger:create-temp'
 
 
 

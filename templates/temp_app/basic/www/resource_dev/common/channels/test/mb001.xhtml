@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--<?xml version="1.0" encoding="UTF-8" ?>-->
+<!--<atom_emp_related_file_info>public/www/resource_dev/common/channels/test/xhtml/mb001.xhtml</atom_emp_related_file_info>-->
+<content>
+    <head>
+        <style>
+            .body {background-color:#ffffff;}
+            .title {left:3px;top:5px;color:#FF3300;font-size:18px;}
+            .title_div {left:0px;top:0px;width:320px;height:51px;}
+            .label_title {left:123px;top:11px;font-size:19px;font-weight:bold;color:#000000;}
+            .button_main {left:260px;top:6px;width:54px;height:32px;background-color:#99FFFF;color:#000000;}
+            .button_back {left:8px;top:6px;width:54px;height:32px;background-color:#99FFFF;color:#000000;}
+            .button_next {left:8px; bottom:20px; width:304px; height: 60px;background-color:#3300FF; color:#FFFFFF;}
+            .acc_div {left:0px;top:51px;width:320px;}
+            .test {left:40px;width:270px; background-color:#3300FF;}
+
+        </style>
+        <script type="text/x-lua" src="RYTL.lua"></script>
+        <!-- <script type="text/x-lua" src="/unit_fun.lua"></script> -->
+        <script type="text/x-lua" src="//ebank/resource_dev/common/lua/unit_fun.lua"></script>
+        <script type="text/x-lua" src="//ebank/resource_dev/common/lua/elements_fun.lua"></script>
+        <script type="text/x-lua">
+            <![CDATA[
+
+            ryt = RYTL:new{};
+            local next_channelId = "test";
+            local next_trancode = "mb002";
+            function main_page()
+                local result = history:get(1);
+                location:replace(result);
+            end;
+
+            function back_fun()
+                local result = history:get(-1);
+                location:replace(result);
+            end;
+
+            --[[此回调方法中做返回错误json的判断，如果正确则将数据放入全局变量并请求界面进入下个界面]]--
+            function callback_channel(params)
+                local ret_code,ret_msg = error_judge(params);
+                if ret_code == -1 then
+                    window:alert(ret_msg);
+                    return;
+                else
+                    local trancode = params["trancode"];
+                    globalTable[trancode] = params["responseBody"];
+
+                    --[[ 添加Channel之后,替换下列的channelId 和channelView ]]--
+                    invoke_page(next_channelId.."/xhtml/"..next_trancode..".xhtml",page_callback,nil);
+                end;
+            end;
+
+            --[[Next Page]]--
+            function common_req()
+                error("asdasd");
+                invoke_trancode(next_channelId, next_trancode, {id=next_channelId,tranCode= next_trancode}, callback_channel, {trancode=next_trancode});
+            end;
+
+            function UUID()
+            local chars = {"0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F"}
+            local uuid = {[9]="-",[14]="-",[15]="4",[19]="-",[24]="-"}
+            local r, index
+            for i = 1,36 do
+            if(uuid[i]==nil) then
+              r = math.random (16)
+              if(i == 20 and BinDecHex)then
+                index = tonumber(Hex2Dec(BMOr(BMAnd(Dec2Hex(r), Dec2Hex(3)), Dec2Hex(8))))
+                if(index < 1 or index > 16)then
+                  print("WARNING Index-19:",index)
+                  return UUID() -- should never happen - just try again if it does ;-)
+                  end;
+                  else
+                    index = r
+                    end;
+                    uuid[i] = chars[index]
+                    end;
+                    end;
+                    return table.concat(uuid)
+                    end;
+
+
+            function test()
+              -- jc_test(123);
+              -- jc_test3();
+              print("this is a test");
+              print("this is a test2");
+              print("this is a test3");
+              print("this is a test4");
+              print("this is a test5");
+              print("this is a test6");
+              -- window:alert("this is a test ");
+            end;
+            ]]>
+        </script>
+    </head>
+
+    <body>
+
+        <!--Title-->
+        <div class="title_div" border="0">
+            <label class="label_title">标题</label>
+            <input type="button" class="button_back" name="back_but" onclick="back_fun()" value="Back" />
+            <input type="button" class="button_main" name="main_but" onclick="main_page()" value="Home" />
+        </div>
+
+          <div class="title_div" border="0">
+              <label class="label_title">标题</label>
+              <input type="button" class="button_back" name="back_but" onclick="back_fun()" value="Back" />
+              <input type="button" class="button_main" name="main_but" onclick="main_page()" value="Home" />
+          </div>
+
+        <div class="acc_div" name="div_acc" border="0">
+
+        </div>
+        <!-- 添加的代码 -->
+        <div class="" name="content" border="0">
+          <label>btn:-------</label>
+          <input type="button" class="test" name="test" onclick="test()" value="test"/>
+        </div>
+
+        <input type="button" class="button_next" name="next_page" onclick="common_req()" value="Next Page" />
+    </body>
+</content>

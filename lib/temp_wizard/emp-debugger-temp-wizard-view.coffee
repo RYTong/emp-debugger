@@ -20,4 +20,4 @@ class EmpDebugTempWizardView extends View
     this
 
   call_temp_wizard: ->
-    EmpViewManage.open_app_wizard()
+    EmpViewManage.open_temp_wizard()

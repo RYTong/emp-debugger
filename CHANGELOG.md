@@ -1,6 +1,10 @@
 ![EMP](https://raw.githubusercontent.com/wiki/RYTong/emp-debugger/images/emp.png)
 # Emp Debugger Package Change Log
 
+## Version 0.7.1
+1. 修改重定义的字体类型
+2. 修改 按键映射函数错误的 bug
+
 ## Version 0.7.0
 1. 修改 linux 下 中文显示乱码的问题, 引入字体`思源黑体`.#58.
 2. 增加前端工程创建向导. #60.

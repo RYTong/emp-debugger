@@ -1,4 +1,4 @@
-{$, View} = require 'atom'
+{$, $$, View} = require 'atom'
 
 parent_view = null
 module.exports =

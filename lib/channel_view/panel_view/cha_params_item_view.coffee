@@ -1,4 +1,4 @@
-{$, $$, View} = require 'atom'
+{$, $$, TextEditorView, View} = require 'atom-space-pen-views'
 {TextEditorView} = require 'atom-space-pen-views'
 # EmpEditView = require '../../view/emp-edit-view'
 emp = require '../../exports/emp'

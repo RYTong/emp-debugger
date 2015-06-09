@@ -1,6 +1,11 @@
 ![EMP](https://raw.githubusercontent.com/wiki/RYTong/emp-debugger/images/emp.png)
 # Emp Debugger Package Change Log
 
+## Version 0.8.1
+1. 删除 Deprecated API
+2. 修改工程模板
+3. 修改 Col/Cha 编辑时的 bug
+
 ## Version 0.7.1
 1. 修改重定义的字体类型
 2. 修改 按键映射函数错误的 bug

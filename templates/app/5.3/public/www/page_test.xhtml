@@ -6,10 +6,14 @@
             .body {background-color:#ffffff;}
             .title {left:100px;top:5px;color:#000000;font-size:18px;}
             .wrap {width:320px;background-color:#FFFFFF;}
-            .inputurl {left:3px;width:260px;height:40px;top:200px;}
-            .buttoncss {width:55px;height:40px;top:200px;background-image:url(backButtonBg.png);}
+            .inputurl {left:3px;width:260px;height:40px;top:150px;}
+            .inputid {left:3px;width:260px;height:40px;top:200px;}
+            .inputcode {left:3px;width:260px;height:40px;top:260px;}
+            .buttoncss {width:55px;height:40px;top:150px;background-image:url(backButtonBg.png);}
+            .buttonelse {width:55px;height:40px;top:260px;background-image:url(backButtonBg.png);}
         </style>
         <script type="text/x-lua" src="RYTL.lua"></script>
+        <script type="text/x-lua" src="unit_fun.lua"></script>
         <script type="text/x-lua">
             <![CDATA[
                 ryt = RYTL:new{};
@@ -17,7 +21,6 @@
                 globalTable = {};
 
                 save_list = {};
-
                 ewp_debug = false;
 
                 page_ewp_debug = true;
@@ -107,6 +110,34 @@
                     local restr = "name="..url;
                     ryt:post(nil, "test_s/get_json_data", restr, callback, {},false);
                 end;
+
+                --[[此回调方法中做返回错误json的判断，如果正确则将数据放入全局变量并请求界面进入下个界面]]--
+                function callback_login(params)
+                    local ret_code,ret_msg = error_judge(params);
+                    if ret_code == -1 then
+                        window:alert(ret_msg);
+                        return;
+                    else
+                        local trancode = params["trancode"];
+                        local cha_id = params["cha_id"];
+                        globalTable[trancode] = params["responseBody"];
+                        --[[ 添加Channel之后,替换下列的channelId 和channelView ]]--
+                        invoke_page(cha_id.."/xhtml/"..trancode..".xhtml",page_callback, nil);
+                    end;
+                end;
+
+                --在获取数据的回调中做界面的跳转，这样能保证数据写入的及时性
+                --替换下列channelID
+                local input_id = document:getElementsByProperty{name="cha_id"};
+                local input_code = document:getElementsByProperty{name="tran_code"};
+
+                function update_else()
+                  tmp_cha_id = input_id[1]:getPropertyByName("value");;
+                  tmp_trancode = input_code[1]:getPropertyByName("value");;
+                  invoke_trancode(tmp_cha_id, tmp_trancode, {id=tmp_cha_id,tranCode= tmp_trancode}, callback_login, {trancode=tmp_trancode, cha_id=tmp_cha_id});
+                end
+
+
             ]]>
         </script>
     </head>
@@ -114,5 +145,9 @@
         <label class='title' >Hello Emp </label>
         <input type="text" class='inputurl' name='url' value="entrance.xhtml" />
         <input type="button" class="buttoncss" value="访问" onclick="update()"/>
+        <input type="text" class='inputid' name='cha_id' hold='Channel Id' value="" />
+        <input type="text" class='inputcode' name='tran_code' hold='TranCode' value="" />
+        <input type="button" class="buttonelse" value="访问" onclick="update_else()"/>
+
     </body>
 </content>

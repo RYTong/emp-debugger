@@ -1,4 +1,4 @@
-{$, $$, View} = require 'atom'
+{$, $$, View} = require 'atom-space-pen-views'
 remote = require 'remote'
 dialog = remote.require 'dialog'
 

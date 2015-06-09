@@ -1,26 +1,26 @@
-{$, View} = require 'atom'
+{$, $$, TextEditorView, View} = require 'atom-space-pen-views'
 emp = require '../../exports/emp'
 
 module.exports =
 class ChaItemView extends View
   cha_obj:null
   cha_name:null
-  cha_id:null
+  id:null
   isSelected:false
   use:false
   item_type: emp.ITEM_CHA_TYPE
 
   @content: (@cha_obj)->
     @cha_name = @cha_obj.name
-    @cha_id = @cha_obj.id
+    @id = @cha_obj.id
 
     @li class: 'list-item' , =>
-      @div outlet: 'cha_item', id:@cha_id, class: 'emp_cha_item_tag list-item', =>
+      @div outlet: 'cha_item', id:@id, class: 'emp_cha_item_tag list-item', =>
         @span outlet: 'chaName', class: 'text-success icon  icon-diff-modified', 'data-name':"*.json", @cha_name
 
   initialize: (@cha_obj)->
     this
-    @cha_id = @cha_obj.id
+    @id = @cha_obj.id
 
   select: ->
     if !@isSelected

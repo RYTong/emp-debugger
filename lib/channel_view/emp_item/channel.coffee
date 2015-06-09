@@ -15,6 +15,7 @@ class emp_channel
   use_cs:true
   use_off:true
   use_code:true
+  use_front:true
 
   off_detail:{}
   adapters:{}
@@ -243,6 +244,9 @@ class emp_channel
       # console.log '2222'
       if @use_cs
         @create_cs(project_path)
+
+      if @use_front
+        @create_front(project_path)
     catch err
       console.error(err)
       throw("创建辅助代码失败")
@@ -330,7 +334,7 @@ class emp_channel
   # @doc创建简单的Cs 模板
   create_cs: (project_path)->
     pub_dir = path.join project_path,emp.CHA_PUBLIC_DIR
-    cs_dir = path.join pub_dir, emp.OFF_EXTENSION_CS;
+    cs_dir = path.join pub_dir, emp.OFF_EXTENSION_CS
     channels_dir = path.join cs_dir, emp.OFF_DEFAULT_BASE
     cha_dir = path.join channels_dir, @id
     emp.mkdir_sync(pub_dir)
@@ -431,7 +435,7 @@ class emp_channel
     # console.log "dest dir :#{dest_dir}"
 
     if !fs.existsSync(dest_dir)
-      fs.mkdirSync(dest_dir);
+      fs.mkdirSync(dest_dir)
       @initial_base_dir(dest_dir)
     cha_dir = ''
     if adapter_plat is emp.ADAPTER_PLT_D
@@ -445,7 +449,7 @@ class emp_channel
     else
       res_dir = path.join dest_dir,adapter_res
       if !fs.existsSync(res_dir)
-        fs.mkdirSync(res_dir);
+        fs.mkdirSync(res_dir)
         @initial_channels_dir(res_dir)
       cha_dir = path.join res_dir,emp.OFF_DEFAULT_BASE,@id
       relate_dir = path.join relate_dir,adapter_res, emp.OFF_DEFAULT_BASE,@id
@@ -458,7 +462,7 @@ class emp_channel
     for dir in emp.OFF_CHA_PLT_LIST
       tmp_dir = path.join resrc_dir,dir
       if !fs.existsSync(tmp_dir)
-        fs.mkdirSync(tmp_dir);
+        fs.mkdirSync(tmp_dir)
       if dir isnt emp.ADAPTER_PLT_D
         @initial_base_dir(tmp_dir)
       else
@@ -469,7 +473,7 @@ class emp_channel
     for dir in emp.OFF_BASE_DIR_LIST
       base_dir = path.join tmp_dir,dir
       if !fs.existsSync(base_dir)
-        fs.mkdirSync(base_dir);
+        fs.mkdirSync(base_dir)
       @initial_channels_dir(base_dir)
 
   # @doc 构建通用资源目录 ，默认为 common_src = base/channel
@@ -477,16 +481,48 @@ class emp_channel
     for dir in emp.COMMON_DIR_LIST
       tmp_dir = path.join base_dir,dir
       if !fs.existsSync(tmp_dir)
-        fs.mkdirSync(tmp_dir);
+        fs.mkdirSync(tmp_dir)
       if dir is emp.OFF_DEFAULT_BASE
         cha_dir = path.join tmp_dir,@id
 
         if !fs.existsSync(cha_dir)
-          fs.mkdirSync(cha_dir);
+          fs.mkdirSync(cha_dir)
 
   # @doc 构建指定 channel 的资源存放路径
   initial_cha_temp_dir:(cha_dir) ->
     for dir in emp.OFF_CHA_DIR_LIST
       tmp_dir = path.join cha_dir,dir
       if !fs.existsSync(tmp_dir)
-        fs.mkdirSync(tmp_dir);
+        fs.mkdirSync(tmp_dir)
+
+
+  # @doc 创建前端资源文件
+  # emp.EMP_DEFAULT_FRONT_MSG
+  create_front: (project_path)->
+    cha_dir = @initial_menu_dir(project_path)
+
+    for key,obj of @adapters
+      tmp_tran = key
+      # tmp_view = obj.trancode
+
+      ext_json = emp.OFF_EXTENSION_JSON
+      tmp_json_file = path.join cha_dir, (tmp_tran+'.'+ext_json)
+      if !fs.existsSync tmp_json_file
+        fs.writeFile tmp_json_file, emp.EMP_DEFAULT_FRONT_MSG, 'utf8', (err) =>
+          if err
+            console.error(err)
+            emp.show_error("创建前端代码失败~:#{err}")
+
+
+  # @doc 初始化前端路径
+  initial_menu_dir:(project_path) ->
+    pub_dir = path.join project_path,emp.CHA_PUBLIC_DIR
+    menu_dir = path.join pub_dir, "/menu"
+    cha_dir = path.join menu_dir, "$#{@id}"
+
+    emp.mkdir_sync(pub_dir)
+    emp.mkdir_sync(menu_dir)
+
+    if !fs.existsSync cha_dir
+      fs.mkdirSync cha_dir
+    cha_dir

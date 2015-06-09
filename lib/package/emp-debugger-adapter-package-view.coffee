@@ -1,4 +1,4 @@
-{$, $$, View} = require 'atom'
+{$, $$, View} = require 'atom-space-pen-views'
 ZipWriter = require("moxie-zip").ZipWriter
 # os = require 'os'
 path = require 'path'

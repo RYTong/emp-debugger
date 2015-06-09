@@ -1,4 +1,4 @@
-{$, $$, ScrollView} = require 'atom'
+{$, $$, ScrollView} = require  'atom-space-pen-views'
 path = require 'path'
 fs = require 'fs'
 c_process = require 'child_process'

@@ -1,5 +1,4 @@
-{$, $$, View} = require 'atom'
-{TextEditorView} = require 'atom-space-pen-views'
+{$, $$, TextEditorView, View} = require 'atom-space-pen-views'
 path = require 'path'
 # EmpEditView = require '../item-editor-view'
 emp = require '../../exports/emp'
@@ -55,6 +54,11 @@ class AddGenPanel extends View
               @input outlet:'col_state', type: 'checkbox', checked:'true'
               @text "开启"
 
+            @div outlet:'col_front_info', class: 'info-div info-font', =>
+              @label class: 'info-label', '创建前端模板结构:'
+              # @div class: 'checkbox', =>
+              @input outlet:'use_front', type: 'checkbox', checked:'true'
+              @text "开启"
 
             # @div outlet:'entry_params', class:'entry_div'
 
@@ -67,6 +71,7 @@ class AddGenPanel extends View
 
   initialize: (@fa_view, extra_param)->
     @col_obj = new collection()
+    # console.log extra_param
     if extra_param
       @is_edit = true
       tmp_col_obj = extra_param
@@ -96,7 +101,7 @@ class AddGenPanel extends View
 
       @items_panel = new ItemsPanel(@fa_view.all_objs, @col_obj)
       # @params_view = new ParamView(@cha_obj)
-    @col_state_info.after(@items_panel)
+    @col_front_info.after(@items_panel)
       # @cha_params.append(@params_view)
     @loadingElement.remove()
     # @active_view = @adapter_view
@@ -141,6 +146,8 @@ class AddGenPanel extends View
       @col_obj.url = @col_obj.set_url(@col_url.getText())
       @col_obj.uid = @col_obj.set_uid(@col_uid.getText())
       @col_obj.set_state(@col_state.prop('checked'))
+      @col_obj.use_front = @use_front.prop('checked')
+
       # console.log "bbbbdo sumbmit "
       @items_panel.submit_detail()
       atom.config.set(emp.EMP_TMPORARY_APP_NAME, tmp_app)

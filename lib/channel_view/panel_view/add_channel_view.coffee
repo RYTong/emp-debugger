@@ -1,5 +1,4 @@
-{$, $$, View} = require 'atom'
-{TextEditorView} = require 'atom-space-pen-views'
+{$, $$, TextEditorView, View} = require 'atom-space-pen-views'
 path = require 'path'
 fs = require 'fs'
 # EmpEditView = require '../../view/emp-edit-view'

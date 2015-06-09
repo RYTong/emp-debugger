@@ -207,7 +207,7 @@ class emp_collection
       tmp_type = tmp_item.item_type
 
       if tmp_type is emp.ITEM_CHA_TYPE
-        tmp_cha_dir = path.join menu_dir, "$#{tmp_id}"
+        tmp_cha_dir = path.join menu_dir, emp.CHA_FRONT_VITUAL_COL, "$#{tmp_id}"
         tmp_dest_dir = path.join col_dir, "$#{tmp_id}"
         emp.mkdir_sync tmp_dest_dir
 

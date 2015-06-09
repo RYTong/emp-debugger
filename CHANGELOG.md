@@ -1,6 +1,9 @@
 ![EMP](https://raw.githubusercontent.com/wiki/RYTong/emp-debugger/images/emp.png)
 # Emp Debugger Package Change Log
 
+## Version 0.8.2
+1. 添加遗漏的前端模板
+
 ## Version 0.8.1
 1. 删除 Deprecated API
 2. 修改工程模板

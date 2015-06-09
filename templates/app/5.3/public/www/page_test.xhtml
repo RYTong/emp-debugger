@@ -132,8 +132,8 @@
                 local input_code = document:getElementsByProperty{name="tran_code"};
 
                 function update_else()
-                  tmp_cha_id = input_id[1]:getPropertyByName("value");;
-                  tmp_trancode = input_code[1]:getPropertyByName("value");;
+                  tmp_cha_id = input_id[1]:getPropertyByName("value");
+                  tmp_trancode = input_code[1]:getPropertyByName("value");
                   invoke_trancode(tmp_cha_id, tmp_trancode, {id=tmp_cha_id,tranCode= tmp_trancode}, callback_login, {trancode=tmp_trancode, cha_id=tmp_cha_id});
                 end
 

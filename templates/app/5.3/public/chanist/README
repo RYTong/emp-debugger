@@ -1,0 +1,4 @@
+此目录用于存放 channel/list 接口模拟数据。
+
+channel/list 请求需要指定两个参数：Id和Format，对应的模拟数据文件名为：Id.Format.json
+或者 Id.json。

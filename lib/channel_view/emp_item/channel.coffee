@@ -517,7 +517,7 @@ class emp_channel
   # @doc 初始化前端路径
   initial_menu_dir:(project_path) ->
     pub_dir = path.join project_path,emp.CHA_PUBLIC_DIR
-    menu_dir = path.join pub_dir, "/menu"
+    menu_dir = path.join pub_dir, "/menu/", emp.CHA_FRONT_VITUAL_COL
     cha_dir = path.join menu_dir, "$#{@id}"
 
     emp.mkdir_sync(pub_dir)

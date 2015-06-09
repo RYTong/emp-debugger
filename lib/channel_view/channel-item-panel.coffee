@@ -1,4 +1,4 @@
-{$, $$, View} = require 'atom'
+{$, $$, TextEditorView, View} = require 'atom-space-pen-views'
 os = require 'os'
 ChaItemView = require './item_view/channel-item-view'
 PackageBarView = require '../package/emp-debugger-pkg-plugin-view'
@@ -68,16 +68,16 @@ class ChannelItemPanel extends View
     if ctrl_key
       if entry.isSelected
         entry.deselect()
-        delete @select_entry[entry.cha_id]
+        delete @select_entry[entry.id]
       else
         entry.select()
-        @select_entry[entry.cha_id] = entry
+        @select_entry[entry.id] = entry
     else
       for key, tmp_entry of @select_entry
         tmp_entry.deselect()
         delete @select_entry[key]
       entry.select()
-      @select_entry[entry.cha_id] = entry
+      @select_entry[entry.id] = entry
 
   add_cha: (e, element)->
     # console.log 'add_cha'

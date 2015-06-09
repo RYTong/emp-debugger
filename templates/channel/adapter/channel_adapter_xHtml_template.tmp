@@ -24,7 +24,7 @@ ${atom_related_info}
             local next_trancode = "${next_tran_code}";
 
             function main_page()
-                local result = history:get(-1);
+                local result = history:get(1);
                 location:replace(result);
             end;
 

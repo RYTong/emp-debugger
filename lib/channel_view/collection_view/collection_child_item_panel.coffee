@@ -1,4 +1,4 @@
-{$, $$, View} = require 'atom'
+{$, $$, TextEditorView, View} = require 'atom-space-pen-views'
 # EmpEditView = require '../item-editor-view'
 # EmpSelView = require '../item-selector-view'
 ChaItemView = require '../item_view/channel-item-view'
@@ -75,6 +75,20 @@ class ItemsPanel extends View
         @use_cha_list.append(tmp_item)
         @used_item[tmp_id] = tmp_item
 
+    for key, obj of @col_objs
+      if obj.type isnt emp.COL_ROOT_TYPE
+        tmp_use_item = @used_item[key]
+        if tmp_use_item
+          if tmp_use_item.item_type isnt emp.ITEM_COL_TYPE
+            tmp_item = new ColItemView(obj)
+            # @cha_view_list[obj.id] = tmp_item
+            @unuse_cha_list.append(tmp_item)
+            @unused_item[key] = tmp_item
+        else
+          tmp_item = new ColItemView(obj)
+          @unuse_cha_list.append(tmp_item)
+          @unused_item[key] = tmp_item
+
     for key, obj of @cha_objs
       tmp_use_item = @used_item[key]
       if tmp_use_item
@@ -101,6 +115,9 @@ class ItemsPanel extends View
 
     @on 'click', '.emp_cha_item_tag', (e, element) =>
       @itemClicked(e, element)
+    @on 'click', '.emp_col_item_tag', (e, element) =>
+      @itemClicked(e, element)
+
     # @cha_view_list = {}
 
   itemClicked:(e, element) ->
@@ -122,11 +139,11 @@ class ItemsPanel extends View
       if entry.isSelected
         entry.deselect()
         tmp_entry = @get_map(entry.use)
-        delete tmp_entry[entry.cha_id]
+        delete tmp_entry[entry.id]
       else
         entry.select()
         tmp_entry = @get_map(entry.use)
-        tmp_entry[entry.cha_id] = entry
+        tmp_entry[entry.id] = entry
     else
       tmp_entrys = @get_map(entry.use)
       # console.log tmp_entrys
@@ -135,7 +152,7 @@ class ItemsPanel extends View
         delete tmp_entrys[key]
       entry.select()
 
-      tmp_entrys[entry.cha_id] = entry
+      tmp_entrys[entry.id] = entry
 
   get_map: (flag)->
     if flag
@@ -147,9 +164,14 @@ class ItemsPanel extends View
     # console.log "add item"
     # console.log @select_unentry
     for key,old_item of @select_unentry
-      tmp_obj = old_item.cha_obj
-      # console.log tmp_obj
-      tmp_item = new ChaItemView(tmp_obj)
+      tmp_type = old_item.item_type
+      if tmp_type is emp.ITEM_CHA_TYPE
+        tmp_obj = old_item.cha_obj
+        tmp_item = new ChaItemView(tmp_obj)
+      else
+        tmp_obj = old_item.col_obj
+        tmp_item = new ColItemView(tmp_obj)
+
       tmp_item.set_used()
       # @cha_view_list[obj.id] = tmp_item
       @use_cha_list.append(tmp_item)
@@ -161,9 +183,15 @@ class ItemsPanel extends View
   add_all:->
     # console.log "add all"
     for key,old_item of @unused_item
-      tmp_obj = old_item.cha_obj
-      # console.log tmp_obj
-      tmp_item = new ChaItemView(tmp_obj)
+
+      tmp_type = old_item.item_type
+      if tmp_type is emp.ITEM_CHA_TYPE
+        tmp_obj = old_item.cha_obj
+        tmp_item = new ChaItemView(tmp_obj)
+      else
+        tmp_obj = old_item.col_obj
+        tmp_item = new ColItemView(tmp_obj)
+
       tmp_item.set_used()
       # @cha_view_list[obj.id] = tmp_item
       @use_cha_list.append(tmp_item)
@@ -175,8 +203,15 @@ class ItemsPanel extends View
   remove_item:->
     # console.log "remove item"
     for key,old_item of @select_entry
-      tmp_obj = old_item.cha_obj
-      tmp_item = new ChaItemView(tmp_obj)
+
+      tmp_type = old_item.item_type
+      if tmp_type is emp.ITEM_CHA_TYPE
+        tmp_obj = old_item.cha_obj
+        tmp_item = new ChaItemView(tmp_obj)
+      else
+        tmp_obj = old_item.col_obj
+        tmp_item = new ColItemView(tmp_obj)
+
       @unuse_cha_list.append(tmp_item)
       @unused_item[tmp_obj.id] = tmp_item
       old_item.destroy()
@@ -186,8 +221,14 @@ class ItemsPanel extends View
   remove_all:->
     # console.log "remove all"
     for key,old_item of @used_item
-      tmp_obj = old_item.cha_obj
-      tmp_item = new ChaItemView(tmp_obj)
+      tmp_type = old_item.item_type
+      if tmp_type is emp.ITEM_CHA_TYPE
+        tmp_obj = old_item.cha_obj
+        tmp_item = new ChaItemView(tmp_obj)
+      else
+        tmp_obj = old_item.col_obj
+        tmp_item = new ColItemView(tmp_obj)
+
       @unuse_cha_list.append(tmp_item)
       @unused_item[tmp_obj.id] = tmp_item
       old_item.destroy()
@@ -206,15 +247,27 @@ class ItemsPanel extends View
     @use_cha_list.empty()
 
     for key,old_item of @used_item
-      tmp_obj = old_item.cha_obj
-      tmp_item = new ChaItemView(tmp_obj)
+      tmp_type = old_item.item_type
+      if tmp_type is emp.ITEM_CHA_TYPE
+        tmp_obj = old_item.cha_obj
+        tmp_item = new ChaItemView(tmp_obj)
+      else
+        tmp_obj = old_item.col_obj
+        tmp_item = new ColItemView(tmp_obj)
+
       @unuse_cha_list.append(tmp_item)
       @unused_item[tmp_obj.id] = tmp_item
       old_item.destroy()
     @used_item = {}
     for key,old_item of tmp_unmap
-      tmp_obj = old_item.cha_obj
-      tmp_item = new ChaItemView(tmp_obj)
+      tmp_type = old_item.item_type
+      if tmp_type is emp.ITEM_CHA_TYPE
+        tmp_obj = old_item.cha_obj
+        tmp_item = new ChaItemView(tmp_obj)
+      else
+        tmp_obj = old_item.col_obj
+        tmp_item = new ColItemView(tmp_obj)
+
       tmp_item.set_used()
       @use_cha_list.append(tmp_item)
       @used_item[tmp_obj.id] = tmp_item

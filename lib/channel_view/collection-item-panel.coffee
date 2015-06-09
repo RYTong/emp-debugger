@@ -1,4 +1,4 @@
-{$, $$, View} = require 'atom'
+{$, $$, TextEditorView, View} = require 'atom-space-pen-views'
 # ItemEditorView = require './item-editor-view'
 ColItemView = require './item_view/collection-item-view'
 emp = require '../exports/emp'
@@ -58,7 +58,7 @@ class SettingsPanel extends View
     shift_key = e.shiftKey
     ctrl_key = e.ctrlKey
     # console.log entry
-
+#
     os_platform = emp.get_emp_os()
     # console.log os_platform
     unless os_platform isnt emp.OS_DARWIN
@@ -66,16 +66,16 @@ class SettingsPanel extends View
     if ctrl_key
       if entry.isSelected
         entry.deselect()
-        delete @select_entry[entry.col_id]
+        delete @select_entry[entry.id]
       else
         entry.select()
-        @select_entry[entry.col_id] = entry
+        @select_entry[entry.id] = entry
     else
       for key, tmp_entry of @select_entry
         tmp_entry.deselect()
         delete @select_entry[key]
       entry.select()
-      @select_entry[entry.col_id] = entry
+      @select_entry[entry.id] = entry
 
 
 

@@ -1,6 +1,7 @@
 emp = require '../../exports/emp'
 path = require 'path'
 fs = require 'fs'
+fs_plus = require 'fs-plus'
 conf_parser = require '../../emp_app/conf_parser'
 
 module.exports =
@@ -16,6 +17,7 @@ class emp_collection
   state:1
   item_param:[]
   items:[]
+  use_front:true
 
 
   constructor: ->
@@ -67,6 +69,8 @@ class emp_collection
     else
       @do_create_collection(col_objs)
 
+    @create_front_col()
+
   do_create_collection: (col_objs)->
     tmp_col = path.join __dirname, '../../../', emp.STATIC_TEMPLATE_DIR,'/collection.txt'
     f_con = fs.readFileSync(tmp_col, 'utf8')
@@ -110,6 +114,7 @@ class emp_collection
       # if erl_str = atom.config.get(emp.EMP_IMPORT_MENU_KEY)
       tmp_pid.stdin.write(erl_str+'\n')
 
+
   edit_collection: ()->
     if atom.project.emp_app_state
       @do_edit_collection_rt()
@@ -117,6 +122,7 @@ class emp_collection
       @do_edit_collection_rt('node')
     else
       @do_edit_collection()
+    @create_front_col()
 
   do_edit_collection: ()->
     # console.log col_objs
@@ -159,3 +165,63 @@ class emp_collection
       # console.log erl_str
       tmp_pid = atom.project.emp_app_pid
       tmp_pid.stdin.write(erl_str+'\n')
+
+
+  create_front_col:()->
+    if @use_front
+      project_path = atom.project.getPath()
+      pub_dir = path.join project_path,emp.CHA_PUBLIC_DIR
+      menu_dir = path.join pub_dir, "/menu"
+      col_dir = path.join menu_dir, "#{@id}"
+
+      emp.mkdir_sync(pub_dir)
+      emp.mkdir_sync(menu_dir)
+
+      if !fs.existsSync col_dir
+        fs.mkdirSync col_dir
+
+      @create_front_item(menu_dir, col_dir)
+
+
+  # @doc 初始化前端路径
+  initial_menu_dir:(project_path) ->
+
+    pub_dir = path.join project_path,emp.CHA_PUBLIC_DIR
+    menu_dir = path.join pub_dir, "/menu"
+    col_dir = path.join menu_dir, "#{@id}"
+
+    emp.mkdir_sync(pub_dir)
+    emp.mkdir_sync(menu_dir)
+
+    if !fs.existsSync col_dir
+      fs.mkdirSync col_dir
+    col_dir
+
+  create_front_item:(menu_dir, col_dir) ->
+    # console.log @items
+
+# {item_id:key, item_type:item_type,menu_order:index}
+    for tmp_item in @items
+      # console.log  tmp_item
+      tmp_id = tmp_item.item_id
+      tmp_type = tmp_item.item_type
+
+      if tmp_type is emp.ITEM_CHA_TYPE
+        tmp_cha_dir = path.join menu_dir, "$#{tmp_id}"
+        tmp_dest_dir = path.join col_dir, "$#{tmp_id}"
+        emp.mkdir_sync tmp_dest_dir
+
+        if fs.existsSync tmp_cha_dir
+          fs_plus.copySync  tmp_cha_dir, tmp_dest_dir
+
+      else
+        tmp_col_dir = path.join menu_dir, "#{tmp_id}"
+
+        tmp_dest_dir = path.join col_dir, "#{tmp_id}"
+        emp.mkdir_sync tmp_dest_dir
+
+        if fs.existsSync tmp_col_dir
+          fs_plus.copySync  tmp_col_dir, tmp_dest_dir
+        else
+          tmp_col_dir = path.join col_dir, "#{tmp_id}"
+          emp.mkdir_sync tmp_col_dir

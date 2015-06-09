@@ -1,5 +1,4 @@
-{$, $$, ScrollView} = require 'atom'
-{TextEditorView} = require 'atom-space-pen-views'
+{$, $$, ScrollView, TextEditorView} = require 'atom-space-pen-views'
 remote = require 'remote'
 dialog = remote.require 'dialog'
 fs = require 'fs'
@@ -18,10 +17,6 @@ class EmpAppWizardView extends ScrollView
   default_app_port:'4002'
   default_app_aport:'4000'
   default_ewp_path:'/usr/local/lib/ewp'
-  def_app_file:'.app'
-  def_port_file:'.port'
-  def_aport_file:'.aport'
-
 
 
   @content: ->
@@ -210,9 +205,9 @@ class EmpAppWizardView extends ScrollView
     basic_dir = path.join __dirname, '../../', emp.STATIC_APP_FRONT_TEMP, @app_version
     @copy_template(to_path, basic_dir)
     console.log to_path
-    app_file = path.join to_path,@def_app_file
-    port_file = path.join to_path, @def_port_file
-    aport_file = path.join to_path, @def_aport_file
+    app_file = path.join to_path,emp.DEF_APP_FILE
+    port_file = path.join to_path, emp.DEF_PORT_FILE
+    aport_file = path.join to_path, emp.DEF_APORT_FILE
     fs.writeFileSync app_file, @app_name
     fs.writeFileSync port_file, @app_port_text
     fs.writeFileSync aport_file, @app_aport_text

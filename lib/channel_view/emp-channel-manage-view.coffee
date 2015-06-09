@@ -1,4 +1,4 @@
-{$, $$, View} = require 'atom'
+{$, $$, TextEditorView, View} = require 'atom-space-pen-views'
 # os = require 'os'
 # EmpChannelWizardView = require './emp-channel-wizard-view'
 # empChaWizard = require './emp-channel-wizard'

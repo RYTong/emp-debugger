@@ -43,6 +43,11 @@ module.exports =
   COL_KEY:"collections"
   CHA_KEY:"channels"
 
+  # front template macro
+  DEF_APP_FILE:'.app'
+  DEF_PORT_FILE:'.port'
+  DEF_APORT_FILE:'.aport'
+
 
   COL_ROOT_TYPE:1
   COL_CH_TYPE:0
@@ -63,6 +68,7 @@ module.exports =
 
   CHA_CODE_DIR:'src'
   CHA_PUBLIC_DIR:'public'
+  CHA_FRONT_MENU_DIR:'public/menu'
 
   # channel adapter 代码生成过程中的取值类型，
   # 分别为 params， arg， session
@@ -170,6 +176,9 @@ module.exports =
   EMP_PACKAGE_UNION_PKG_SUCCESS:"普通资源整合包，打包成功~"
   EMP_PACKAGE_PKG_SUCCESS:"普通资源包，打包成功~"
   EMP_PACKAGE_UNION_PKG_DIR_ENOENT:"打包失败：没有离线资源相关文件~"
+
+  EMP_DEFAULT_FRONT_MSG:"{\r\n    \"return\": {\r\n        \"error_code\": \"000000\",\r\n        \"error_msg\": \"\",\r\n
+        \"message\": \"This is a msg~~~~~\" \r\n   }\r\n}"
 
 module.exports.mk_node_name = (node_name="") ->
   default_name = " -sname "

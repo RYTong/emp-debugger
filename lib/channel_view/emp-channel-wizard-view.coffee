@@ -1,5 +1,4 @@
-{$, $$, ScrollView} = require 'atom'
-
+{$, $$, ScrollView, View} = require 'atom-space-pen-views'
 # ChannelItemPanel = require './channel-item-panel.coffee'
 GeneralPanel = require './general-panel'
 AddChaPanel = require './panel_view/add_channel_view'

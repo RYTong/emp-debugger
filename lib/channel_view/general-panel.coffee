@@ -1,4 +1,4 @@
-{View} = require 'atom'
+{$, $$, TextEditorView, View} = require 'atom-space-pen-views'
 ColItemPanel = require './collection-item-panel'
 ChannelItemPanel = require './channel-item-panel'
 emp = require '../exports/emp'

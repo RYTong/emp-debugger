@@ -107,6 +107,7 @@ class EmpDebuggerSettingView extends View
   initialize: (serializeState, @emp_socket_server, @empDebuggerLogView, @fa_view) ->
     # console.log 'server state view initial'
     bar_view = new EmpBarView(this)
+    # console.log "after new"
     @emp_setting_panel.before(bar_view)
     snippet_view = new EmpSnippetsView(this)
     @conf_detail.after snippet_view

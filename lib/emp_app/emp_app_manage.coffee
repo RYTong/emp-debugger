@@ -13,6 +13,7 @@ emp_app_view = null
 app_state = false
 connect_state = false
 emp_app_start_script='iewp'
+emp_front_app_start_script='/public/simulator'
 emp_app_make_cmd='make'
 emp_app_config_cmd='configure'
 emp_app_config_arg= ['--with-debug']
@@ -45,6 +46,9 @@ class emp_app
 
     unless atom.config.get(emp.EMP_STAET_SCRIPT_KEY)
       atom.config.set(emp.EMP_STAET_SCRIPT_KEY, emp_app_start_script)
+
+    unless atom.config.get(emp.EMP_STAET_FRONT_SCRIPT_KEY)
+      atom.config.set(emp.EMP_STAET_FRONT_SCRIPT_KEY, emp_front_app_start_script)
     # else
     #   emp_app_start_script = tmp_emp_start_sc
 
@@ -156,6 +160,47 @@ class emp_app
       #   pid.stdin.end()
       #   emp_app_view.refresh_app_st(app_state)
       #   console.warn "close over:#{code}"
+
+      # pid = new BufferedProcess({command:script_exc, args:[], options:{cwd:cwd}, stdout:stdout, stderr:stderr, exit:exit})
+      pid = c_process.spawn script_exc, [],  {cwd:cwd, env: process.env}
+      app_state = true
+      set_app_stat(true)
+      pid.stdout.on 'data', (data) ->
+        console.info data.binarySlice()
+      # pid.stdout.pipe process.stdout
+
+      pid.stderr.on 'data', (data) ->
+        console.error data.binarySlice()
+
+      pid.on 'SIGINT', (data) ->
+        console.log "-------------------------"
+        console.log data
+
+      pid.on 'close', (code) ->
+        app_state = false
+        # pid.stdin.write('q().\r\n')
+        # set_app_stat(false)
+        pid.stdin.end()
+        emp_app_view.refresh_app_st(app_state)
+        console.warn "close over:#{code}"
+    else
+      emp.show_error("Run app error ~")
+
+
+  run_front_app: ->
+    # console.log "run"
+    script_file = atom.config.get(emp.EMP_STAET_FRONT_SCRIPT_KEY)
+    script_exc = '.' +script_file
+    cwd = atom.project.getPath()
+    script_path = path.join cwd, script_file
+    # console.log script_path
+    f_state = fs.existsSync script_path
+
+    if f_state
+      if pid
+        tmp_pid = pid
+        pid = null
+        tmp_pid.kill()
 
       # pid = new BufferedProcess({command:script_exc, args:[], options:{cwd:cwd}, stdout:stdout, stderr:stderr, exit:exit})
       pid = c_process.spawn script_exc, [],  {cwd:cwd, env: process.env}

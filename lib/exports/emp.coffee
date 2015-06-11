@@ -22,6 +22,7 @@ module.exports =
 
   EMP_MAKE_CMD_KEY: 'emp-debugger.emp-make'
   EMP_STAET_SCRIPT_KEY: 'emp-debugger.emp-start-script'
+  EMP_STAET_FRONT_SCRIPT_KEY: 'emp-debugger.emp-start-front-script'
   EMP_CONFIG_KEY: 'emp-debugger.emp-config'
   EMP_CONFIG_ARG_KEY: 'emp-debugger.emp-config-arg'
   EMP_IMPORT_MENU_KEY : 'emp-debugger.emp-import-menu'
@@ -61,14 +62,17 @@ module.exports =
   EMP_CHANNEL_URI : 'emp://wizard'
   EMP_APP_URI : 'emp://app_wizard'
   EMP_TEMP_URI : 'emp://template_wizard'
+  EMP_FRONT_PAGE_URI : 'emp://front_page_wizard'
 
   CHA_WIZARD_VIEW: 'EmpView'
   APP_WIZARD_VIEW: 'EmpAppView'
   TEMP_WIZARD_VIEW: 'EmpTemplateView'
+  FRONT_PAGE_WIZARD_VIEW: 'EmpFrontPageView'
 
   CHA_CODE_DIR:'src'
   CHA_PUBLIC_DIR:'public'
   CHA_FRONT_MENU_DIR:'public/menu'
+  CHA_FRONT_VITUAL_COL:'virtual_collection'
 
   # channel adapter 代码生成过程中的取值类型，
   # 分别为 params， arg， session

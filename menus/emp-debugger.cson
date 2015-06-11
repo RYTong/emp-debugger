@@ -30,6 +30,7 @@
         { 'label': 'Create App', 'command': 'emp-debugger:create-app' }
         { 'label': 'Create Template App', 'command': 'emp-debugger:create-temp' }
         { 'label': 'Show Channel', 'command': 'emp-debugger:show-channel' }
+        # { 'label': 'Create A Channel Page', 'command': 'emp-debugger:create-front-page' }
         {type: 'separator'}
         { 'label': 'Live Preview', 'command': 'emp-debugger:live-preview' }
         { 'label': 'Enabel View', 'command': 'emp-debugger:enable-view' }

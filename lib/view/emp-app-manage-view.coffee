@@ -53,6 +53,7 @@ class EmpAppManaView extends View
 
           @div outlet:"emp_app_btns", class: "emp-setting-btn-else ",  =>
             @button outlet:"btn_run_app", class: 'btn btn-else btn-success inline-block-tight', click: 'run_app', "Start App"
+            @button outlet:"btn_run_front", class: 'btn btn-else btn-success inline-block-tight', click: 'run_front_app', "Start Front App"
             @button outlet:"btn_stop_app", class: 'btn btn-else btn-error inline-block-tight', click: 'stop_app', "Stop App"
             @button outlet:"btn_conf_app", class: 'btn btn-else btn-warning inline-block-tight', click: 'conf_app', "Config App"
             @button outlet:"btn_make_app", class: 'btn btn-else btn-warning inline-block-tight', click: 'make_app', "Make App"
@@ -176,6 +177,10 @@ class EmpAppManaView extends View
     @emp_app_manage.run_app()
     @refresh_app_st()
     # @hide_loading()
+
+  run_front_app: ->
+    @emp_app_manage.run_front_app()
+    @refresh_app_st()
 
   stop_app: ->
     @show_loading()

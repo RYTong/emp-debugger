@@ -2,12 +2,31 @@
 EmpChannelWizardView = require '../channel_view/emp-channel-wizard-view'
 EmpCreateAppWizardView = require '../app_wizard/emp-app-wizard-view'
 EmpCreateTempWizardView = require '../temp_wizard/emp-temp-wizard-view'
+EmpCreateFrontPageWizardView = require '../temp_wizard/emp-front-page-wizard-view'
 
 empChannelWizardView = null
 empAppWizardView = null
 empTempWizardView = null
 
 emp = require '../exports/emp'
+
+
+
+# -------------------use for front page -------------------------
+create_front_page_wizard_view = (params) ->
+  empTempWizardView = new EmpCreateFrontPageWizardView(params)
+
+open_front_page_wizard_panel = ->
+  atom.workspace.open(emp.EMP_FRONT_PAGE_URI)
+
+front_page_deserializer =
+  name: emp.FRONT_PAGE_WIZARD_VIEW
+  version: 1
+  deserialize: (state) ->
+    # console.log "emp deserialize"
+    create_front_page_wizard_view(state) if state.constructor is Object
+
+atom.deserializers.add(front_page_deserializer)
 
 # -------------------use for temp -------------------------
 create_temp_wizard_view = (params) ->
@@ -85,8 +104,12 @@ module.exports =
       "emp-debugger:create-app", -> open_app_wizard_panel()
     atom.commands.add "atom-workspace",
       "emp-debugger:create-temp", -> open_temp_wizard_panel()
+
+    atom.commands.add "atom-workspace",
+      "emp-debugger:create-front-page", -> open_front_page_wizard_panel()
       # "emp-debugger:temp-management", -> open_temp_wizard_panel()
 
 module.exports.open_cha_wizard = open_cha_wizard_panel
 module.exports.open_app_wizard = open_app_wizard_panel
 module.exports.open_temp_wizard = open_temp_wizard_panel
+module.exports.open_front_page_wizard_panel = open_front_page_wizard_panel

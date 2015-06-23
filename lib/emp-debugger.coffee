@@ -37,7 +37,7 @@ module.exports =
     # atom.commands.add "atom-workspace","emp-debugger:setting-view", => @set_conf()
 
     EmpViewManage.activate()
-    conf_parser.initial_parser()
+    # conf_parser.initial_parser()
 
   # convert: ->
     # @empDebuggerInitView.start_listen(@empDebuggerInitView)

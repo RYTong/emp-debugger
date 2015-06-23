@@ -9,7 +9,7 @@ class EnableRView extends SelectListView
   initialize: (@offline_path, @ignore_name) ->
     # console.log 'enable view process initial'
     super
-    project_path = atom.project.getPath()
+    project_path = atom.project.getPaths()[0]
     @addClass('overlay from-top')
     # @setMaxItems(20)
     @autoDetect = index: 'Auto Detect'

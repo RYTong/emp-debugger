@@ -5,6 +5,7 @@ AddChaPanel = require './panel_view/add_channel_view'
 AddColPanel = require './collection_view/add_collection_view'
 # EmpEditView = require '../view/emp-edit-view'
 EmpChaListView = require './emp-channel-list-view'
+conf_parser = require '../emp_app/conf_parser'
 emp = require '../exports/emp'
 
 module.exports =
@@ -36,8 +37,10 @@ class EmpChannelWizardView extends ScrollView
     # console.log activePanelName
     # @panelToShow = activePanelName
     # process.nextTick =>
+    conf_parser.initial_parser()
     @panels_list={}
     @createPanel = {}
+
     @initializePanels()
     @all_objs = null
 

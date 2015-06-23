@@ -169,7 +169,7 @@ class emp_collection
 
   create_front_col:()->
     if @use_front
-      project_path = atom.project.getPath()
+      project_path = atom.project.getPaths()[0]
       pub_dir = path.join project_path,emp.CHA_PUBLIC_DIR
       menu_dir = path.join pub_dir, "/menu"
       col_dir = path.join menu_dir, "#{@id}"

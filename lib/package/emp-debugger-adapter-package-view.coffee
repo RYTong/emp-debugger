@@ -36,19 +36,19 @@ class EmpDebugAdpPackageView extends View
     @emp_debugger_bar = new PackageBarView()
     @emp_debugger_adp_pkg = new PackageAdpView()
     # @emp_package_all_view = new PackageAllView()
-    project_path = atom.project.getPath()
+    project_path = atom.project.getPaths()[0]
     this
 
   # 打普通资源包
   do_package: ->
-    project_path = atom.project.getPath()
+    project_path = atom.project.getPaths()[0]
     offline_path = path.join project_path, tmp_offline_path
     gather_common_files(offline_path)
 
   #  打普通资源整合包，即把普通资源报再压缩为一个压缩包
 
   do_union_package: ->
-    project_path = atom.project.getPath()
+    project_path = atom.project.getPaths()[0]
     offline_path = path.join project_path, tmp_offline_path
     package_union_package(offline_path)
 
@@ -63,7 +63,7 @@ class EmpDebugAdpPackageView extends View
   show_detail3: ->
     berts = new Cert()
     # console.log berts.encode(berts.string("hello"))
-    project_path = atom.project.getPath()
+    project_path = atom.project.getPaths()[0]
     tmp_file = path.join project_path,"ebin","test.beam"
     tmp_con = fs.readFileSync tmp_file, 'utf-8'
     # re = berts.encode({"test": berts.binary tmp_con})
@@ -91,7 +91,7 @@ package_union_package = (adapter_dir)->
       delete re_dir.length
       # console.log re_dir
 
-      project_path?= atom.project.getPath()
+      project_path?= atom.project.getPaths()[0]
       tmp_path?= path.join project_path, "tmp"
       # console.log tmp_path
       emp.mkdir_sync tmp_path
@@ -220,7 +220,7 @@ check_file  = (dir_acc, re_acc) ->
 
 create_adapter_zip = (package_type, file_list) ->
   # console.log "create adapter zip :#{package_type}"
-  project_path = atom.project.getPath()
+  project_path = atom.project.getPaths()[0]
 
   tmp_path = path.join project_path, "tmp"
   emp.mkdir_sync tmp_path
@@ -287,7 +287,7 @@ create_adapter_buffer = (re_arr) ->
 
 common_zip = (file_list, zip_name = emp.DEFAULT_ZIP_FULE_NAME) ->
   # console.log file_list
-  project_path = atom.project.getPath()
+  project_path = atom.project.getPaths()[0]
   tmp_path = path.join project_path, "tmp"
   re_pa = path.join tmp_path, zip_name
 

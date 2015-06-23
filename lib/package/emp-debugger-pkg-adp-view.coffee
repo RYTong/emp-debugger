@@ -27,7 +27,7 @@ class EmpPkgAdpView extends View
 
 
   initialize: () ->
-    project_path = atom.project.getPath()
+    project_path = atom.project.getPaths()[0]
     unless tmp_offline_path = atom.config.get(emp.EMP_OFFLINE_RELATE_DIR)
       tmp_offline_path = emp.EMP_OFFLINE_RELATE_PATH_V
 

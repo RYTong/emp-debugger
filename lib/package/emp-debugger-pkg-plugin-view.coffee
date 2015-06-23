@@ -56,7 +56,7 @@ class EmpDebuggerPkgView extends View
 
 
   initialize: () ->
-    project_path = atom.project.getPath()
+    project_path = atom.project.getPaths()[0]
     @eft_parser = new Cert()
     # super()
     # console.log "server init view initial"
@@ -94,7 +94,7 @@ class EmpDebuggerPkgView extends View
     # console.log "do nothing now"
     # console.log @package_show_entry
     # console.log @package_extra_entry
-    project_path = atom.project.getPath()
+    project_path = atom.project.getPaths()[0]
     zip_file_name = emp.PACKAGE_NORMAL_CHANNEL+".zip"
     zip_file_name = path.join(project_path,"tmp",zip_file_name)
     # console.log "zip_name: #{zip_file_name}"

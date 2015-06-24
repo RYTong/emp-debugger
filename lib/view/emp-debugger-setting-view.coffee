@@ -36,7 +36,7 @@ class EmpDebuggerSettingView extends View
 
   @content: ->
     # console.log 'constructor'
-    @div class: 'emp-setting tool-panel pannel panel-right padding', =>
+    @div class: 'emp-setting tool-panel',=>
       @div outlet:"emp_setting_panel", class:'emp-setting-panel', =>
         @div outlet:"emp_setting_view", class:'emp-setting-server',  =>
           # ------------------------ server setting pane ------------------------
@@ -71,8 +71,8 @@ class EmpDebuggerSettingView extends View
                 @button class: 'btn btn-else btn-info inline-block-tight', click: 'show_enable_views', "Enable Views"
                 @button class: 'btn btn-else btn-info inline-block-tight', click: 'show_enable_lua', "Enable Lua"
 
-          # ------------------------ log config pane ------------------------
-          # @div outlet: 'log_detail', class: 'emp-setting-row', =>
+      #     # ------------------------ log config pane ------------------------
+          @div outlet: 'log_detail', class: 'emp-setting-row', =>
             @div class: "emp-setting-con panel-body padded", =>
               @div class: "block conf-heading icon icon-gear", "Log Setting"
 
@@ -107,14 +107,12 @@ class EmpDebuggerSettingView extends View
   initialize: (serializeState, @emp_socket_server, @empDebuggerLogView, @fa_view) ->
     # console.log 'server state view initial'
     bar_view = new EmpBarView(this)
-    # console.log "after new"
     @emp_setting_panel.before(bar_view)
-    snippet_view = new EmpSnippetsView(this)
-    @conf_detail.after snippet_view
 
+    snippet_view = new EmpSnippetsView(this)
+    @log_detail.after snippet_view
 
     @disposable = new CompositeDisposable
-
     @disposable.add atom.commands.add "atom-workspace","emp-debugger:setting-view", => @set_conf()
     @server_host = atom.config.get(EMP_DEBUG_HOST_KEY)
     @server_port = atom.config.get(EMP_DEBUG_PORT_KEY)
@@ -123,7 +121,6 @@ class EmpDebuggerSettingView extends View
     @emp_socket_server.set_conf_view(this)
     @defailt_host = @emp_socket_server.get_default_host()
     @default_port = @emp_socket_server.get_default_port()
-    # @do_test()
 
   do_test: ->
     # @on 'click', '.entry', (e) =>
@@ -234,8 +231,8 @@ class EmpDebuggerSettingView extends View
 
   attach: ->
 
-    # @panel = atom.workspace.addRightPanel(item:this,visible:true)
-    @panel = atom.workspaceView.appendToRight(this)
+    @panel = atom.workspace.addRightPanel(item:this,visible:true)
+    # @panel = atom.workspaceView.appendToRight(this)
         # atom.workspaceView.prependToRight(this)
 
     @disposable.add new Disposable =>

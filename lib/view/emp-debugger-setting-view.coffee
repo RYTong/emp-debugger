@@ -103,6 +103,11 @@ class EmpDebuggerSettingView extends View
                   @option value: "#FF6600", "橙"
                   @option value: "#990099", "紫"
                   @option value: "#000033", "黑"
+      @div class: 'emp-setting-footor', =>
+        # @ul class:'eul' ,=>
+        # @button outlet:"emp_footor_btn", class:'btn btn-info inline-block-tight', click: 'hide_setting_view', "Hide"
+        @ul class:'eul' ,=>
+          @li outlet:"emp_footor_btn", class:'eli curr',click: 'hide_setting_view', "Hide"
 
   initialize: (serializeState, @emp_socket_server, @empDebuggerLogView, @fa_view) ->
     # console.log 'server state view initial'
@@ -411,6 +416,13 @@ class EmpDebuggerSettingView extends View
   stop_server: (event, element) ->
     @emp_socket_server.close()
     @hide_state_pane()
+
+
+  # -------------------------------------------------------------------------
+  #  btn for hide the setting view
+  hide_setting_view: () ->
+      this.hide()
+      @show_state = false
 
   # -------------------------------------------------------------------------
   live_preview: ->

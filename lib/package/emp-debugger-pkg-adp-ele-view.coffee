@@ -32,7 +32,7 @@ class EmpPkgAdpEleView extends View
     # console.log "do_package"
     # console.log @adp_type
     # console.log @file_arr
-    project_path = atom.project.getPath()
+    project_path = atom.project.getPaths()[0]
     zip_file_name = get_pkg_name(".zip", @cha_id, @adp_type)
     # console.log zip_file_name
     zip_file_name = path.join(project_path,"tmp",zip_file_name)

@@ -136,8 +136,8 @@ class AddGenPanel extends View
       @destroy()
 
     catch e
-      console.log e
-      emp.show_error(e)
+      console.error e
+      emp.show_error("添加 channel 失败,详细信息通过调试界面查看.")
 
   do_add: ->
     # console.log "do add"
@@ -156,7 +156,7 @@ class AddGenPanel extends View
   check_if_the_first_page: ->
     tmp_cha_obj = @cha_obj
     if !atom.project.emp_first_cha_flag
-      project_path = atom.project.getPath()
+      project_path = atom.project.getPaths()[0]
       entrance_page = path.join project_path, emp.ATOM_EMP_APGE_ENTRANCE
       fs.exists entrance_page, (exist_state) ->
         if exist_state

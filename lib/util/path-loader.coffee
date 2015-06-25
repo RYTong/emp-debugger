@@ -18,7 +18,7 @@ module.exports.load_path = (dir, tmp_file, tmp_ignore_name, callback) ->
   ignoredNames = atom.config.get('fuzzy-finder.ignoredNames') ? []
   ignoredNames = ignoredNames.concat(atom.config.get('core.ignoredNames') ? [])
   ignoredNames = ignoredNames.concat(tmp_ignore_name)
-  pro_dir = atom.project.getPath()
+  pro_dir = atom.project.getPaths()[0]
 
   fuzzyFilter = require('fuzzaldrin').filter
   task = Task.once taskPath, path.join(pro_dir, dir), false, true, ignoredNames, ->
@@ -46,7 +46,7 @@ module.exports.load_all_path = (dir, tmp_ignore_name, callback) ->
   ignoredNames = atom.config.get('fuzzy-finder.ignoredNames') ? []
   ignoredNames = ignoredNames.concat(atom.config.get('core.ignoredNames') ? [])
   ignoredNames = ignoredNames.concat(tmp_ignore_name)
-  pro_dir = atom.project.getPath()
+  pro_dir = atom.project.getPaths()[0]
 
   task = Task.once taskPath, path.join(pro_dir, dir), false, true, ignoredNames, ->
     new_path = []

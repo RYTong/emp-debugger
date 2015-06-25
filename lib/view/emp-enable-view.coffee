@@ -136,7 +136,7 @@ class EnableView extends SelectListView
     tmp_editor = null
     # atom.open({pathsToOpen: [pathToOpen], newWindow: true})
     if dest_file_path = item.dir
-      project_path = atom.project.getPath()
+      project_path = atom.project.getPaths()[0]
       tmp_file_path = path.join project_path, dest_file_path
       if fs.existsSync tmp_file_path
         @create_editor tmp_file_path, item

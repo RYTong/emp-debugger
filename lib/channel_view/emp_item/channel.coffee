@@ -235,7 +235,7 @@ class emp_channel
   # 为实例类型为adapter 的channel 进行处理
   create_adapter_detail: ->
     try
-      project_path = atom.project.getPath()
+      project_path = atom.project.getPaths()[0]
       if @use_code
         @create_code(project_path)
       # console.log '111'

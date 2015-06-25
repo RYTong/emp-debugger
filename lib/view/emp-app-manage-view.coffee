@@ -136,7 +136,7 @@ class EmpAppManaView extends View
   do_test: ->
     #
     console.log "this is a test"
-    tmp_path = atom.project.getPath()
+    tmp_path = atom.project.getPaths()[0]
     console.log tmp_path
     path = require 'path'
     tmp_dile_path = path.join tmp_path, "test.xhtml"

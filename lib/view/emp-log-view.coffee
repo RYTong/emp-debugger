@@ -59,7 +59,8 @@ class EmpDebuggerLogView extends View
       @div class: 'emp_bar panel-heading padded', mousedown: 'resizeStarted', dblclick: 'resizeToMin',=>
         @span 'Log From The Script Of Views: '
         @div class:'bar_div', =>
-          @button class: 'btn btn_right', click: 'clear_log', 'Clear'
+          @button class: 'btn btn_right2', click: 'clear_log', 'Clear'
+          @button class: 'btn-warning btn  inline-block-tight btn_right', click: 'hide_log_view', 'Hide'
       # @ul class: 'log-console list-group', outlet:'listView'
       @div outlet:"emp_log_panel", class:'emp-log-panel',  =>
         @div outlet:"emp_log_view", id:'emp_log_view', class:'emp-log-view', =>
@@ -330,6 +331,8 @@ class EmpDebuggerLogView extends View
       @update_ln()
 
     @clear_store_log()
+
+
 
   # -------------------------------------------------------------------------
   # pause the log poutput

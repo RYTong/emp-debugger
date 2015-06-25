@@ -245,7 +245,7 @@ parse_conf = (callback)->
   # console.log atom.project.emp_app_pid
   # channel_conf = test_conf
   cha_conf_dir = atom.config.get(emp.ATOM_CONF_CHANNEL_DIR_KEY)
-  project_path = atom.project.getPath()
+  project_path = atom.project.getPaths()[0]
   channel_conf = path.join project_path, cha_conf_dir
   atom.project.channel_conf = channel_conf
   atom.project.parse_beam_dir = parser_beam_dir

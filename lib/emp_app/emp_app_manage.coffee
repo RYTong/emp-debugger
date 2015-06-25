@@ -37,7 +37,7 @@ class emp_app
   erl_project: true
 
   constructor: (tmp_emp_app_view)->
-    @project_path = atom.project.getPath()
+    @project_path = atom.project.getPaths()[0]
     emp_app_view = tmp_emp_app_view
     unless atom.config.get(emp.EMP_MAKE_CMD_KEY)
       atom.config.set(emp.EMP_MAKE_CMD_KEY, emp_app_make_cmd)
@@ -72,7 +72,7 @@ class emp_app
   make_app: ->
     # console.log "make"
     make_str = atom.config.get(emp.EMP_MAKE_CMD_KEY)
-    cwd = atom.project.getPath()
+    cwd = atom.project.getPaths()[0]
 
     # console.log cwd
     c_process.exec make_str, cwd:cwd, (error, stdout, stderr) ->
@@ -91,7 +91,7 @@ class emp_app
     conf_file = atom.config.get(emp.EMP_CONFIG_KEY)
     conf_ags = atom.config.get(emp.EMP_CONFIG_ARG_KEY)
     # console.log conf_ags
-    cwd = atom.project.getPath()
+    cwd = atom.project.getPaths()[0]
     conf_f_p = path.join cwd, conf_file
     # console.log conf_f_p
     f_state = fs.existsSync conf_f_p
@@ -132,7 +132,7 @@ class emp_app
     # console.log "run"
     script_file = atom.config.get(emp.EMP_STAET_SCRIPT_KEY)
     script_exc = './' +script_file
-    cwd = atom.project.getPath()
+    cwd = atom.project.getPaths()[0]
     script_path = path.join cwd, script_file
     # console.log script_path
     f_state = fs.existsSync script_path
@@ -191,7 +191,7 @@ class emp_app
     # console.log "run"
     script_file = atom.config.get(emp.EMP_STAET_FRONT_SCRIPT_KEY)
     script_exc = '.' +script_file
-    cwd = atom.project.getPath()
+    cwd = atom.project.getPaths()[0]
     script_path = path.join cwd, script_file
     # console.log script_path
     f_state = fs.existsSync script_path
@@ -302,7 +302,7 @@ class emp_app
     re_arg = ["-run", "#{emp.parser_beam_file_mod}", "connect_node", ""+node_name, ""+check_flag]
     re_arg = re_arg.concat(t_erl.replace(/\s+/ig, " ").split(" "))
 
-    cwd = atom.project.getPath()
+    cwd = atom.project.getPaths()[0]
     # console.log t_erl
     # console.log re_arg
     if npid

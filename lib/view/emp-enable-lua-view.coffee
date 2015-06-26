@@ -129,8 +129,8 @@ class EnableLuaView extends SelectListView
           com_filter_arr.push(tmp_item)
 
       if com_filter_arr.length is 0
-        tmp_editor = atom.workspace.openSync()
-        @store_info(tmp_editor, item)
+        atom.workspace.open().then (tmp_editor) =>
+          @store_info(tmp_editor, item)
       else if com_filter_arr.length is 1
         tmp_item = com_filter_arr.pop()
         @create_editor tmp_item.dir, item
@@ -143,15 +143,17 @@ class EnableLuaView extends SelectListView
 
   create_editor:(tmp_file_path, item) ->
     changeFocus = true
-    tmp_editor = atom.workspace.openSync(tmp_file_path, { changeFocus })
+    atom.workspace.open(tmp_file_path, { changeFocus }).then (tmp_editor) =>
 
-    tmp_editor["emp_live_view"] = item.fa_view.view
-    tmp_editor["emp_live_script_name"] = item.script_name
-    tmp_editor["emp_live_script"] = item
-    # console.log tmp_editor
-    tmp_editor.setText(item.script_con)
-    gramers = @getGrammars()
-    tmp_editor.setGrammar(gramers[0]) unless gramers[0] is undefined
+        tmp_editor["emp_live_view"] = item.fa_view.view
+        tmp_editor["emp_live_script_name"] = item.script_name
+        tmp_editor["emp_live_script"] = item
+        console.log "===============+++++++================"
+        console.log item
+        # console.log tmp_editor
+        tmp_editor.setText(item.script_con)
+        gramers = @getGrammars()
+        tmp_editor.setGrammar(gramers[0]) unless gramers[0] is undefined
 
   store_info: (tmp_editor, item)->
     tmp_editor["emp_live_view"] = item.fa_view.view

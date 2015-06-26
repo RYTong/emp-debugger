@@ -146,7 +146,7 @@ class EmpAppManaView extends View
     console.log re
     # atom.open({pathsToOpen: [tmp_dile_path], newWindow: false})
     changeFocus = true
-    atom.workspaceView.open(tmp_dile_path, { changeFocus })
+    atom.workspace.open(tmp_dile_path, { changeFocus })
 
 
   # -------------------------------------------------------------------------

@@ -1,3 +1,4 @@
+{Disposable, CompositeDisposable} = require 'atom'
 {$, $$, View} = require 'atom-space-pen-views'
 remote = require 'remote'
 dialog = remote.require 'dialog'
@@ -58,6 +59,7 @@ class EmpDebuggerPkgView extends View
   initialize: () ->
     project_path = atom.project.getPaths()[0]
     @eft_parser = new Cert()
+    @disposable = new CompositeDisposable()
     # super()
     # console.log "server init view initial"
 
@@ -74,10 +76,18 @@ class EmpDebuggerPkgView extends View
     # console.log "EmpDebuggerView was toggled!"
     # if @emp_socket_server.get_server() is null
     if @hasParent()
-      @detach()
+      @destroy()
     else
       @initial_channel_panel(@cha_id, @cha_obj)
-      atom.workspaceView.append(this) # unless @emp_socket_server.server isnt null
+      # @panel = atom.workspace.addTopPanel(item:this) # unless @emp_socket_server.server isnt null
+      @panel = atom.workspace.addTopPanel(item:this, visible:true)
+      # @panel = atom.workspaceView.appendToRight(this)
+          # atom.workspaceView.prependToRight(this)
+
+      @disposable.add new Disposable =>
+        @panel.destroy()
+        @panel = null
+      # @attach()
       # @emp_sub_host.focus()
       # @emp_sub_host.on 'enter', =>
       #   console.log 'enter input~'

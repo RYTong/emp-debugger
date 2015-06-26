@@ -1,3 +1,4 @@
+{Disposable, CompositeDisposable} = require 'atom'
 {$, $$, View} = require 'atom-space-pen-views'
 remote = require 'remote'
 dialog = remote.require 'dialog'
@@ -45,6 +46,7 @@ class EmpPkgAdpView extends View
   initialize: () ->
     # console.log @cha_obj
     project_path = atom.project.getPaths()[0]
+    @disposable = new CompositeDisposable()
     unless tmp_offline_path = atom.config.get(emp.EMP_OFFLINE_RELATE_DIR)
       tmp_offline_path = emp.EMP_OFFLINE_RELATE_PATH_V
 
@@ -67,7 +69,11 @@ class EmpPkgAdpView extends View
         emp_ele = new EmpPkgEle(this, tmp_obj)
         @element_arr.push emp_ele
         @detail_body.append emp_ele
-      atom.workspaceView.append(this) # unless @emp_socket_server.server isnt null
+      @panel = atom.workspace.addTopPanel(item:this, visible:true) # unless @emp_socket_server.server isnt null
+
+      @disposable.add new Disposable =>
+        @panel.destroy()
+        @panel = null
 
   # @doc 全选所有选项
   checked_all: (event, element) ->

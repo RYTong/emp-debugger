@@ -300,7 +300,9 @@ parse_conf = (callback)->
     tmp_pid = atom.project.emp_node_pid
     tmp_pid.stdin.write(erl_str+'\n')
   else
-    t_erl = 'erl -pa '+parser_beam_dir+' -channel_conf '+channel_conf+' -sname testjs -run atom_pl_parse_json parse -noshell -s erlang halt'
+    t_erl = " erl -pa "+parser_beam_dir+" -channel_conf "+channel_conf+" -sname testjs1 -run atom_pl_parse_json parse -noshell -s erlang halt"
+    # console.log 'parse conf ---------'
+    # console.log t_erl
     c_process.exec t_erl, (error, stdout, stderr) ->
       # console.log error
       if (error instanceof Error)

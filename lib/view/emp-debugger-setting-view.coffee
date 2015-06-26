@@ -494,8 +494,3 @@ class EmpDebuggerSettingView extends View
       arrayValue = (value or '').split(',')
       value = (val.trim() for val in arrayValue when val)
     value
-
-  test_log: ->
-    console.log "do test log panel "
-    tmp_editor = atom.workspace.openSync()
-    tmp_editor.setText "asdasd"

@@ -165,7 +165,8 @@ class EnableView extends SelectListView
 
   create_editor:(tmp_file_path, item) ->
     changeFocus = true
-    tmp_editor = atom.workspace.openSync(tmp_file_path, { changeFocus })
+    # tmp_editor = atom.workspace.openSync(tmp_file_path, { changeFocus })
+    tmp_editor = atom.open({pathsToOpen: [tmp_file_path], newWindow: true})
     tmp_editor["emp_live_view"] = item
     tmp_editor["emp_live_script_name"] = null
     tmp_editor["emp_live_script"] = null

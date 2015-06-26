@@ -184,7 +184,8 @@ class EmpAppWizardView extends ScrollView
         pathsToOpen: [@app_dir]
         devMode: false
 
-      atom.workspaceView.trigger 'core:close'
+      # atom.workspaceView.trigger 'core:close'
+      atom.workspace.destroyActivePaneItem()
     catch e
       console.error e
       emp.show_error(e)

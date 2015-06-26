@@ -121,8 +121,8 @@ class EmpAppWizardView extends ScrollView
     uri: @uri
 
   # Tear down any state and detach
-  destroy: ->
-    @detach()
+  # destroy: ->
+  #   @detach()
 
   # toggle: ->
   #   # console.log "EmpChannelWizardView was toggled!"
@@ -193,7 +193,8 @@ class EmpAppWizardView extends ScrollView
         pathsToOpen: [@app_dir]
         devMode: false
 
-      atom.workspaceView.trigger 'core:close'
+      # atom.workspace.trigger 'core:close'
+      atom.workspace.destroyActivePaneItem()
     catch e
       console.error e
       emp.show_error(e)

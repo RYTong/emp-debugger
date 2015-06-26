@@ -1,3 +1,4 @@
+{Disposable, CompositeDisposable} = require 'atom'
 {$, $$, View} = require 'atom-space-pen-views'
 remote = require 'remote'
 dialog = remote.require 'dialog'
@@ -28,6 +29,7 @@ class EmpPkgAdpView extends View
 
   initialize: () ->
     project_path = atom.project.getPaths()[0]
+    @disposable = new CompositeDisposable()
     unless tmp_offline_path = atom.config.get(emp.EMP_OFFLINE_RELATE_DIR)
       tmp_offline_path = emp.EMP_OFFLINE_RELATE_PATH_V
 
@@ -45,7 +47,11 @@ class EmpPkgAdpView extends View
       @detach()
     else
       @initial_channel_panel(cha_id, cha_obj)
-      atom.workspaceView.append(this) # unless @emp_socket_server.server isnt null
+      @panel = atom.workspace.addTopPanel(item:this, visible:true)# unless @emp_socket_server.server isnt null
+
+      @disposable.add new Disposable =>
+        @panel.destroy()
+        @panel = null
 
   process_cancel: (event, element) ->
     # console.log element

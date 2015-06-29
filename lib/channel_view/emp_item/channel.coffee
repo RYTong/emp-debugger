@@ -245,8 +245,8 @@ class emp_channel
       if @use_cs
         @create_cs(project_path)
 
-      if @use_front
-        @create_front(project_path)
+      # if @use_front
+      #   @create_front(project_path)
     catch err
       console.error(err)
       throw("创建辅助代码失败")

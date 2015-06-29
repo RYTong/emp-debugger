@@ -24,8 +24,7 @@ ${atom_related_info}
             local next_trancode = "${next_tran_code}";
 
             function main_page()
-                local result = history:get(1);
-                location:replace(result);
+                ert.channel:back();
             end;
 
             function back_fun()
@@ -33,24 +32,12 @@ ${atom_related_info}
                 location:replace(result);
             end;
 
-            --[[此回调方法中做返回错误json的判断，如果正确则将数据放入全局变量并请求界面进入下个界面]]--
-            function callback_channel(params)
-                local ret_code,ret_msg = error_judge(params);
-                if ret_code == -1 then
-                    window:alert(ret_msg);
-                    return;
-                else
-                    local trancode = params["trancode"];
-                    globalTable[trancode] = params["responseBody"];
-                    --[[ 添加Channel之后,替换下列的channelId 和channelView ]]--
-                    invoke_page(next_channelId.."/xhtml/"..next_trancode..".xhtml",page_callback,nil);
-                end;
-            end;
 
             --[[Next Page]]--
-            function common_req()
-                invoke_trancode(next_channelId, next_trancode, {id=next_channelId,tranCode= next_trancode}, callback_channel, {trancode=next_trancode});
+            function next_step()
+                ert.channel:next_page(next_channelId, next_trancode, {id=next_channelId,tranCode= next_trancode});
             end;
+
 
             ]]>
         </script>

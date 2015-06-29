@@ -84,7 +84,7 @@ module.exports =
     empDebuggerSettingViewState: @empDebuggerSettingView.serialize()
 
   live_preview: ->
-    editor = atom.workspace.getActiveEditor()
+    editor = atom.workspace.getActiveTextEditor()
     if editor
       text_path = editor.getPath()
       text_ext  = undefined

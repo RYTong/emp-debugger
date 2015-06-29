@@ -25,7 +25,7 @@ class EmpSnippetsView extends View
 
   add_snippet: ->
     console.log "add_snippet"
-    editor = atom.workspace.getActiveEditor()
+    editor = atom.workspace.getActiveTextEditor()
     project_path = atom.project.getPaths()[0]
     if editor
       text_path = editor.getPath()

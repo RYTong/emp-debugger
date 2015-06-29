@@ -144,12 +144,9 @@ class EnableLuaView extends SelectListView
   create_editor:(tmp_file_path, item) ->
     changeFocus = true
     atom.workspace.open(tmp_file_path, { changeFocus }).then (tmp_editor) =>
-
         tmp_editor["emp_live_view"] = item.fa_view.view
         tmp_editor["emp_live_script_name"] = item.script_name
         tmp_editor["emp_live_script"] = item
-        console.log "===============+++++++================"
-        console.log item
         # console.log tmp_editor
         tmp_editor.setText(item.script_con)
         gramers = @getGrammars()

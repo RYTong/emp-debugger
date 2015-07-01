@@ -19,7 +19,7 @@
         'name': 'punctuation.definition.tag.html'
       '2':
         'name': 'entity.name.tag.html'
-    'end': '(>(<)/)(\\2)(>)'
+    'end': '(>(\\s*<)/)(\\2)(>)'
     'endCaptures':
       '1':
         'name': 'punctuation.definition.tag.html'
@@ -66,7 +66,7 @@
     'name': 'comment.block.html'
     'patterns': [
       {
-        'match': '--'
+        'match': '--(?!-*\\s*>)'
         'name': 'invalid.illegal.bad-comments-or-CDATA.html'
       }
       {

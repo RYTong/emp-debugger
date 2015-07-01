@@ -424,3 +424,69 @@
   'Word Break Opportunity':
     'prefix': 'wbr'
     'body': '<wbr>'
+  # ERT Buttton Color
+  'Ert Button 灰色':
+    'prefix': 'ebutton-color-1'
+    'body': '<input type=\'button\' value=\'${1:Button}\' border=\'1\' class=\'ert_btn1\'></input>'
+  'Ert Button 蓝色':
+    'prefix': 'ebutton-color-2'
+    'body': '<input type=\'button\' value=\'${1:Button}\' border=\'1\' class=\'ert_btn2\'></input>'
+  'Ert Button 绿色':
+    'prefix': 'ebutton-color-3'
+    'body': '<input type=\'button\' value=\'${1:Button}\' border=\'1\' class=\'ert_btn3\'></input>'
+  'Ert Button 红色':
+    'prefix': 'ebutton-color-4'
+    'body': '<input type=\'button\' value=\'${1:Button}\' border=\'1\' class=\'ert_btn4\'></input>'
+  'Ert Button 粉红色':
+    'prefix': 'ebutton-color-5'
+    'body': '<input type=\'button\' value=\'${1:Button}\' border=\'1\' class=\'ert_btn5\'></input>'
+  'Ert Button 深灰色':
+    'prefix': 'ebutton-color-6'
+    'body': '<input type=\'button\' value=\'${1:Button}\' border=\'1\' class=\'ert_btn6\'></input>'
+  'Ert Button 橄榄绿':
+    'prefix': 'ebutton-color-7'
+    'body': '<input type=\'button\' value=\'${1:Button}\' border=\'1\' class=\'ert_btn7\'></input>'
+  'Ert Button 橘黄色':
+    'prefix': 'ebutton-color-8'
+    'body': '<input type=\'button\' value=\'${1:Button}\' border=\'1\' class=\'ert_btn8\'></input>'
+  'Ert Button 土黄色':
+    'prefix': 'ebutton-color-9'
+    'body': '<input type=\'button\' value=\'${1:Button}\' border=\'1\' class=\'ert_btn9\'></input>'
+
+
+  # ERT Block button
+  'Ert Block Button Default':
+    'prefix': 'ebutton-block'
+    'body': '<input type=\'button\' value=\'${1:Block button}\' class=\'ert_btn6\'></input>'
+  'Ert Block Button 灰色':
+    'prefix': 'ebutton-block-1'
+    'body': '<input type=\'button\' value=\'${1:Block button}\' class=\'ert_btn1\'></input>'
+  'Ert Block Button 紫色':
+    'prefix': 'ebutton-block-2'
+    'body': '<input type=\'button\' value=\'${1:Block button}\' class=\'ert_btn2\'></input>'
+  'Ert Block Button 绿色':
+    'prefix': 'ebutton-block-3'
+    'body': '<input type=\'button\' value=\'${1:Block button}\' class=\'ert_btn3\'></input>'
+  'Ert Block Button 红色':
+    'prefix': 'ebutton-block-4'
+    'body': '<input type=\'button\' value=\'${1:Block button}\' class=\'ert_btn4\'></input>'
+  'Ert Block Button 紫色边框':
+    'prefix': 'ebutton-block-5'
+    'body': '<input type=\'button\' value=\'${1:Block button}\' class=\'ert_btn5\'></input>'
+  'Ert Block Button 深绿色边框':
+    'prefix': 'ebutton-block-7'
+    'body': '<input type=\'button\' value=\'${1:Block button}\' class=\'ert_btn7\'></input>'
+  'Ert Block Button 橘黄色边框':
+    'prefix': 'ebutton-block-8'
+    'body': '<input type=\'button\' value=\'${1:Block button}\' class=\'ert_btn8\'></input>'
+
+  # ERT Title
+  'Ert Title':
+    'prefix': 'etitle'
+    'body': '      <div class=\"ert_bar\" name=\"ert_bar\" border=\"0\" >\r\n\t<label class=\"ert_label_title\">Title</label>\r\n</div>\r\n'
+
+  # ERT Snippet
+'.source.coffee':
+  'Ert Snippet Temp':
+    'prefix': 'esnip'
+    'body': '\'${1:Snippet Name}\': \r\n\t\'prefix\': \'${2:hello}\'\r\n\t\'body\': \'${3:Hello World!}\''

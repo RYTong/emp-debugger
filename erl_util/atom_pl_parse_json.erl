@@ -759,8 +759,11 @@ consult_file(ConfFile) ->
     case file:consult(ConfFile) of
         {ok, C} ->
             C;
-        _E ->
+        Err ->
             % io:format("read file error:~p~n", [E]),
+            error_logger:error_msg("Error msg: ~p~n", [Err]),
+            Err_re = hd(io_lib:format("~s~n", [Err])),
+            io:put_chars(standard_error, Err_re),
             throw("Read the channel conf file failed, please checked the file content!")
     end.
 

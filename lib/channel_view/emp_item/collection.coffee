@@ -69,7 +69,7 @@ class emp_collection
     else
       @do_create_collection(col_objs)
 
-    @create_front_col()
+    # @create_front_col()
 
   do_create_collection: (col_objs)->
     tmp_col = path.join __dirname, '../../../', emp.STATIC_TEMPLATE_DIR,'/collection.txt'
@@ -122,7 +122,7 @@ class emp_collection
       @do_edit_collection_rt('node')
     else
       @do_edit_collection()
-    @create_front_col()
+    # @create_front_col()
 
   do_edit_collection: ()->
     # console.log col_objs

@@ -425,60 +425,103 @@
     'prefix': 'wbr'
     'body': '<wbr>'
   # ERT Buttton Color
-  'Ert Button 灰色':
-    'prefix': 'ebutton-color-1'
+  'Ert Button 灰色背景':
+    'prefix': 'ebutton-color1'
     'body': '<input type=\'button\' value=\'${1:Button}\' border=\'1\' class=\'ert_btn1\'></input>'
-  'Ert Button 蓝色':
-    'prefix': 'ebutton-color-2'
+  'Ert Button 蓝色背景':
+    'prefix': 'ebutton-color2'
     'body': '<input type=\'button\' value=\'${1:Button}\' border=\'1\' class=\'ert_btn2\'></input>'
-  'Ert Button 绿色':
-    'prefix': 'ebutton-color-3'
+  'Ert Button 绿色背景':
+    'prefix': 'ebutton-color3'
     'body': '<input type=\'button\' value=\'${1:Button}\' border=\'1\' class=\'ert_btn3\'></input>'
-  'Ert Button 红色':
-    'prefix': 'ebutton-color-4'
+  'Ert Button 红色背景':
+    'prefix': 'ebutton-color4'
     'body': '<input type=\'button\' value=\'${1:Button}\' border=\'1\' class=\'ert_btn4\'></input>'
-  'Ert Button 粉红色':
-    'prefix': 'ebutton-color-5'
+  'Ert Button 粉红色背景':
+    'prefix': 'ebutton-color5'
     'body': '<input type=\'button\' value=\'${1:Button}\' border=\'1\' class=\'ert_btn5\'></input>'
   'Ert Button 深灰色':
-    'prefix': 'ebutton-color-6'
+    'prefix': 'ebutton-color6'
     'body': '<input type=\'button\' value=\'${1:Button}\' border=\'1\' class=\'ert_btn6\'></input>'
   'Ert Button 橄榄绿':
-    'prefix': 'ebutton-color-7'
+    'prefix': 'ebutton-color7'
     'body': '<input type=\'button\' value=\'${1:Button}\' border=\'1\' class=\'ert_btn7\'></input>'
   'Ert Button 橘黄色':
-    'prefix': 'ebutton-color-8'
+    'prefix': 'ebutton-color8'
     'body': '<input type=\'button\' value=\'${1:Button}\' border=\'1\' class=\'ert_btn8\'></input>'
   'Ert Button 土黄色':
-    'prefix': 'ebutton-color-9'
+    'prefix': 'ebutton-color9'
     'body': '<input type=\'button\' value=\'${1:Button}\' border=\'1\' class=\'ert_btn9\'></input>'
 
 
   # ERT Block button
-  'Ert Block Button Default':
+  'EBTN 块级 Default':
     'prefix': 'ebutton-block'
     'body': '<input type=\'button\' value=\'${1:Block button}\' class=\'ert_btn6\'></input>'
-  'Ert Block Button 灰色':
-    'prefix': 'ebutton-block-1'
+  'EBTN 块级 灰色背景':
+    'prefix': 'ebutton-block1'
     'body': '<input type=\'button\' value=\'${1:Block button}\' class=\'ert_btn1\'></input>'
-  'Ert Block Button 紫色':
-    'prefix': 'ebutton-block-2'
+  'EBTN 块级 紫色背景':
+    'prefix': 'ebutton-block2'
     'body': '<input type=\'button\' value=\'${1:Block button}\' class=\'ert_btn2\'></input>'
-  'Ert Block Button 绿色':
-    'prefix': 'ebutton-block-3'
+  'EBTN 块级 绿色背景':
+    'prefix': 'ebutton-block3'
     'body': '<input type=\'button\' value=\'${1:Block button}\' class=\'ert_btn3\'></input>'
-  'Ert Block Button 红色':
-    'prefix': 'ebutton-block-4'
+  'EBTN 块级 红色背景':
+    'prefix': 'ebutton-block4'
     'body': '<input type=\'button\' value=\'${1:Block button}\' class=\'ert_btn4\'></input>'
-  'Ert Block Button 紫色边框':
-    'prefix': 'ebutton-block-5'
+  'EBTN 块级 紫色背景+边框':
+    'prefix': 'ebutton-block5'
     'body': '<input type=\'button\' value=\'${1:Block button}\' class=\'ert_btn5\'></input>'
-  'Ert Block Button 深绿色边框':
-    'prefix': 'ebutton-block-7'
+  'EBTN 块级 深绿色背景+边框':
+    'prefix': 'ebutton-block7'
     'body': '<input type=\'button\' value=\'${1:Block button}\' class=\'ert_btn7\'></input>'
-  'Ert Block Button 橘黄色边框':
-    'prefix': 'ebutton-block-8'
+  'EBTN 块级 橘黄色背景+边框':
+    'prefix': 'ebutton-block8'
     'body': '<input type=\'button\' value=\'${1:Block button}\' class=\'ert_btn8\'></input>'
+
+  # ERT button image
+  'EBTN IMG Default 蓝色字体':
+    'prefix': 'ebutton-img'
+    'body': '<input type=\'button\' value=\'${1: Button}\' class=\'ert_btn5\'></input>'
+  'EBTN IMG 灰色背景':
+    'prefix': 'ebutton-img1'
+    'body': '<input type=\'button\' value=\'${1: Button}\' border=\'1\' class=\'ert_btn1\'></input>\r\n\t<img src=\"local:024.png\" class=\'father,ert_dvo\'></img>'
+  'EBTN IMG 蓝色背景 灰色字体':
+    'prefix': 'ebutton-img2'
+    'body': '<input type=\'button\' value=\'${1: Button}\' border=\'1\' class=\'ert_btn2\'></input>\r\n\t<img src=\"local:024.png\" class=\'father,ert_dvt\'></img>'
+  'EBTN IMG 绿色背景 蓝色字体':
+    'prefix': 'ebutton-img3'
+    'body': '<input type=\'button\' value=\'${1: Button}\' border=\'1\' class=\'ert_btn3\'></input>\r\n\t<img src=\"local:024.png\" class=\'father,ert_dvs\'></img>'
+  'EBTN IMG 红色背景 蓝色字体':
+    'prefix': 'ebutton-img4'
+    'body': '<input type=\'button\' value=\'${1: Button}\' border=\'1\' class=\'ert_btn4\'></input>\r\n\t<img src=\"local:024.png\" class=\'father,ert_dvf\'></img>'
+
+  # ERT button number
+  'EBTN 灰色背景+角标':
+    'prefix': 'ebutton-num1'
+    'body': '<input type=\'button\' value=\'${1:Button}\' border=\'1\' class=\'ert_btn1\'></input>\r\n\t<div align=\"center\" valign=\"middle\" class=\'ert_div1\'>\r\n\t<label class=\'ert_1\'>1</label>\r\n\t</div>'
+  'EBTN 蓝色背景+角标':
+    'prefix': 'ebutton-color2'
+    'body': '<input type=\'button\' value=\'${1:Button}\' border=\'1\' class=\'ert_btn2\'></input>\r\n\t<div align=\"center\" valign=\"middle\" class=\'ert_div2\'>\r\n\t<label class=\'ert_1,ert_21\'>1</label>\r\n\t</div>'
+  'EBTN 绿色背景+角标':
+    'prefix': 'ebutton-color3'
+    'body': '<input type=\'button\' value=\'${1:Button}\' border=\'1\' class=\'ert_btn3\'></input>\r\n\t<div align=\"center\" valign=\"middle\" class=\'ert_div3\'>\r\n\t<label class=\'ert_1\'>1</label>\r\n\t</div>'
+  'EBTN 红色背景+角标':
+    'prefix': 'ebutton-color4'
+    'body': '<input type=\'button\' value=\'${1:Button}\' border=\'1\' class=\'ert_btn4\'></input>\r\n\t<div align=\"center\" valign=\"middle\" class=\'ert_div4\'>\r\n\t<label class=\'ert_1\'>1</label>\r\n\t</div>'
+  'EBTN 白色边框+角标':
+    'prefix': 'ebutton-color5'
+    'body': '<input type=\'button\' value=\'{1:Badge button} 1\' border=\'1\' class=\'ert_btn5\'></input>'
+  'EBTN 深灰色边框+角标':
+    'prefix': 'ebutton-color6'
+    'body': '<input type=\'button\' value=\'{1:Badge button} 1\' border=\'1\' class=\'ert_btn6\'></input>'
+  'EBTN 绿色边框+角标':
+    'prefix': 'ebutton-color7'
+    'body': '<input type=\'button\' value=\'{1:Badge button} 1\' border=\'1\' class=\'ert_btn7\'></input>'
+  'EBTN 黄色边框+角标':
+    'prefix': 'ebutton-color8'
+    'body': '<input type=\'button\' value=\'{1:Badge button} 1\' border=\'1\' class=\'ert_btn8\'></input>'
 
   # ERT Title
   'Ert Title':

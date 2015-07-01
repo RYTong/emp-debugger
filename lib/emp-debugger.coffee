@@ -9,6 +9,8 @@ EmpSocketServer = require './debugger/emp_socket'
 # EmpChaWizard = require './channel_view/emp-channel-wizard'
 EmpViewManage = require './view/emp-views-entrance'
 conf_parser = require './emp_app/conf_parser'
+ErtUiGuide = require './guide/emp-debugger-ui-guide'
+
 emp = require './exports/emp'
 n_state = null
 path = require 'path'
@@ -32,6 +34,8 @@ module.exports =
     @empEnableLuaView = new EmpEnableLuaView(n_state.empEnableLuaViewState, @emp_socket_server)
     @empDebuggerSettingView = new EmpDebuggerSettingView(n_state.empDebuggerSettingViewState,
                                   @emp_socket_server, @empDebuggerLogView, this)
+
+    @ertUiGuide = new ErtUiGuide(n_state.ertUiGuideState, this)
 
     atom.commands.add "atom-workspace","emp-debugger:live-preview", => @live_preview()
     # atom.commands.add "atom-workspace","emp-debugger:setting-view", => @set_conf()
@@ -74,6 +78,7 @@ module.exports =
     @empDebuggerLogView.destroy()
     @emp_socket_server.destroy()
     @empDebuggerSettingView.destroy()
+    @ertUiGuide.destroy()
 
   serialize: ->
     # empDebuggerStateViewState: @empDebuggerStateView.serialize()
@@ -82,6 +87,7 @@ module.exports =
     # empDebuggerInitViewState: @empDebuggerInitView.serialize()
     empDebuggerLogViewState: @empDebuggerLogView.serialize()
     empDebuggerSettingViewState: @empDebuggerSettingView.serialize()
+    ertUiGuideState:@ertUiGuide.serialize()
 
   live_preview: ->
     editor = atom.workspace.getActiveTextEditor()

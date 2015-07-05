@@ -2,44 +2,8 @@
 ${atom_related_info}
 <content>
     <head>
-        <style>
-            .body {background-color:#ffffff;}
-            .title {left:3px;top:5px;color:#FF3300;font-size:18px;}
-            .title_div{width:320px;height:51px;}
-            .label_title{left:123px;top:11px;font-size:19px;font-weight:bold;color:#000000;}
-            .button_main{left:260px;top:6px;width:54px;height:32px;background-color:#99FFFF;color:#000000;}
-            .button_back{left:8px;top:6px;width:54px;height:32px;background-color:#99FFFF;color:#000000;}
-            .button_next {left:8px; bottom:20px; width:304px; height: 60px;background-color:#3300FF; color:#FFFFFF;}
-            .acc_div{width:320px;}
-
-        </style>
-        <script type="text/x-lua" src="RYTL.lua"></script>
-        <script type="text/x-lua">
-            <![CDATA[
-
-            ryt = RYTL:new{};
-
-            local next_channelId = "${channel}";
-            local next_trancode = "${next_tran_code}";
-
-            function main_page()
-                ert.channel:back();
-            end;
-
-            function back_fun()
-                local result = history:get(-1);
-                location:replace(result);
-            end;
-
-
-            --[[Next Page]]--
-            function next_step()
-                ert.channel:next_page(next_channelId, next_trancode, {id=next_channelId,tranCode= next_trancode});
-            end;
-
-
-            ]]>
-        </script>
+        <link ref="${channel}/css/${channel}.css" type="text/css"/>
+        <script type="text/x-lua" src="${channel}/lua/${trancode}.lua"></script>
     </head>
 
     <body class="body">

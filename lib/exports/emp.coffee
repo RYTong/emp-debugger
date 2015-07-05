@@ -138,6 +138,8 @@ module.exports =
   STATIC_ERL_FUN_TEMPLATE : "/channel_adapter_erl_function.tmp"
   STATIC_CS_TEMPLATE : "/channel_adapter_cs_template.tmp"
   STATIC_OFF_TEMPLATE : "/channel_adapter_xHtml_template.tmp"
+  STATIC_CSS_TEMPLATE : "/channel_adapter_css_template.tmp"
+  STATIC_LUA_TEMPLATE : "/channel_adapter_lua_template.tmp"
 
 
   STATIC_APP_FRONT_TEMP:"/templates/temp_app/"

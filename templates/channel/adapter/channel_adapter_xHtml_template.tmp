@@ -17,6 +17,6 @@ ${atom_related_info}
         <div class="acc_div" name="div_acc" border="0">
             <label>Channel:${channel}, TranCode: ${trancode}, 此处填页面内容.</label>
         </div>
-        <input type="button" class="button_next" name="next_page" onclick="next_page()" value="Next Page" />
+        <input type="button" class="button_next" name="next_page" onclick="next_step()" value="Next Page" />
     </body>
 </content>

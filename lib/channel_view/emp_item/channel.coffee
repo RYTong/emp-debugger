@@ -369,10 +369,18 @@ class emp_channel
     pro_dir = path.join __dirname, '../../../', emp.STATIC_CHANNEL_TEMPLATE, @entry_dir
     tmp_xhtml_dir = path.join pro_dir,emp.STATIC_OFF_TEMPLATE
     tmp_json_dir = path.join pro_dir,emp.STATIC_CS_TEMPLATE
+    tmp_css_dir = path.join pro_dir,emp.STATIC_CSS_TEMPLATE
+    tmp_lua_dir = path.join pro_dir,emp.STATIC_LUA_TEMPLATE
+
     xhtml_template = fs.readFileSync tmp_xhtml_dir, 'utf8'
     json_template = fs.readFileSync tmp_json_dir, 'utf8'
     json_template = json_template.replace(/\$channel/ig, @id)
     xhtml_template = xhtml_template.replace(/\$\{app\}/ig, @app).replace(/\$\{channel\}/ig, @id)
+
+    css_template = fs.readFileSync tmp_css_dir, 'utf8'
+
+    lua_template = fs.readFileSync tmp_lua_dir, 'utf8'
+
 
     tmp_arr = []
     for key,obj of @adapters
@@ -395,10 +403,7 @@ class emp_channel
         tmp_relate_file = path.join relate_dir, ext_xhtml, tmp_xhtml_name
         tmp_xhtml_template = tmp_xhtml_template.replace(/\$\{atom_related_info\}/ig, emp.DEFAULT_TEMP_HEADER.replace(/\$\{atom_related_info\}/ig,tmp_relate_file))
 
-        if next_obj = tmp_arr.pop()
-          tmp_xhtml_template = tmp_xhtml_template.replace(emp.EMP_ENTRANCE_NEXT_TRANCODE, next_obj.trancode)
-        else
-          tmp_xhtml_template = tmp_xhtml_template.replace(emp.EMP_ENTRANCE_NEXT_TRANCODE, "")
+
 
         fs.writeFile tmp_xhtml_file, tmp_xhtml_template, 'utf8', (err) =>
           if err
@@ -415,9 +420,16 @@ class emp_channel
             emp.show_error("创建离线资源代码失败~:#{tmp_json_file}")
 
       ext_lua = emp.OFF_EXTENSION_LUA
-      tmp_lua_file = path.join cha_dir, ext_lua, (@id+'.'+ext_lua)
+      tmp_lua_file = path.join cha_dir, ext_lua, (tmp_tran+'.'+ext_lua)
+      re_lua_template = lua_template.replace(/\${channel}/ig, @id).replace(/\$\{trancode\}/ig, tmp_tran)
+
+      if next_obj = tmp_arr.pop()
+        re_lua_template = re_lua_template.replace(emp.EMP_ENTRANCE_NEXT_TRANCODE, next_obj.trancode)
+      else
+        re_lua_template = re_lua_template.replace(emp.EMP_ENTRANCE_NEXT_TRANCODE, "")
+
       if !fs.existsSync tmp_lua_file
-        fs.writeFile tmp_lua_file, " ", 'utf8', (err) =>
+        fs.writeFile tmp_lua_file, re_lua_template, 'utf8', (err) =>
           if err
             console.error(err)
             emp.show_error("创建离线资源代码失败~:#{tmp_lua_file}")
@@ -425,7 +437,7 @@ class emp_channel
       ext_css = emp.OFF_EXTENSION_CSS
       tmp_css_file = path.join cha_dir, ext_css, (@id+'.'+ext_css)
       if !fs.existsSync tmp_css_file
-        fs.writeFile tmp_css_file, " ", 'utf8', (err) =>
+        fs.writeFile tmp_css_file, css_template, 'utf8', (err) =>
           if err
             console.error(err)
             emp.show_error("创建离线资源代码失败~:#{tmp_css_file}")

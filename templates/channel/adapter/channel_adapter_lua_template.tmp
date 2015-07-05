@@ -1,0 +1,22 @@
+--[[Create By EMP Editor Channel Wizard ]]--
+
+ryt = RYTL:new{};
+
+local next_channelId = "${channel}";
+local next_trancode = "${next_tran_code}";
+local curr_trancode = "${trancode}";
+
+function main_page()
+    ert.channel:back();
+end;
+
+function back_fun()
+    local result = history:get(-1);
+    location:replace(result);
+end;
+
+
+--[[Next Page]]--
+function next_step()
+    ert.channel:next_page(next_channelId, next_trancode, {id=next_channelId,tranCode= next_trancode});
+end;

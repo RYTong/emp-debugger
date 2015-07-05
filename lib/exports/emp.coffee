@@ -134,6 +134,10 @@ module.exports =
   CHANNEL_ADAPTER_DIR:'adapter'
   CHANNEL_NEW_CALLBACK_DIR: 'new_callback'
   CHANNEL_CALLBACK_DIR: 'callback'
+  # STATIC_UI_CSS_TEMPLATE_PATH:"/templates/css/"
+  STATIC_UI_CSS_TEMPLATE:"/templates/css/ert_ui.css"
+  STATIC_UI_CSS_TEMPLATE_DEST_PATH:"public/www/resource_dev/common/css/ert_ui.css"
+
   STATIC_ERL_TEMPLATE : "/channel_adapter_erl_template.tmp"
   STATIC_ERL_FUN_TEMPLATE : "/channel_adapter_erl_function.tmp"
   STATIC_CS_TEMPLATE : "/channel_adapter_cs_template.tmp"
@@ -256,13 +260,16 @@ module.exports.mkdir_sync = (tmp_dir) ->
   if !fs.existsSync(tmp_dir)
     fs.mkdirSync(tmp_dir);
 
-
 module.exports.mkdirs_sync = (root_dir, dir_list) ->
   for dir in dir_list
     tmp_dir = root_dir+dir
     if !fs.existsSync(tmp_dir)
       fs.mkdirSync(tmp_dir);
 
+module.exports.mkdir_sync_safe = (tmp_dir) ->
+   if !fs.existsSync(tmp_dir)
+     this.mkdir_sync_safe(path.dirname tmp_dir)
+     fs.mkdirSync(tmp_dir);
 
 mk_dirs_sync = (p, made) ->
   # default mode is 0777

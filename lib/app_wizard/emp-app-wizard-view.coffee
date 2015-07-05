@@ -195,9 +195,9 @@ class EmpAppWizardView extends ScrollView
 
       # atom.workspace.trigger 'core:close'
       atom.workspace.destroyActivePaneItem()
-    catch e
-      console.error e
-      emp.show_error(e)
+    # catch e
+    #   console.error e
+    #   emp.show_error("创建 App 失败!")
 
   mk_app_dir:(app_path, app_name) ->
     base_name = path.basename(app_path)
@@ -214,6 +214,8 @@ class EmpAppWizardView extends ScrollView
     # console.log re
     basic_dir = path.join __dirname, '../../', emp.STATIC_APP_TEMPLATE, @app_version
     @copy_template(to_path, basic_dir)
+
+    @copy_css_ui(to_path)
 
     front_path = path.join  to_path, '/public'
     if fs.existsSync front_path
@@ -255,3 +257,13 @@ class EmpAppWizardView extends ScrollView
       tmp_os = emp.get_emp_os()
       if tmp_os is emp.OS_DARWIN or tmp_os is emp.OS_LINUX
         fs.chmodSync(t_path, 493);
+
+  copy_css_ui: (to_path) ->
+    # console.log "  ------ ----- "
+    basic_dir = path.join __dirname, '../../', emp.STATIC_UI_CSS_TEMPLATE
+    dest_path = path.join to_path, emp.STATIC_UI_CSS_TEMPLATE_DEST_PATH
+    css_con = fs.readFileSync basic_dir, 'utf8'
+    tmp_dest_path = path.dirname dest_path
+    if !fs.existsSync tmp_dest_path
+      emp.mkdir_sync_safe tmp_dest_path
+    fs.writeFileSync(dest_path, css_con, 'utf8')

@@ -253,7 +253,7 @@
     'body': '<li>$1</li>$0'
   'Link':
     'prefix': 'link'
-    'body': '<link rel="${1:ert_ui.css}" type="text/css">$0'
+    'body': '<link ref="${1:ert_ui.css}" type="text/css"/>$0'
   # M
   'Main':
     'prefix': 'main'

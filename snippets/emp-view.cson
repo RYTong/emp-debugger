@@ -457,71 +457,71 @@
   # ERT Block button
   'EBTN 块级 Default':
     'prefix': 'ebutton-block'
-    'body': '<input type=\'button\' value=\'${1:Block button}\' class=\'ert_btn6\'></input>'
+    'body': '<input type=\'button\' value=\'${1:Block button}\' class=\'ert_btn_block6\'></input>'
   'EBTN 块级 灰色背景':
     'prefix': 'ebutton-block1'
-    'body': '<input type=\'button\' value=\'${1:Block button}\' class=\'ert_btn1\'></input>'
+    'body': '<input type=\'button\' value=\'${1:Block button}\' class=\'ert_btn_block1\'></input>'
   'EBTN 块级 紫色背景':
     'prefix': 'ebutton-block2'
-    'body': '<input type=\'button\' value=\'${1:Block button}\' class=\'ert_btn2\'></input>'
+    'body': '<input type=\'button\' value=\'${1:Block button}\' class=\'ert_btn_block2\'></input>'
   'EBTN 块级 绿色背景':
     'prefix': 'ebutton-block3'
-    'body': '<input type=\'button\' value=\'${1:Block button}\' class=\'ert_btn3\'></input>'
+    'body': '<input type=\'button\' value=\'${1:Block button}\' class=\'ert_btn_block3\'></input>'
   'EBTN 块级 红色背景':
     'prefix': 'ebutton-block4'
-    'body': '<input type=\'button\' value=\'${1:Block button}\' class=\'ert_btn4\'></input>'
+    'body': '<input type=\'button\' value=\'${1:Block button}\' class=\'ert_btn_block4\'></input>'
   'EBTN 块级 紫色背景+边框':
     'prefix': 'ebutton-block5'
-    'body': '<input type=\'button\' value=\'${1:Block button}\' class=\'ert_btn5\'></input>'
+    'body': '<input type=\'button\' value=\'${1:Block button}\' class=\'ert_btn_block5\'></input>'
   'EBTN 块级 深绿色背景+边框':
     'prefix': 'ebutton-block7'
-    'body': '<input type=\'button\' value=\'${1:Block button}\' class=\'ert_btn7\'></input>'
+    'body': '<input type=\'button\' value=\'${1:Block button}\' class=\'ert_btn_block7\'></input>'
   'EBTN 块级 橘黄色背景+边框':
     'prefix': 'ebutton-block8'
-    'body': '<input type=\'button\' value=\'${1:Block button}\' class=\'ert_btn8\'></input>'
+    'body': '<input type=\'button\' value=\'${1:Block button}\' class=\'ert_btn_block8\'></input>'
 
   # ERT button image
   'EBTN IMG Default 蓝色字体':
     'prefix': 'ebutton-img'
-    'body': '<input type=\'button\' value=\'${1: Button}\' class=\'ert_btn5\'></input>'
+    'body': '<input type=\'button\' value=\'${1: Button}\' class=\'ert_btn_image5\'></input>'
   'EBTN IMG 灰色背景':
     'prefix': 'ebutton-img1'
-    'body': '<input type=\'button\' value=\'${1: Button}\' border=\'1\' class=\'ert_btn1\'></input>\r\n\t<img src=\"local:024.png\" class=\'father,ert_dvo\'></img>'
+    'body': '<input type=\'button\' value=\'${1: Button}\' border=\'1\' class=\'ert_btn_image1\'></input>\r\n\t<img src=\"local:024.png\" class=\'father,ert_btn_image_dvo\'></img>'
   'EBTN IMG 蓝色背景 灰色字体':
     'prefix': 'ebutton-img2'
-    'body': '<input type=\'button\' value=\'${1: Button}\' border=\'1\' class=\'ert_btn2\'></input>\r\n\t<img src=\"local:024.png\" class=\'father,ert_dvt\'></img>'
+    'body': '<input type=\'button\' value=\'${1: Button}\' border=\'1\' class=\'ert_btn_image2\'></input>\r\n\t<img src=\"local:024.png\" class=\'father,ert_btn_image_dvt\'></img>'
   'EBTN IMG 绿色背景 蓝色字体':
     'prefix': 'ebutton-img3'
-    'body': '<input type=\'button\' value=\'${1: Button}\' border=\'1\' class=\'ert_btn3\'></input>\r\n\t<img src=\"local:024.png\" class=\'father,ert_dvs\'></img>'
+    'body': '<input type=\'button\' value=\'${1: Button}\' border=\'1\' class=\'ert_btn_image3\'></input>\r\n\t<img src=\"local:024.png\" class=\'father,ert_btn_image_dvs\'></img>'
   'EBTN IMG 红色背景 蓝色字体':
     'prefix': 'ebutton-img4'
-    'body': '<input type=\'button\' value=\'${1: Button}\' border=\'1\' class=\'ert_btn4\'></input>\r\n\t<img src=\"local:024.png\" class=\'father,ert_dvf\'></img>'
+    'body': '<input type=\'button\' value=\'${1: Button}\' border=\'1\' class=\'ert_btn_image4\'></input>\r\n\t<img src=\"local:024.png\" class=\'father,ert_btn_image_dvf\'></img>'
 
   # ERT button number
   'EBTN 灰色背景+角标':
     'prefix': 'ebutton-num1'
-    'body': '<input type=\'button\' value=\'${1:Button}\' border=\'1\' class=\'ert_btn1\'></input>\r\n\t<div align=\"center\" valign=\"middle\" class=\'ert_div1\'>\r\n\t<label class=\'ert_1\'>1</label>\r\n\t</div>'
+    'body': '<input type=\'button\' value=\'${1:Button}\' border=\'1\' class=\'ert_btn_no1\'></input>\r\n\t<div align=\"center\" valign=\"middle\" class=\'ert_btn_no_div1\'>\r\n\t<label class=\'ert_btn_no_font1\'>1</label>\r\n\t</div>'
   'EBTN 蓝色背景+角标':
     'prefix': 'ebutton-color2'
-    'body': '<input type=\'button\' value=\'${1:Button}\' border=\'1\' class=\'ert_btn2\'></input>\r\n\t<div align=\"center\" valign=\"middle\" class=\'ert_div2\'>\r\n\t<label class=\'ert_1,ert_21\'>1</label>\r\n\t</div>'
+    'body': '<input type=\'button\' value=\'${1:Button}\' border=\'1\' class=\'ert_btn_no2\'></input>\r\n\t<div align=\"center\" valign=\"middle\" class=\'ert_btn_no_div2\'>\r\n\t<label class=\'ert_btn_no_font1,ert_btn_no_font2\'>1</label>\r\n\t</div>'
   'EBTN 绿色背景+角标':
     'prefix': 'ebutton-color3'
-    'body': '<input type=\'button\' value=\'${1:Button}\' border=\'1\' class=\'ert_btn3\'></input>\r\n\t<div align=\"center\" valign=\"middle\" class=\'ert_div3\'>\r\n\t<label class=\'ert_1\'>1</label>\r\n\t</div>'
+    'body': '<input type=\'button\' value=\'${1:Button}\' border=\'1\' class=\'ert_btn_no3\'></input>\r\n\t<div align=\"center\" valign=\"middle\" class=\'ert_btn_no_div3\'>\r\n\t<label class=\'ert_btn_no_font1\'>1</label>\r\n\t</div>'
   'EBTN 红色背景+角标':
     'prefix': 'ebutton-color4'
-    'body': '<input type=\'button\' value=\'${1:Button}\' border=\'1\' class=\'ert_btn4\'></input>\r\n\t<div align=\"center\" valign=\"middle\" class=\'ert_div4\'>\r\n\t<label class=\'ert_1\'>1</label>\r\n\t</div>'
+    'body': '<input type=\'button\' value=\'${1:Button}\' border=\'1\' class=\'ert_btn_no4\'></input>\r\n\t<div align=\"center\" valign=\"middle\" class=\'ert_btn_no_div4\'>\r\n\t<label class=\'ert_btn_no_font1\'>1</label>\r\n\t</div>'
   'EBTN 白色边框+角标':
     'prefix': 'ebutton-color5'
-    'body': '<input type=\'button\' value=\'{1:Badge button} 1\' border=\'1\' class=\'ert_btn5\'></input>'
+    'body': '<input type=\'button\' value=\'{1:Badge button} 1\' border=\'1\' class=\'ert_btn_no5\'></input>'
   'EBTN 深灰色边框+角标':
     'prefix': 'ebutton-color6'
-    'body': '<input type=\'button\' value=\'{1:Badge button} 1\' border=\'1\' class=\'ert_btn6\'></input>'
+    'body': '<input type=\'button\' value=\'{1:Badge button} 1\' border=\'1\' class=\'ert_btn_no6\'></input>'
   'EBTN 绿色边框+角标':
     'prefix': 'ebutton-color7'
-    'body': '<input type=\'button\' value=\'{1:Badge button} 1\' border=\'1\' class=\'ert_btn7\'></input>'
+    'body': '<input type=\'button\' value=\'{1:Badge button} 1\' border=\'1\' class=\'ert_btn_no7\'></input>'
   'EBTN 黄色边框+角标':
     'prefix': 'ebutton-color8'
-    'body': '<input type=\'button\' value=\'{1:Badge button} 1\' border=\'1\' class=\'ert_btn8\'></input>'
+    'body': '<input type=\'button\' value=\'{1:Badge button} 1\' border=\'1\' class=\'ert_btn_no8\'></input>'
 
   # ERT Title
   'Ert Title':

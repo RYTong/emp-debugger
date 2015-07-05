@@ -1,0 +1,51 @@
+/*Add By EMP Debugger*/
+/* Warning 警告: 请不要修改该文件,修改之后再次刷新时,该文件会被覆盖!!!*/
+
+
+/* Ert Common Button */
+.ert_btn1{left:20px; width:100px; background-color: #f0f0f0;}
+.ert_btn2{left:20px; width:100px; background-color: #6495ED;}
+.ert_btn3{left:20px; width:100px; background-color: #00FA9A;}
+.ert_btn4{left:20px; width:100px; background-color: #CD5C5C;}
+.ert_btn5{left:20px; width:100px; font color: #FF00FF;}
+.ert_btn6{left:20px; width:100px; border: #696969;font color:#696969;}
+.ert_btn7{left:20px; width:100px; border: #6B8E23;font color:#6B8E23;}
+.ert_btn8{left:20px; width:100px; border: #FF8C00;font color:#FF8C00;}
+.ert_btn9{left:20px; width:100px; border: #BDB76B;font color:#BDB76B;}
+
+/*Ert Button Block*/
+.ert_btn_block1 {width:300px;height:35px;left:10px;font-size:15px;background-color:#D3D3D3;display:block}
+.ert_btn_block2 {width:300px;height:35px;left:10px;font-size:15px;background-color:#9400D3;display:block}
+.ert_btn_block3 {width:300px;height:35px;left:10px;font-size:15px;background-color:#00FF7F;display:block}
+.ert_btn_block4 {width:300px;height:35px;left:10px;font-size:15px;background-color:#8B0000;display:block}
+.ert_btn_block5 {width:300px;height:35px;left:10px;font-size:15px;display:block}
+.ert_btn_block6 {width:300px;height:35px;left:10px;font-size:15px;font color:#9400D3; border:#9400D3;display:block}
+.ert_btn_block7 {width:300px;height:35px;left:10px;font-size:15px;font color:#2E8B57; border:#2E8B57;display:block}
+.ert_btn_block8 {width:300px;height:35px;left:10px;font-size:15px;font color:#F4A460; border:#F4A460;display:block}
+
+/*Ert Button Image*/
+.ert_btn_image1{left:20px; width:100px; background-color: #f0f0f0;}
+.ert_btn_image2{left:20px; width:100px; background-color: #6495ED;font color:#f0f0f0;}
+.ert_btn_image3{left:20px; width:100px; background-color: #00FA9A;font color:#f0f0f0;}
+.ert_btn_image4{left:20px; width:100px; background-color: #CD5C5C;font color:#f0f0f0;}
+.ert_btn_image5{left:20px; width:100px; font color: #000080;}
+.ert_btn_image_dvo{left:24px;top:5px;}
+.ert_btn_image_dvt{left:24px;top:32px;}
+.ert_btn_image_dvs{left:24px;top:62px;}
+.ert_btn_image_dvf{left:24px;top:92px;}
+
+/*Ert Button Number*/
+.ert_btn_no1{left:20px; width:200px; background-color: #f0f0f0;}
+.ert_btn_no2{left:20px; width:200px; color:#D8BFD8;background-color: #00008B;}
+.ert_btn_no3{left:20px; width:200px; color:#D8BFD8;background-color: #008000;}
+.ert_btn_no4{left:20px; width:200px; color:#D8BFD8;background-color: #CD5C5C;}
+.ert_btn_no5{left:20px; width:190px; font color: #000000;font-size:14px;}
+.ert_btn_no6{left:20px; width:190px; border: #696969;font color:#696969;font-size:14px;}
+.ert_btn_no7{left:20px; width:190px; border: #6B8E23;font color:#6B8E23;font-size:14px;}
+.ert_btn_no8{left:20px; width:190px; border: #B8860B;font color:#B8860B;font-size:14px;}
+.ert_btn_no_div1{left:185px; top:5px;width:16px; height:16px; border-radius:8px;background-color:#DDA0DD;}
+.ert_btn_no_div2{left:185px; top:34px;width:16px; height:16px; border-radius:8px;background-color:#9400D3;}
+.ert_btn_no_div3{left:185px; top:62px;width:16px; height:16px; border-radius:8px;background-color:#3CB371;}
+.ert_btn_no_div4{left:185px; top:93px;width:16px; height:16px; border-radius:8px;background-color:#A52A2A;}
+.ert_btn_no_font1{font-size:13px;}
+.ert_btn_no_font2{font color:#D8BFD8;}

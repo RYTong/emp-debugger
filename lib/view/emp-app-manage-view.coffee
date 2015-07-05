@@ -7,6 +7,7 @@ EmpAppMan = require '../emp_app/emp_app_manage'
 EmpAppWizardView = require '../app_wizard/emp-debugger-app-wizard-view'
 EmpAdpPackageView = require '../package/emp-debugger-adapter-package-view'
 EmpTempWizardView = require '../temp_wizard/emp-debugger-temp-wizard-view'
+EmpUIRefreshWizardView = require '../refresh/emp-debugger-refresh-ui-view'
 
 os = require 'os'
 emp = require '../exports/emp'
@@ -69,8 +70,10 @@ class EmpAppManaView extends View
     @emp_app_wizard = new EmpAppWizardView(this)
     @emp_temp_wizard = new EmpTempWizardView(this)
     @emp_adp_package = new EmpAdpPackageView(this)
+    @emp_ui_refresh = new EmpUIRefreshWizardView(this)
 
     @app_local_view.after(@emp_node_view)
+    @app_detail.after @emp_ui_refresh
     @app_detail.after(@emp_adp_package)
     @app_detail.after(@emp_cha_manage)
     @app_detail.after @emp_temp_wizard

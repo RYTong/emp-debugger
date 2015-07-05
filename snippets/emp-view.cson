@@ -338,10 +338,10 @@
     'body': '<samp>$1</samp>$0'
   'Script':
     'prefix': 'script'
-    'body': '<script charset="utf-8">\n\t$1\n</script>'
+    'body': '<script type="text/x-lua"><![CDATA[\n\t$1\n]]></script>'
   'Script With External Source':
     'prefix': 'scriptsrc'
-    'body': '<script src="$1" charset="${2:utf-8}"></script>$0'
+    'body': '<script type="text/x-lua" src="$1ert.lua" ></script>$0'
   'Section':
     'prefix': 'section'
     'body': '<section>\n\t$1\n</section>'

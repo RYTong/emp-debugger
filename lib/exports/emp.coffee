@@ -139,6 +139,7 @@ module.exports =
   STATIC_CS_TEMPLATE : "/channel_adapter_cs_template.tmp"
   STATIC_OFF_TEMPLATE : "/channel_adapter_xHtml_template.tmp"
 
+
   STATIC_APP_FRONT_TEMP:"/templates/temp_app/"
 
   COMMON_DIR_LIST :["images", "css", "lua", "xhtml","channels"]
@@ -153,6 +154,7 @@ module.exports =
   OFF_EXTENSION_JSON: "json"
   OFF_EXTENSION_XHTML:"xhtml"
   OFF_EXTENSION_LUA:"lua"
+  OFF_EXTENSION_CSS: "css"
 
 
   DEFAULT_COL_ITEM:'[{item_id,"$cha_id"},{item_type,$itype},{menu_order,$order}]'

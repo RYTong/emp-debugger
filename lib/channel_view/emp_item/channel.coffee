@@ -414,6 +414,22 @@ class emp_channel
             console.error(err)
             emp.show_error("创建离线资源代码失败~:#{tmp_json_file}")
 
+      ext_lua = emp.OFF_EXTENSION_LUA
+      tmp_lua_file = path.join cha_dir, ext_lua, (@id+'.'+ext_lua)
+      if !fs.existsSync tmp_lua_file
+        fs.writeFile tmp_lua_file, " ", 'utf8', (err) =>
+          if err
+            console.error(err)
+            emp.show_error("创建离线资源代码失败~:#{tmp_lua_file}")
+
+      ext_css = emp.OFF_EXTENSION_CSS
+      tmp_css_file = path.join cha_dir, ext_css, (@id+'.'+ext_css)
+      if !fs.existsSync tmp_css_file
+        fs.writeFile tmp_css_file, " ", 'utf8', (err) =>
+          if err
+            console.error(err)
+            emp.show_error("创建离线资源代码失败~:#{tmp_css_file}")
+
   # @doc 初始化离线资源文件的路径
   initial_dir:(project_path) ->
     pub_dir = path.join project_path,emp.CHA_PUBLIC_DIR

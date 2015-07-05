@@ -5,12 +5,12 @@ ${atom_related_info}
         <style>
             .body {background-color:#ffffff;}
             .title {left:3px;top:5px;color:#FF3300;font-size:18px;}
-            .title_div{left:0px;top:0px;width:320px;height:51px;}
+            .title_div{width:320px;height:51px;}
             .label_title{left:123px;top:11px;font-size:19px;font-weight:bold;color:#000000;}
             .button_main{left:260px;top:6px;width:54px;height:32px;background-color:#99FFFF;color:#000000;}
             .button_back{left:8px;top:6px;width:54px;height:32px;background-color:#99FFFF;color:#000000;}
             .button_next {left:8px; bottom:20px; width:304px; height: 60px;background-color:#3300FF; color:#FFFFFF;}
-            .acc_div{left:0px;top:51px;width:320px;}
+            .acc_div{width:320px;}
 
         </style>
         <script type="text/x-lua" src="RYTL.lua"></script>
@@ -53,6 +53,6 @@ ${atom_related_info}
         <div class="acc_div" name="div_acc" border="0">
             <label>Channel:${channel}, TranCode: ${trancode}, 此处填页面内容.</label>
         </div>
-        <input type="button" class="button_next" name="next_page" onclick="common_req()" value="Next Page" />
+        <input type="button" class="button_next" name="next_page" onclick="next_page()" value="Next Page" />
     </body>
 </content>

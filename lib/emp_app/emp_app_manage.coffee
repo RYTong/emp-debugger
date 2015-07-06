@@ -297,8 +297,8 @@ class emp_app
       tmp_obj = emp.mk_node_name(node_name)
       # console.log tmp_obj
       check_flag = tmp_obj.name
-      node_cookie = node_cookie + tmp_obj.node_name
-    t_erl = '-pa '+ atom.project.parse_beam_dir + node_cookie
+      node_cookie = node_cookie+tmp_obj.node_name
+    t_erl = '-pa '+atom.project.parse_beam_dir+node_cookie
     re_arg = ["-run", "#{emp.parser_beam_file_mod}", "connect_node", ""+node_name, ""+check_flag]
     re_arg = re_arg.concat(t_erl.replace(/\s+/ig, " ").split(" "))
 

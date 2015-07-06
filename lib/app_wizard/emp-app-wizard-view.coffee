@@ -195,9 +195,9 @@ class EmpAppWizardView extends ScrollView
 
       # atom.workspace.trigger 'core:close'
       atom.workspace.destroyActivePaneItem()
-    # catch e
-    #   console.error e
-    #   emp.show_error("创建 App 失败!")
+    catch e
+      console.error e
+      emp.show_error("创建 App 失败!")
 
   mk_app_dir:(app_path, app_name) ->
     base_name = path.basename(app_path)

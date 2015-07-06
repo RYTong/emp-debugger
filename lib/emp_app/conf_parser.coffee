@@ -107,7 +107,8 @@ module.exports.remove_cha = (cha_str, cid_list) ->
   else
     parse_beam_dir = atom.project.parse_beam_dir
     t_erl = 'erl -pa '+parse_beam_dir+' -channel_conf '+channel_conf
-    t_erl = t_erl+' -cha_id'+cha_str+" -sname " + emp.mk_node_name() +" -run #{emp.parser_beam_file_mod} remove_channel -noshell -s erlang halt"
+    name_obj = emp.mk_node_name()
+    t_erl = t_erl+' -cha_id '+cha_str+name_obj.node_name+" -run #{emp.parser_beam_file_mod} remove_channel -noshell -s erlang halt"
     c_process.exec t_erl, (error, stdout, stderr) ->
       if (error instanceof Error)
         console.log error.message
@@ -137,7 +138,8 @@ module.exports.remove_col = (col_str, col_list) ->
   else
     parse_beam_dir = atom.project.parse_beam_dir
     t_erl = 'erl -pa '+parse_beam_dir+' -channel_conf '+channel_conf
-    t_erl = t_erl+' -col_id'+col_str+' -sname ' + emp.mk_node_name() + " -run #{emp.parser_beam_file_mod} remove_col -noshell -s erlang halt"
+    name_obj = emp.mk_node_name()
+    t_erl = t_erl+' -col_id'+col_str+name_obj.node_name+ " -run #{emp.parser_beam_file_mod} remove_col -noshell -s erlang halt"
     c_process.exec t_erl, (error, stdout, stderr) ->
       # console.log "compile:#{stdout}"
       if (error instanceof Error)
@@ -152,7 +154,8 @@ module.exports.edit_col = (col_str) ->
   channel_conf = atom.project.channel_conf
   parse_beam_dir = atom.project.parse_beam_dir
   t_erl = 'erl -pa '+parse_beam_dir+' -channel_conf '+channel_conf
-  t_erl = t_erl+col_str+' -sname ' +emp.mk_node_name()+' -run atom_pl_parse_json edit_col -noshell -s erlang halt'
+  name_obj = emp.mk_node_name()
+  t_erl = t_erl+col_str+name_obj.node_name+' -run atom_pl_parse_json edit_col -noshell -s erlang halt'
   # console.log t_erl
   c_process.exec t_erl, (error, stdout, stderr) ->
     # console.log "compile:#{stdout}"
@@ -166,7 +169,8 @@ module.exports.edit_cha = (cha_str) ->
   channel_conf = atom.project.channel_conf
   parse_beam_dir = atom.project.parse_beam_dir
   t_erl = 'erl -pa '+parse_beam_dir+' -channel_conf '+channel_conf
-  t_erl = t_erl+cha_str+' -sname '+ emp.mk_node_name() + ' -run atom_pl_parse_json edit_cha -noshell -s erlang halt'
+  name_obj = emp.mk_node_name()
+  t_erl = t_erl+cha_str+name_obj.node_name+' -run atom_pl_parse_json edit_cha -noshell -s erlang halt'
   # console.log t_erl
   c_process.exec t_erl, (error, stdout, stderr) ->
     # console.log "compile:#{stdout}"

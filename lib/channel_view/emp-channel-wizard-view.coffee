@@ -7,6 +7,9 @@ AddColPanel = require './collection_view/add_collection_view'
 EmpChaListView = require './emp-channel-list-view'
 conf_parser = require '../emp_app/conf_parser'
 emp = require '../exports/emp'
+fs = require 'fs'
+path = require 'path'
+parser_beam_file = path.join(__dirname, '../../erl_util/atom_pl_parse_json.beam')
 
 module.exports =
 class EmpChannelWizardView extends ScrollView
@@ -37,7 +40,13 @@ class EmpChannelWizardView extends ScrollView
     # console.log activePanelName
     # @panelToShow = activePanelName
     # process.nextTick =>
-    conf_parser.initial_parser()
+    # conf_parser.initial_parser()
+    @fex_state = fs.existsSync(parser_beam_file)
+    # console.log @fex_state
+    if !@fex_state
+      conf_parser.initial_parser()
+    else
+      conf_parser.initial_path()
     @panels_list={}
     @createPanel = {}
 

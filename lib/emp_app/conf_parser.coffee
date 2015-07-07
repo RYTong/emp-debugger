@@ -16,9 +16,12 @@ os_platform = emp.get_emp_os()
 
 initial_parser = (callback)->
   # console.log "init"
-  initial_path()
-  compile_paser(callback)
-
+  try
+    initial_path()
+    compile_paser(callback)
+  catch err
+    console.error err
+    console.warn  "编译 erl 文件失败."
 
 initial_path = ->
   # console.log os_platform

@@ -25,7 +25,7 @@ init_content(_Arg) ->
     case ?param(o) of
         i ->
             Prefix = filename:join(?arg("docroot"), ?param(app)),
-            Page = ewp_file_util:read_file(Prefix, "page_test.xhtml"),
+            Page = ewp_file_util:read_file(Prefix, "entrance.xhtml"),
             Page;
         qt ->
             cs_api:render("init_content_qt", []);
@@ -48,4 +48,3 @@ decrypt_password(Password, CipherState) ->
     ?ewp_log("Password-----~p~n",[Password]),
     Text = sec_cipher:decrypt_password({Password, CipherState}),
     {ok, Text}.
-

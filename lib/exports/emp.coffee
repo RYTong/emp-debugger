@@ -137,6 +137,8 @@ module.exports =
   # STATIC_UI_CSS_TEMPLATE_PATH:"/templates/css/"
   STATIC_UI_CSS_TEMPLATE:"/templates/css/ert_ui.css"
   STATIC_UI_CSS_TEMPLATE_DEST_PATH:"public/www/resource_dev/common/css/ert_ui.css"
+  STATIC_UI_LUA_TEMPLATE:"/templates/lua/ert.lua"
+  STATIC_UI_LUA_TEMPLATE_DEST_PATH:"public/www/resource_dev/common/lua/ert.lua"
 
   STATIC_ERL_TEMPLATE : "/channel_adapter_erl_template.tmp"
   STATIC_ERL_FUN_TEMPLATE : "/channel_adapter_erl_function.tmp"

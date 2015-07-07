@@ -102,8 +102,8 @@ class EnableRView extends SelectListView
     @callback(item.dir, @view_item)
 
   # set the opened editor grammar, default is HTML
-  getGrammars: ->
-    grammars = atom.syntax.getGrammars().filter (grammar) ->
-      (grammar isnt atom.syntax.nullGrammar) and
-      grammar.name is 'HTML'
+  getGrammars: (grammar_name)->
+    grammars = atom.grammars.getGrammars().filter (grammar) ->
+      (grammar isnt atom.grammars.nullGrammar) and
+      grammar.name is 'Emp View'
     grammars

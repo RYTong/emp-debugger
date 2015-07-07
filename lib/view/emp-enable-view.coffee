@@ -151,8 +151,9 @@ class EnableView extends SelectListView
           if tmp_item.name is  tmp_name
             com_filter_arr.push(tmp_item)
         if com_filter_arr.length < 1
-          tmp_editor = atom.workspace.openSync()
-          @store_info(tmp_editor, item)
+          # tmp_editor = atom.workspace.openSync()
+          atom.workspace.open('').then (tmp_editor) =>
+            @store_info(tmp_editor, item)
         else if com_filter_arr.length is 1
           @create_editor tmp_item.dir, item
         else
@@ -160,8 +161,9 @@ class EnableView extends SelectListView
             @path_view = new relate_view(tmp_offline_path, emp.EMP_VIEW_FILTER_IGNORE)
           @path_view.enable_view(com_filter_arr, item, this.create_editor)
     else
-      tmp_editor = atom.workspace.openSync()
-      @store_info(tmp_editor, item)
+      # tmp_editor = atom.workspace.openSync()
+      atom.workspace.open('').then (tmp_editor) =>
+        @store_info(tmp_editor, item)
 
   create_editor:(tmp_file_path, item) ->
     changeFocus = true
@@ -183,9 +185,16 @@ class EnableView extends SelectListView
     tmp_editor.setGrammar(gramers[0]) unless gramers[0] is undefined
 
   # set the opened editor grammar, default is HTML
-  getGrammars: ->
-    grammars = atom.syntax.getGrammars().filter (grammar) ->
-      (grammar isnt atom.syntax.nullGrammar) and
-      grammar.name is 'HTML'
+  # getGrammars: ->
+  #   console.log "3333333333333"
+  #   console.log atom.syntax.getGrammars()
+  #   grammars = atom.syntax.getGrammars().filter (grammar) ->
+  #     (grammar isnt atom.syntax.nullGrammar) and
+  #     grammar.name is 'HTML'
+  #   grammars
 
+  getGrammars: (grammar_name)->
+    grammars = atom.grammars.getGrammars().filter (grammar) ->
+      (grammar isnt atom.grammars.nullGrammar) and
+      grammar.name is 'Emp View'
     grammars

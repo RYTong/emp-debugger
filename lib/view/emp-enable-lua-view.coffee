@@ -163,12 +163,12 @@ class EnableLuaView extends SelectListView
 
   # set the opened editor grammar, default is HTML
   getGrammars: ->
-    grammars = atom.syntax.getGrammars().filter (grammar) ->
-      (grammar isnt atom.syntax.nullGrammar) and
+    grammars = atom.grammars.getGrammars().filter (grammar) ->
+      (grammar isnt atom.grammars.nullGrammar) and
       grammar.name is 'Lua'
 
     if !grammars
-      grammars = atom.syntax.getGrammars().filter (grammar) ->
-        (grammar isnt atom.syntax.nullGrammar) and
-        grammar.name is 'HTML'
+      grammars = atom.grammars.getGrammars().filter (grammar) ->
+        (grammar isnt atom.grammars.nullGrammar) and
+        grammar.name is 'Emp View'
     grammars

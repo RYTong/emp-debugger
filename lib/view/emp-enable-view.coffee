@@ -43,9 +43,11 @@ class EnableView extends SelectListView
     if @panel?
       @cancel()
     else
-      path_fliter.load_all_path tmp_offline_path, emp.EMP_VIEW_FILTER_IGNORE, (paths) ->
-        # console.log result
-        relate_all_views = paths
+      # console.log tmp_offline_path
+      if atom.project.getPaths().length >0
+        path_fliter.load_all_path tmp_offline_path, emp.EMP_VIEW_FILTER_IGNORE, (paths) ->
+          # console.log result
+          relate_all_views = paths
 
       @setItems(@get_view_items())
       @storeFocusedElement()

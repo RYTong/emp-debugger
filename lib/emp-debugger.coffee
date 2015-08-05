@@ -94,7 +94,7 @@ module.exports =
       debug_text = editor.getText()
       # console.log preview_obj
       # 判断是否为新协议页面
-      if preview_obj.new_type_view
+      if preview_obj?.new_type_view
         # console.log "new protocol send"
         @emp_socket_server.live_preview_view_with_new(preview_obj, debug_text)
       else

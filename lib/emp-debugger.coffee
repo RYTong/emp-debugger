@@ -1,12 +1,9 @@
 {EditorView} = require 'atom'
-# EmpDebuggerInitView = require './view/emp-debugger-view'
-# EmpDebuggerStateView = require './view/emp-state-view'
 EmpEnableView = require './view/emp-enable-view'
 EmpEnableLuaView = require './view/emp-enable-lua-view'
 EmpDebuggerLogView = require './view/emp-log-view.coffee'
 EmpDebuggerSettingView = require './view/emp-debugger-setting-view.coffee'
 EmpSocketServer = require './debugger/emp_socket'
-# EmpChaWizard = require './channel_view/emp-channel-wizard'
 EmpViewManage = require './view/emp-views-entrance'
 conf_parser = require './emp_app/conf_parser'
 ErtUiGuide = require './guide/emp-debugger-ui-guide'
@@ -92,32 +89,40 @@ module.exports =
   live_preview: ->
     editor = atom.workspace.getActiveTextEditor()
     if editor
-      text_path = editor.getPath()
-      text_ext  = undefined
-      text_ext  = path.extname(text_path ).toLowerCase() unless !text_path
+
+      preview_obj = editor["emp_live_view"]
       debug_text = editor.getText()
-      # live preview lus script with lua file
-      if text_ext is emp.DEFAULT_EXT_LUA
-        text_name = path.basename(text_path)
-        @emp_socket_server.live_preview_lua(text_name, debug_text)
-      else if text_ext is emp.DEFAULT_EXT_XHTML # live preview xhtml file
-        @emp_socket_server.live_preview_view(debug_text)
-      else if text_ext
-        emp.self_info("Warnning", "Unrecognise file type, unable live preview~")
+      # console.log preview_obj
+      # 判断是否为新协议页面
+      if preview_obj.new_type_view
+        # console.log "new protocol send"
+        @emp_socket_server.live_preview_view_with_new(preview_obj, debug_text)
       else
-        debug_view = editor["emp_live_view"]
-        debug_script_name = editor["emp_live_script_name"]
-        debug_script = editor["emp_live_script"]
-        # if the debug script exist, then live preview the lua script
-        if debug_script
-          debug_script.script_con = debug_text
-          @emp_socket_server.live_preview_view(debug_view, debug_text, debug_script_name)
-        else if debug_view
-          # if the script isn't exist , then live preview the view
-          debug_view.view = debug_text
+        text_path = editor.getPath()
+        text_ext  = undefined
+        text_ext  = path.extname(text_path ).toLowerCase() unless !text_path
+        # live preview lus script with lua file
+        if text_ext is emp.DEFAULT_EXT_LUA
+          text_name = path.basename(text_path)
+          @emp_socket_server.live_preview_lua(text_name, debug_text)
+        else if text_ext is emp.DEFAULT_EXT_XHTML # live preview xhtml file
           @emp_socket_server.live_preview_view(debug_text)
+        else if text_ext
+          emp.self_info("Warnning", "Unrecognise file type, unable live preview~")
         else
-          emp.show_error("No Content to live preview~")
+          debug_view = editor["emp_live_view"]
+          debug_script_name = editor["emp_live_script_name"]
+          debug_script = editor["emp_live_script"]
+          # if the debug script exist, then live preview the lua script
+          if debug_script
+            debug_script.script_con = debug_text
+            @emp_socket_server.live_preview_view(debug_view, debug_text, debug_script_name)
+          else if debug_view
+            # if the script isn't exist , then live preview the view
+            debug_view.view = debug_text
+            @emp_socket_server.live_preview_view(debug_text)
+          else
+            emp.show_error("No Content to live preview~")
     else
       emp.show_error("There's no editors~")
 

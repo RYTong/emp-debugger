@@ -54,7 +54,7 @@ class EmpAppManaView extends View
 
           @div outlet:"emp_app_btns", class: "emp-setting-btn-else ",  =>
             @button outlet:"btn_run_app", class: 'btn btn-else btn-success inline-block-tight', click: 'run_app', "Start App"
-            @button outlet:"btn_run_front", class: 'btn btn-else btn-success inline-block-tight', click: 'run_front_app', "Start Front App"
+            # @button outlet:"btn_run_front", class: 'btn btn-else btn-success inline-block-tight', click: 'run_front_app', "Start Front App"
             @button outlet:"btn_stop_app", class: 'btn btn-else btn-error inline-block-tight', click: 'stop_app', "Stop App"
             @button outlet:"btn_conf_app", class: 'btn btn-else btn-warning inline-block-tight', click: 'conf_app', "Config App"
             @button outlet:"btn_make_app", class: 'btn btn-else btn-warning inline-block-tight', click: 'make_app', "Make App"
@@ -68,7 +68,7 @@ class EmpAppManaView extends View
     @emp_node_view = new EmpAppNodeView(this, @emp_app_manage)
     @emp_cha_manage = new EmpChaManaView(this)
     @emp_app_wizard = new EmpAppWizardView(this)
-    @emp_temp_wizard = new EmpTempWizardView(this)
+    # @emp_temp_wizard = new EmpTempWizardView(this)
     @emp_adp_package = new EmpAdpPackageView(this)
     @emp_ui_refresh = new EmpUIRefreshWizardView(this)
 
@@ -76,7 +76,7 @@ class EmpAppManaView extends View
     @app_detail.after @emp_ui_refresh
     @app_detail.after(@emp_adp_package)
     @app_detail.after(@emp_cha_manage)
-    @app_detail.after @emp_temp_wizard
+    # @app_detail.after @emp_temp_wizard
     @app_detail.after(@emp_app_wizard)
 
 
@@ -181,9 +181,9 @@ class EmpAppManaView extends View
     @refresh_app_st()
     # @hide_loading()
 
-  run_front_app: ->
-    @emp_app_manage.run_front_app()
-    @refresh_app_st()
+  # run_front_app: ->
+  #   @emp_app_manage.run_front_app()
+  #   @refresh_app_st()
 
   stop_app: ->
     @show_loading()

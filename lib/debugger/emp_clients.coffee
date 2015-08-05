@@ -1,4 +1,7 @@
 emp_client = require './emp_client'
+glo_obj_name = "name"
+glo_obj_con = "content"
+
 module.exports =
 class emp_clients
   active_len: 0
@@ -14,11 +17,14 @@ class emp_clients
     # console.log "emp_clients constructor"
     @views_map = new Array()
     @script_map = {}
+    @css_map = {}
 
   new_client: (id, obj) ->
-    @clients_map[id] = new emp_client(id, obj)
+    new_client = new emp_client(id, obj)
+    @clients_map[id] = new_client
     @obj_len += 1
     @active_len += 1
+    new_client
 
   remove_client: (id)->
     @active_len -= 1 unless @clients_map[id].state is false
@@ -34,7 +40,7 @@ class emp_clients
 
   remove_client_socket: (id) ->
     @clients_map[id].remove_socket()
-    @active_len -= 1 unless @active_len <=0 
+    @active_len -= 1 unless @active_len <=0
     @log_storage.remove_client_log(id)
 
 
@@ -46,12 +52,25 @@ class emp_clients
     @clients_map[id]
 
   get_client_socket: (id) ->
-    @clients_map[id].get_view_socket()
+    @clients_map[id]?.get_view_socket()
 
   get_all_socket: ->
+    # result = new Array()
+    result = {new_p:[], old_p:[]}
+    for k,v of @clients_map
+      if v.state isnt false
+        if v.new_type_protocal
+          result.new_p.push(v.socket)
+        else
+          result.old_p.push(v.socket)
+    result
+
+  get_new_socket: ->
     result = new Array()
     for k,v of @clients_map
-      result.push(v.socket) unless v.state is false
+      if v.state isnt false
+        unless !v.new_type_protocal
+          result.push(v.socket)
     result
 
   close_all_socket: ->
@@ -85,6 +104,15 @@ class emp_clients
           script_obj = @clients_map[client_id].put_script(script_name, script_con, view_obj)
           if !@script_map[map_index]
             @script_map[map_index] = script_obj
+
+  # 保存新协议的内容
+  store_new_view: (client_id, data_obj) ->
+    # argsContent = message.split "#EditorContent#"
+    # console.log "+++++++++++++++++++++++ obj +++++++++++++++++++++++"
+    # console.log  data_obj
+    @index += 1
+    view_obj = @clients_map[client_id].store_new_view(data_obj, @index)
+    @views_map.push(view_obj)
 
   put_spec_view: (id, view) ->
     console.log "New view item income~"

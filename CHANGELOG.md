@@ -1,5 +1,9 @@
 ![EMP](https://raw.githubusercontent.com/wiki/RYTong/emp-debugger/images/emp.png)
+
 # Emp Debugger Package Change Log
+## Version 0.8.14
+1. 交互协议更新 参见 doc 路径下文档
+2. slt2 展现界面优化
 
 ## Version 0.8.11
 1. 为个界面添加隐藏按键.参见 #68.

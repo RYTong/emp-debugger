@@ -3,42 +3,20 @@
   'EMP Content':
     'prefix': 'xml'
     'body' : '<?xml version="1.0" encoding="UTF-8" ?>\n<content>\n\t<head>
-\n\t\t<style>\n\t\t\t.body{background-color:#ffffff;}\n\t\t</style>
+\n\t\t<link ref="${0:ert_ui.css}" type="text/css"/>
 \n\t\t<script type="text/x-lua" src="RYTL.lua"></script>
 \n\t\t<script type="text/x-lua">\n\t\t\t<![CDATA[
 \n\t\t\t\tryt = RYTL:new{};\n\t\t\t]]>\n\t\t</script>
-\n\t</head>\n\t<body>\n\t</body></content>'
+\n\t</head>\n\t<body>\n\t$1\n\t</body>\n</content>'
 
   'EMP Details Content':
     'prefix': 'xmld'
     'body': '<?xml version="1.0" encoding="UTF-8" ?>\n<content>\n\t<head>\n\t\t<style>
-\n\t\t\t.title_div{left:0px;top:0px;width:320px;height:51px;background-image:url(title_bg.png);}
-\n\t\t\t.label_title{left:123px;top:11px;font-size:19px;font-weight:bold;color:#FFFFFF;}
-\n\t\t\t.button_main{left:260px;top:6px;width:54px;height:32px;background-image:url(main_but.png);}
-\n\t\t\t.button_back{left:8px;top:6px;width:54px;height:32px;background-image:url(back_but.png);}
-\n\t\t\t.acc_div{left:0px;top:51px;width:320px;}
+\n\t\t<link ref="${0:ert_ui.css}" type="text/css"/>
 \n\n\t\t</style>\n\t\t<script type="text/x-lua" src="RYTL.lua"></script>
 \n\t\t<script type="text/x-lua">\n\t\t\t<![CDATA[
-\n\t\t\t\tryt = RYTL:new{};
-\n\n\t\t\t\tfunction main_page()
-\n\t\t\t\t\tlocal result = history:get(-1);
-\n\t\t\t\t\tlocation:replace(result);
-\n\t\t\t\tend;
-\n\n\t\t\t\tfunction back_fun()
-\n\t\t\t\t\tlocal result = history:get(-1);
-\n\t\t\t\t\tlocation:replace(result);
-\n\t\t\t\tend;
-\n\n\t\t\t\t--[[Next Page]]--
-\n\n\t\t\t\tfunction common_req()
-\n\t\t\t\t\ttrancode="";
-\n\t\t\t\t\tnvoke_trancode(channelId, trancode, {}, callback_channel, {});
-\n\t\t\t\tend;\n\t\t\t]]>
-\n\t\t</script>\n\t</head>\n\n\t<body>\n\t\t<!--Title-->\n\t\t<div class="title_div" border="0">
-\n\t\t\t\t<label class="label_title">标题</label>
-\n\t\t\t\t<input type="button" class="button_back" name="back_but" onclick="back_fun()"/>
-\n\t\t\t\t<input type="button" class="button_main" name="main_but" onclick="main_page()"/>
-\n\t\t\t</div>\n\t\t<div class="acc_div" name="div_acc" border="0">
-\n\t\t\t<label>此处填页面内容．</label>\n\t\t</div>\n\t</body>\n</content>'
+\n\t\t\t]]>
+\n\t\t</script>\n\t</head>\n\n\t<body>\n\t$1\n\t</body>\n</content>'
 
   'EMP Lua Script':
     'prefix': 'lua'
@@ -424,109 +402,7 @@
   'Word Break Opportunity':
     'prefix': 'wbr'
     'body': '<wbr>'
-  # ERT Buttton Color
-  'Button 灰色背景':
-    'prefix': 'ebutton-color1'
-    'body': '<input type=\'button\' value=\'${1:Button}\' border=\'1\' class=\'ert_btn1\'></input>'
-  'Button 蓝色背景':
-    'prefix': 'ebutton-color2'
-    'body': '<input type=\'button\' value=\'${1:Button}\' border=\'1\' class=\'ert_btn2\'></input>'
-  'Button 绿色背景':
-    'prefix': 'ebutton-color3'
-    'body': '<input type=\'button\' value=\'${1:Button}\' border=\'1\' class=\'ert_btn3\'></input>'
-  'Button 红色背景':
-    'prefix': 'ebutton-color4'
-    'body': '<input type=\'button\' value=\'${1:Button}\' border=\'1\' class=\'ert_btn4\'></input>'
-  'Button 粉红色背景':
-    'prefix': 'ebutton-color5'
-    'body': '<input type=\'button\' value=\'${1:Button}\' border=\'1\' class=\'ert_btn5\'></input>'
-  'Button 深灰色':
-    'prefix': 'ebutton-color6'
-    'body': '<input type=\'button\' value=\'${1:Button}\' border=\'1\' class=\'ert_btn6\'></input>'
-  'Button 橄榄绿':
-    'prefix': 'ebutton-color7'
-    'body': '<input type=\'button\' value=\'${1:Button}\' border=\'1\' class=\'ert_btn7\'></input>'
-  'Button 橘黄色':
-    'prefix': 'ebutton-color8'
-    'body': '<input type=\'button\' value=\'${1:Button}\' border=\'1\' class=\'ert_btn8\'></input>'
-  'Button 土黄色':
-    'prefix': 'ebutton-color9'
-    'body': '<input type=\'button\' value=\'${1:Button}\' border=\'1\' class=\'ert_btn9\'></input>'
 
-
-  # ERT Block button
-  '块级 Default':
-    'prefix': 'ebutton-block'
-    'body': '<input type=\'button\' value=\'${1:Block button}\' class=\'ert_btn_block6\'></input>'
-  '块级 灰色背景':
-    'prefix': 'ebutton-block1'
-    'body': '<input type=\'button\' value=\'${1:Block button}\' class=\'ert_btn_block1\'></input>'
-  '块级 紫色背景':
-    'prefix': 'ebutton-block2'
-    'body': '<input type=\'button\' value=\'${1:Block button}\' class=\'ert_btn_block2\'></input>'
-  '块级 绿色背景':
-    'prefix': 'ebutton-block3'
-    'body': '<input type=\'button\' value=\'${1:Block button}\' class=\'ert_btn_block3\'></input>'
-  '块级 红色背景':
-    'prefix': 'ebutton-block4'
-    'body': '<input type=\'button\' value=\'${1:Block button}\' class=\'ert_btn_block4\'></input>'
-  '块级 紫色背景+边框':
-    'prefix': 'ebutton-block5'
-    'body': '<input type=\'button\' value=\'${1:Block button}\' class=\'ert_btn_block5\'></input>'
-  '块级 深绿色背景+边框':
-    'prefix': 'ebutton-block7'
-    'body': '<input type=\'button\' value=\'${1:Block button}\' class=\'ert_btn_block7\'></input>'
-  '块级 橘黄色背景+边框':
-    'prefix': 'ebutton-block8'
-    'body': '<input type=\'button\' value=\'${1:Block button}\' class=\'ert_btn_block8\'></input>'
-
-  # ERT button image
-  '图片 蓝色字体':
-    'prefix': 'ebutton-img'
-    'body': '<input type=\'button\' value=\'${1: Button}\' class=\'ert_btn_image5\'></input>'
-  '图片 灰色背景':
-    'prefix': 'ebutton-img1'
-    'body': '<input type=\'button\' value=\'${1: Button}\' border=\'1\' class=\'ert_btn_image1\'></input>\r\n\t<img src=\"${2:local:024.png}\" class=\'father,ert_btn_image_dvo\'></img>'
-  '图片 蓝色背景 灰色字体':
-    'prefix': 'ebutton-img2'
-    'body': '<input type=\'button\' value=\'${1: Button}\' border=\'1\' class=\'ert_btn_image2\'></input>\r\n\t<img src=\"${2:local:024.png}\" class=\'father,ert_btn_image_dvt\'></img>'
-  '图片 绿色背景 蓝色字体':
-    'prefix': 'ebutton-img3'
-    'body': '<input type=\'button\' value=\'${1: Button}\' border=\'1\' class=\'ert_btn_image3\'></input>\r\n\t<img src=\"${2:local:024.png}\" class=\'father,ert_btn_image_dvs\'></img>'
-  '图片 红色背景 蓝色字体':
-    'prefix': 'ebutton-img4'
-    'body': '<input type=\'button\' value=\'${1: Button}\' border=\'1\' class=\'ert_btn_image4\'></input>\r\n\t<img src=\"${2:local:024.png}\" class=\'father,ert_btn_image_dvf\'></img>'
-
-  # ERT button number
-  '灰色背景+角标':
-    'prefix': 'ebutton-num1'
-    'body': '<input type=\'button\' value=\'${1:Button}\' border=\'1\' class=\'ert_btn_no1\'></input>\r\n\t<div align=\"center\" valign=\"middle\" class=\'ert_btn_no_div1\'>\r\n\t<label class=\'ert_btn_no_font1\'>1</label>\r\n\t</div>'
-  '蓝色背景+角标':
-    'prefix': 'ebutton-num2'
-    'body': '<input type=\'button\' value=\'${1:Button}\' border=\'1\' class=\'ert_btn_no2\'></input>\r\n\t<div align=\"center\" valign=\"middle\" class=\'ert_btn_no_div2\'>\r\n\t<label class=\'ert_btn_no_font1,ert_btn_no_font2\'>1</label>\r\n\t</div>'
-  '绿色背景+角标':
-    'prefix': 'ebutton-num3'
-    'body': '<input type=\'button\' value=\'${1:Button}\' border=\'1\' class=\'ert_btn_no3\'></input>\r\n\t<div align=\"center\" valign=\"middle\" class=\'ert_btn_no_div3\'>\r\n\t<label class=\'ert_btn_no_font1\'>1</label>\r\n\t</div>'
-  '红色背景+角标':
-    'prefix': 'ebutton-num4'
-    'body': '<input type=\'button\' value=\'${1:Button}\' border=\'1\' class=\'ert_btn_no4\'></input>\r\n\t<div align=\"center\" valign=\"middle\" class=\'ert_btn_no_div4\'>\r\n\t<label class=\'ert_btn_no_font1\'>1</label>\r\n\t</div>'
-  '白色边框+角标':
-    'prefix': 'ebutton-num5'
-    'body': '<input type=\'button\' value=\'{1:Badge button} 1\' border=\'1\' class=\'ert_btn_no5\'></input>'
-  '深灰色边框+角标':
-    'prefix': 'ebutton-num6'
-    'body': '<input type=\'button\' value=\'{1:Badge button} 1\' border=\'1\' class=\'ert_btn_no6\'></input>'
-  '绿色边框+角标':
-    'prefix': 'ebutton-num7'
-    'body': '<input type=\'button\' value=\'{1:Badge button} 1\' border=\'1\' class=\'ert_btn_no7\'></input>'
-  '黄色边框+角标':
-    'prefix': 'ebutton-num8'
-    'body': '<input type=\'button\' value=\'{1:Badge button} 1\' border=\'1\' class=\'ert_btn_no8\'></input>'
-
-  # ERT Title
-  'Ert Title':
-    'prefix': 'etitle'
-    'body': '      <div class=\"ert_bar\" name=\"ert_bar\" border=\"0\" >\r\n\t<label class=\"ert_label_title\">Title</label>\r\n</div>\r\n'
 
   # ERT Snippet
 '.source.coffee':

@@ -180,6 +180,7 @@ module.exports =
   REPLACE_GETTER : "\\$getter"
   ADAPTER_REQUEST_PARAMS: "{'$key', $value}"
   DEFAULT_EXT_LUA : '.lua'
+  DEFAULT_EXT_CSS : '.css'
   DEFAULT_EXT_XHTML :'.xhtml'
 
   DEFAULT_TEMP_HEADER:'<!--<atom_emp_related_file_info>${atom_related_info}</atom_emp_related_file_info>-->\n'
@@ -272,6 +273,12 @@ module.exports.mkdir_sync_safe = (tmp_dir) ->
    if !fs.existsSync(tmp_dir)
      this.mkdir_sync_safe(path.dirname tmp_dir)
      fs.mkdirSync(tmp_dir);
+
+module.exports.base64_encode = (data) ->
+  new Buffer(data).toString('base64')
+
+module.exports.base64_decode = (data) ->
+  new Buffer(data, 'base64').toString()
 
 mk_dirs_sync = (p, made) ->
   # default mode is 0777

@@ -1,7 +1,7 @@
 {
   "name": "emp-debugger",
   "main": "./lib/emp-debugger",
-  "version": "0.8.14",
+  "version": "0.8.15",
   "description": "Emp Debugger 工具集, 一切从 ctrl-alt-s 开始~",
   "maintainers": [
     {

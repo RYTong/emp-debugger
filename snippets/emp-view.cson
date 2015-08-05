@@ -3,7 +3,7 @@
   'EMP Content':
     'prefix': 'xml'
     'body' : '<?xml version="1.0" encoding="UTF-8" ?>\n<content>\n\t<head>
-\n\t\t<link ref="${0:ert_ui.css}" type="text/css"/>
+\n\t\t<link ref="${0:eui.css}" type="text/css"/>
 \n\t\t<script type="text/x-lua" src="RYTL.lua"></script>
 \n\t\t<script type="text/x-lua">\n\t\t\t<![CDATA[
 \n\t\t\t\tryt = RYTL:new{};\n\t\t\t]]>\n\t\t</script>
@@ -12,7 +12,7 @@
   'EMP Details Content':
     'prefix': 'xmld'
     'body': '<?xml version="1.0" encoding="UTF-8" ?>\n<content>\n\t<head>\n\t\t<style>
-\n\t\t<link ref="${0:ert_ui.css}" type="text/css"/>
+\n\t\t<link ref="${0:eui.css}" type="text/css"/>
 \n\n\t\t</style>\n\t\t<script type="text/x-lua" src="RYTL.lua"></script>
 \n\t\t<script type="text/x-lua">\n\t\t\t<![CDATA[
 \n\t\t\t]]>
@@ -231,7 +231,7 @@
     'body': '<li>$1</li>$0'
   'Link':
     'prefix': 'link'
-    'body': '<link ref="${1:ert_ui.css}" type="text/css"/>$0'
+    'body': '<link ref="${1:eui.css}" type="text/css"/>$0'
   # M
   'Main':
     'prefix': 'main'

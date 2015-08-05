@@ -135,8 +135,8 @@ module.exports =
   CHANNEL_NEW_CALLBACK_DIR: 'new_callback'
   CHANNEL_CALLBACK_DIR: 'callback'
   # STATIC_UI_CSS_TEMPLATE_PATH:"/templates/css/"
-  STATIC_UI_CSS_TEMPLATE:"/templates/css/ert_ui.css"
-  STATIC_UI_CSS_TEMPLATE_DEST_PATH:"public/www/resource_dev/common/css/ert_ui.css"
+  STATIC_UI_CSS_TEMPLATE:"/templates/css/eui.css"
+  STATIC_UI_CSS_TEMPLATE_DEST_PATH:"public/www/resource_dev/common/css/eui.css"
   STATIC_UI_LUA_TEMPLATE:"/templates/lua/ert.lua"
   STATIC_UI_LUA_TEMPLATE_DEST_PATH:"public/www/resource_dev/common/lua/ert.lua"
 

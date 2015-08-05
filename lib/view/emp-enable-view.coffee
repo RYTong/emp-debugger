@@ -2,6 +2,7 @@
 path = require 'path'
 emp = require '../exports/emp'
 relate_view = require './emp-relate-view'
+enable_detail_view = require './emp-enable-detail-view'
 path_fliter = require '../util/path-loader'
 fs = require 'fs'
 
@@ -125,7 +126,7 @@ class EnableView extends SelectListView
     # console.log("#{item.index} was selected")
     # console.log item
     item.set_view_readed()
-    @initial_new_pane(item)
+    @initial_new_pane_test(item)
     @cancel()
 
 
@@ -140,6 +141,8 @@ class EnableView extends SelectListView
     if dest_file_path = item.dir
       project_path = atom.project.getPaths()[0]
       tmp_file_path = path.join project_path, dest_file_path
+      console.log "--------------------------------------------"
+      console.log tmp_file_path
       if fs.existsSync tmp_file_path
         @create_editor tmp_file_path, item
       else
@@ -166,6 +169,52 @@ class EnableView extends SelectListView
       # tmp_editor = atom.workspace.openSync()
       atom.workspace.open('').then (tmp_editor) =>
         @store_info(tmp_editor, item)
+
+  # initial a new editor pane
+  initial_new_pane_test: (item)->
+    tmp_editor = null
+    # atom.open({pathsToOpen: [pathToOpen], newWindow: true})
+    if item.new_type_view
+      @initial_detail_pane(item)
+    else
+      if dest_file_path = item.dir
+        project_path = atom.project.getPaths()[0]
+        tmp_file_path = path.join project_path, dest_file_path
+        # console.log "--------------------------------------------"
+        # console.log tmp_file_path
+        if fs.existsSync tmp_file_path
+          @create_editor tmp_file_path, item
+        else
+          tmp_name = item.name
+          com_filter_arr = []
+          # console.log relate_all_views
+          # console.log tmp_name
+          re_path_arr = path_fliter.filter_path(relate_all_views, tmp_name)
+          # console.log re_path_arr
+          for tmp_item in re_path_arr
+            if tmp_item.name is  tmp_name
+              com_filter_arr.push(tmp_item)
+          if com_filter_arr.length < 1
+            # tmp_editor = atom.workspace.openSync()
+            atom.workspace.open('').then (tmp_editor) =>
+              @store_info(tmp_editor, item)
+          else if com_filter_arr.length is 1
+            @create_editor tmp_item.dir, item
+          else
+            unless @path_view?
+              @path_view = new relate_view(tmp_offline_path, emp.EMP_VIEW_FILTER_IGNORE)
+            @path_view.enable_view(com_filter_arr, item, this.create_editor)
+      else
+        # tmp_editor = atom.workspace.openSync()
+        atom.workspace.open('').then (tmp_editor) =>
+          @store_info(tmp_editor, item)
+
+  initial_detail_pane:(item) ->
+    @detail_view = new enable_detail_view(item)
+    @detail_view.enable_view(item, this.create_editor)
+    @detail_view
+
+
 
   create_editor:(tmp_file_path, item) ->
     changeFocus = true

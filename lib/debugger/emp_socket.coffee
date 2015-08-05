@@ -103,12 +103,16 @@ class emp_socket
     # // socket错误状态
     emp_server.on 'error', (exception) ->
       if exception.code is 'EADDRINUSE'
-        console.log('Address in use, retrying...');
+        console.error('Address in use, retrying...');
         emp_server_state = false
         emp_server = null
         emp_server_error = 'EADDRINUSE'
         emp.show_error("Address or Port in use, retrying...")
-        emp_conf_view.hide_state_pane() unless !emp_conf_view
+      else
+        console.error "socket start error"
+        console.error exception
+
+      emp_conf_view.hide_state_pane() unless !emp_conf_view
       emp_client_map.remove_all_client_socket()
 
     if ip is @default_host

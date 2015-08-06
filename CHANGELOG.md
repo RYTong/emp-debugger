@@ -1,6 +1,9 @@
 ![EMP](https://raw.githubusercontent.com/wiki/RYTong/emp-debugger/images/emp.png)
 
 # Emp Debugger Package Change Log
+## Version 0.8.16
+1. 添加 清除下行视图功能,现在你可以主动清除 enable view 中保存的视图了.
+
 ## Version 0.8.14
 1. 交互协议更新 参见 doc 路径下文档
 2. slt2 展现界面优化

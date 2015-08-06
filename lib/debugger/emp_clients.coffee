@@ -15,9 +15,10 @@ class emp_clients
 
   constructor: (@log_storage)->
     # console.log "emp_clients constructor"
+    @index = 0
     @views_map = new Array()
     @script_map = {}
-    @css_map = {}
+    # @css_map = {}
 
   new_client: (id, obj) ->
     new_client = new emp_client(id, obj)
@@ -130,6 +131,13 @@ class emp_clients
 
   get_all_views: ->
     @views_map
+
+  clear_all_views: ->
+    @index = 0
+    @views_map = new Array()
+    @script_map = {}
+    for tmp_id, tmp_obj of @clients_map
+      tmp_obj.clear_all_views()
 
   get_lastest_view: ->
     @views_map[@views_map.length-1]

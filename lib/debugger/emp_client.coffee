@@ -42,7 +42,7 @@ class emp_client
 
   store_new_view: (data_obj, @index_flag) ->
     tmp_obj = {}
-    console.log data_obj
+    # console.log data_obj
     origin_data = data_obj["originMessage"]
     view = origin_data?["staticContent"]
     unless !view
@@ -92,6 +92,16 @@ class emp_client
 
   get_view_map: ()->
     @view_map
+
+  clear_all_views: () ->
+    @view_map = new Array()
+    @script_map = {}
+    @css_map = {}
+    @script_len = 0
+    @css_len = 0
+    @entrance_flag = 0
+    @entranc_obj = {}
+
 
   get_view: (index)->
     @view_map[index-1]

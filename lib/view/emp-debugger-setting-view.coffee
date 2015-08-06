@@ -1,5 +1,6 @@
 {Disposable, CompositeDisposable} = require 'atom'
 {$, $$, View,TextEditorView} = require 'atom-space-pen-views'
+emp = require '../exports/emp'
 # EmpEditView = require './emp-edit-view'
 EmpAppMan = require '../emp_app/emp_app_manage'
 EmpBarView = require './emp-setting-bar'
@@ -70,6 +71,7 @@ class EmpDebuggerSettingView extends View
                 @button class: 'btn btn-else btn-info inline-block-tight', click: 'live_preview', "Live Preview"
                 @button class: 'btn btn-else btn-info inline-block-tight', click: 'show_enable_views', "Enable Views"
                 @button class: 'btn btn-else btn-info inline-block-tight', click: 'show_enable_lua', "Enable Lua"
+                @button class: 'btn btn-else btn-info inline-block-tight', click: 'clear_input_view', "Clear View"
 
       #     # ------------------------ log config pane ------------------------
           @div outlet: 'log_detail', class: 'emp-setting-row', =>
@@ -436,6 +438,12 @@ class EmpDebuggerSettingView extends View
   show_enable_lua: ->
     console.log "show enbale lua"
     @fa_view.show_enable_lua()
+
+  # 清除 enable view 和 enable lua 的内容
+  clear_input_view: ->
+    @emp_socket_server.get_client_map().clear_all_views()
+    console.info "清除 View 完成."
+    emp.show_info "清除 View 完成."
 
 
   # btn callback for log setting

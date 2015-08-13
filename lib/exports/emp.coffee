@@ -137,6 +137,7 @@ module.exports =
   # STATIC_UI_CSS_TEMPLATE_PATH:"/templates/css/"
   STATIC_UI_CSS_TEMPLATE:"/templates/css/eui.css"
   STATIC_UI_CSS_TEMPLATE_DEST_PATH:"public/www/resource_dev/common/css/eui.css"
+  STATIC_UI_CSS_TEMPLATE_DEST_DIR:"public/www/resource_dev/common/css/"
   STATIC_UI_LUA_TEMPLATE:"/templates/lua/ert.lua"
   STATIC_UI_LUA_TEMPLATE_DEST_PATH:"public/www/resource_dev/common/lua/ert.lua"
 
@@ -194,6 +195,54 @@ module.exports =
 
   EMP_DEFAULT_FRONT_MSG:"{\r\n    \"return\": {\r\n        \"error_code\": \"000000\",\r\n        \"error_msg\": \"\",\r\n
         \"message\": \"This is a msg~~~~~\" \r\n   }\r\n}"
+
+
+  TEMP_PACKAGE_NAME:"emp-template-management"
+  PACKAGE_NAME:"emp-debugger"
+
+  get_pack_path: () ->
+    atom.packages.resolvePackagePath(this.PACKAGE_NAME)
+
+  get_temp_path: () ->
+    atom.packages.resolvePackagePath(this.TEMP_PACKAGE_NAME)
+
+  get_temp_emp_path: ->
+    path.join(atom.packages.resolvePackagePath(this.TEMP_PACKAGE_NAME), "lib/exports/emp")
+
+  create_editor:(tmp_file_path, tmp_grammar, callback, content) ->
+    changeFocus = true
+    tmp_editor = atom.workspace.open(tmp_file_path, { changeFocus }).then (tmp_editor) =>
+      gramers = @getGrammars()
+      # console.log content
+      unless content is undefined
+        tmp_editor.setText(content) #unless !content
+      tmp_editor.setGrammar(gramers[0]) unless gramers[0] is undefined
+      callback(tmp_editor)
+
+  # set the opened editor grammar, default is HTML
+  getGrammars: (grammar_name)->
+    grammars = atom.grammars.getGrammars().filter (grammar) ->
+      (grammar isnt atom.grammars.nullGrammar) and
+      grammar.name is 'CoffeeScript'
+    grammars
+
+
+  get_project_path: ->
+    project_path_list = atom.project.getPaths()
+    project_path = project_path_list[0]
+    editor = atom.workspace.getActiveTextEditor()
+    if editor
+      # 判断 project 有多个的情况
+      efile_path = editor.getPath?()
+      if project_path_list.length > 1
+        for tmp_path in project_path_list
+          relate_path = path.relative tmp_path, efile_path
+          if relate_path.match(/^\.\..*/ig) isnt null
+            project_path = tmp_path
+            break
+    project_path
+
+
 
 module.exports.mk_node_name = (node_name="") ->
   default_name = " -sname "

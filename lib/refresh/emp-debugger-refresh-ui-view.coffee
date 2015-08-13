@@ -1,6 +1,7 @@
 {$, $$, View} = require 'atom-space-pen-views'
 emp = require '../exports/emp'
 fs = require 'fs'
+fs_plus = require 'fs-plus'
 path = require 'path'
 
 module.exports =
@@ -21,23 +22,27 @@ class EmpUIRefreshWizardView extends View
     this
 
   refresh_ui: ->
-    project_path = atom.project.getPaths()[0]
+    project_path = emp.get_project_path()
+
     @copy_css_ui(project_path)
     @copy_lua_ui(project_path)
     emp.show_info "刷新 UI Lib 成功!"
 
+  # 从 emp template management 中指定的 ui snippet 中复制 eui.css
   copy_css_ui: (to_path) ->
-    dest_path = path.join to_path, emp.STATIC_UI_CSS_TEMPLATE_DEST_PATH
-    basic_dir = path.join __dirname, '../../', emp.STATIC_UI_CSS_TEMPLATE
-    css_con = fs.readFileSync basic_dir, 'utf8'
-
-    tmp_dest_path = path.dirname dest_path
-    if !fs.existsSync tmp_dest_path
-      emp.mkdir_sync_safe tmp_dest_path
-
-    fs.writeFileSync(dest_path, css_con, 'utf8')
-
-
+    # dest_path = path.join to_path, emp.STATIC_UI_CSS_TEMPLATE_DEST_PATH
+    dest_dir = path.join to_path, emp.STATIC_UI_CSS_TEMPLATE_DEST_DIR
+    # basic_dir = path.join __dirname, '../../', emp.STATIC_UI_CSS_TEMPLATE
+    # css_con = fs.readFileSync basic_dir, 'utf8'
+    # src_dir = emp.get_temp_path()
+    # tmp_dest_path = path.dirname dest_path
+    if !fs.existsSync dest_dir
+      emp.mkdir_sync_safe dest_dir
+    tmp_emp = require emp.get_temp_emp_path()
+    temp_ui_path = atom.config.get(tmp_emp.EMP_APP_STORE_UI_PATH)
+    temp_ui_css_path = path.join temp_ui_path, emp.OFF_EXTENSION_CSS
+    if fs.existsSync temp_ui_css_path
+      fs_plus.copySync  temp_ui_css_path, dest_dir
 
   copy_lua_ui: (to_path) ->
     basic_dir = path.join __dirname, '../../', emp.STATIC_UI_LUA_TEMPLATE

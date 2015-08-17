@@ -36,6 +36,8 @@
         { 'label': 'Enabel View', 'command': 'emp-debugger:enable-view' }
         { 'label': 'Enabel Lua', 'command': 'emp-debugger:enable-lua' }
         { 'label': 'View Logs', 'command': 'emp-debugger:view-log' }
+        {type: 'separator'}
+        { 'label': 'EMP Refresh Link', 'command': 'emp-debugger:refresh_link' }
     ]
   }
 ]

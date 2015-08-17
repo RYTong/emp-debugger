@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 ${atom_related_info}
+
 <content>
     <head>
         <link ref="${channel}/css/${channel}.css" type="text/css"/>

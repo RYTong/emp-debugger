@@ -1,4 +1,5 @@
 --[[Create By EMP Editor Channel Wizard ]]--
+${atom_related_info}
 
 ryt = RYTL:new{};
 

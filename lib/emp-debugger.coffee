@@ -7,6 +7,7 @@ EmpSocketServer = require './debugger/emp_socket'
 EmpViewManage = require './view/emp-views-entrance'
 conf_parser = require './emp_app/conf_parser'
 ErtUiGuide = require './guide/emp-debugger-ui-guide'
+EMPOpenLink = require './link/emp-open-link'
 
 emp = require './exports/emp'
 n_state = null
@@ -33,6 +34,7 @@ module.exports =
                                   @emp_socket_server, @empDebuggerLogView, this)
 
     @ertUiGuide = new ErtUiGuide(n_state.ertUiGuideState, this)
+    @emp_open_link = new EMPOpenLink()
 
     atom.commands.add "atom-workspace","emp-debugger:live-preview", => @live_preview()
     # atom.commands.add "atom-workspace","emp-debugger:setting-view", => @set_conf()
@@ -76,6 +78,7 @@ module.exports =
     @emp_socket_server.destroy()
     @empDebuggerSettingView.destroy()
     @ertUiGuide.destroy()
+    @emp_open_link.destroy()
 
   serialize: ->
     # empDebuggerStateViewState: @empDebuggerStateView.serialize()

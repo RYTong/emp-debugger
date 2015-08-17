@@ -421,7 +421,9 @@ class emp_channel
 
       ext_lua = emp.OFF_EXTENSION_LUA
       tmp_lua_file = path.join cha_dir, ext_lua, (tmp_tran+'.'+ext_lua)
+      tmp_relate_lua = path.join relate_dir, ext_lua, (tmp_tran+'.'+ext_lua)
       re_lua_template = lua_template.replace(/\${channel}/ig, @id).replace(/\$\{trancode\}/ig, tmp_tran)
+      re_lua_template = re_lua_template.replace(/\$\{atom_related_info\}/ig, emp.DEFAULT_LUATEMP_HEADER.replace(/\$\{atom_related_info\}/ig, tmp_relate_lua))
 
       if next_obj = tmp_arr.pop()
         re_lua_template = re_lua_template.replace(emp.EMP_ENTRANCE_NEXT_TRANCODE, next_obj.trancode)
@@ -436,8 +438,11 @@ class emp_channel
 
       ext_css = emp.OFF_EXTENSION_CSS
       tmp_css_file = path.join cha_dir, ext_css, (@id+'.'+ext_css)
+      tmp_relate_css = path.join relate_dir, ext_css, (@id+'.'+ext_css)
+      re_css_template = css_template.replace(/\$\{atom_related_info\}/ig, emp.DEFAULT_CSSTEMP_HEADER.replace(/\$\{atom_related_info\}/ig, tmp_relate_css))
+
       if !fs.existsSync tmp_css_file
-        fs.writeFile tmp_css_file, css_template, 'utf8', (err) =>
+        fs.writeFile tmp_css_file, re_css_template, 'utf8', (err) =>
           if err
             console.error(err)
             emp.show_error("创建离线资源代码失败~:#{tmp_css_file}")

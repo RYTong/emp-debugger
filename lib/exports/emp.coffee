@@ -12,6 +12,7 @@ module.exports =
   EMP_TEMP_WIZARD_PATH :'emp-debugger.Default-Template-App-Path'
   EMP_TEMP_WIZARD_PORT :'emp-debugger.Default-Template-App-Port'
   EMP_TEMP_WIZARD_APORT :'emp-debugger.Default-Template-App-APort'
+  EMP_LINK_UNIGNORE_CONF :'emp-debugger.EMP-Link-Unignore'
 
   EMP_NODE_NAME :'emp-debugger.Default-EMP-NODE-NAME'
   EMP_NODE_COOKIE :'emp-debugger.Default-EMP-NODE-COOKIE'
@@ -34,6 +35,7 @@ module.exports =
   EMP_OFFLINE_RELATE_PATH_V: "public/www/resource_dev"
   EMP_VIEW_FILTER_IGNORE:["*.json", "*.lua", "*.png", "*.jpg", "*.css"]
   EMP_SCRIPT_FILTER_IGNORE:["*.json", "*.xhtml", "*.png", "*.jpg", "*.css"]
+
 
   EMP_CHANNEL_ADAPTER_PLAT:'emp-debugger.emp-channel-adapter-platform'
   EMP_CHANNEL_ADAPTER_RES:'emp-debugger.emp-channel-adapter-resolution'
@@ -186,6 +188,7 @@ module.exports =
 
   DEFAULT_TEMP_HEADER:'<!--<atom_emp_related_file_info>${atom_related_info}</atom_emp_related_file_info>-->\n'
   DEFAULT_LUATEMP_HEADER:'--<atom_emp_related_file_info>${atom_related_info}</atom_emp_related_file_info>--\n'
+  DEFAULT_CSSTEMP_HEADER:'/*<atom_emp_related_file_info>${atom_related_info}</atom_emp_related_file_info>*/\n'
   DEFAULT_HEADER:'<atom_emp_related_file_info>${atom_related_info}</atom_emp_related_file_info>\n'
 
   # 提示信息
@@ -199,6 +202,10 @@ module.exports =
 
   TEMP_PACKAGE_NAME:"emp-template-management"
   PACKAGE_NAME:"emp-debugger"
+
+  OFF_LINE_LINK_DIR:"public/www/resource_dev/"
+
+  LINK_PUBLICK_DIR:["public/www", "public/www/resource_dev/common/channels","public/www/resource_dev/common/css","public/www/resource_dev/common/lua", "public/www/resource_dev/common/images"]
 
   get_pack_path: () ->
     atom.packages.resolvePackagePath(this.PACKAGE_NAME)

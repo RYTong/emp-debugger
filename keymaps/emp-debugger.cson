@@ -21,9 +21,19 @@
   'ctrl-alt-w': 'emp-debugger:create-app'
   'ctrl-alt-r': 'emp-debugger:create-temp'
 
+  # 'ctrl-i': 'emp-debugger:erl_indent'
 
 
-'.platform-darwin .emp-debugger':
-  'cmd-c': 'emp-debugger:copy'
-  'cmd-x': 'emp-debugger:cut'
-  'cmd-v': 'emp-debugger:paste'
+'.platform-win32 atom-text-editor:not(.mini), .platform-linux atom-text-editor:not(.mini) ':
+  'ctrl-click': 'emp-debugger:open_link'
+  'ctrl-}': 'emp-debugger:open_link'
+  'ctrl-{': 'emp-debugger:open_link'
+  'ctrl-l': 'emp-debugger:open_link'
+
+
+'.platform-darwin atom-text-editor:not(.mini)':
+  'cmd-click': 'emp-debugger:open_link'
+  'ctrl-o': 'emp-debugger:open_link'
+  'ctrl-}': 'emp-debugger:open_link'
+  'ctrl-{': 'emp-debugger:open_link'
+  'ctrl-l': 'emp-debugger:open_link'

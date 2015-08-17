@@ -19,17 +19,18 @@ class emp_client_view
   # OFF_EXTENSION_LUA:"lua"
   # OFF_EXTENSION_CSS: "css"
 
-  constructor: (@fa_obj, @view, @input_name, @fa_from, @fa_address, @file_type)->
+  constructor: (@fa_obj, @view, @input_name, @fa_from, @fa_address, @file_type, true_name)->
     # console.log @fa_from
-    @show_name = "#{@input_name}"
-
-    if re = @view.match(/atom_emp_related_file_info.*atom_emp_related_file_info/ig)
-      # console.log re
-      new_re = re[0].replace(/\<*\/*atom_emp_related_file_info\>*/ig, "")
-      @name = path.basename(new_re)
-      @show_name = @name
-      # @dir = path.dirname(new_re)
-      @dir = new_re
+    if !true_name
+      @show_name = "#{@input_name}"
+      if re = @view.match(/atom_emp_related_file_info.*atom_emp_related_file_info/ig)
+        # console.log re
+        new_re = re[0].replace(/\<*\/*atom_emp_related_file_info\>*/ig, "")
+        @name = path.basename(new_re)
+        @show_name = @name
+        @dir = new_re
+    else
+      @show_name = true_name
 
   set_view_readed: ->
     @readed = true

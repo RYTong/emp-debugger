@@ -1,3 +1,4 @@
+${atom_related_info}
 .body {background-color:#ffffff;}
 .title {left:3px;top:5px;color:#FF3300;font-size:18px;}
 .title_div{width:320px;height:51px;}

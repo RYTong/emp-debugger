@@ -125,7 +125,6 @@ class EnableRView extends SelectListView
   initial_new_pane: (item)->
     tmp_editor = null
     # console.log item
-    # atom.open({pathsToOpen: [pathToOpen], newWindow: true})
     if dest_file_path = item.dir
       project_path = atom.project.getPaths()[0]
       tmp_file_path = path.join project_path, dest_file_path
@@ -142,41 +141,36 @@ class EnableRView extends SelectListView
       atom.workspace.open('').then (tmp_editor) =>
         @store_info(tmp_editor, item)
 
-  # set the opened editor grammar, default is HTML
-  getGrammars: (grammar_name)->
-    grammars = atom.grammars.getGrammars().filter (grammar) ->
-      (grammar isnt atom.grammars.nullGrammar) and
-      grammar.name is 'Emp View'
-    grammars
-
-
-  create_editor:(tmp_file_path, item) ->
+  create_editor:(tmp_file_path, item, grammar_name) ->
     changeFocus = true
     # console.log item
     atom.workspace.open(tmp_file_path).then (tmp_editor) =>
     # tmp_editor = atom.open({pathsToOpen: [tmp_file_path], newWindow: true})
       tmp_editor["emp_live_view"] = item
       tmp_editor.setText(item.view)
-      gramers = @getGrammars()
+      if !grammar_name
+        grammar_name = item.file_type
+      gramers = @getGrammars(grammar_name)
       tmp_editor.setGrammar(gramers[0]) unless gramers[0] is undefined
 
-  store_info: (tmp_editor, item)->
+  store_info: (tmp_editor, item, grammar_name)->
     tmp_editor["emp_live_view"] = item
     tmp_editor.setText(item.view)
-    gramers = @getGrammars()
+    # if grammar_name = item.file_type?.toUpperCase()
+    #   grammar_name = null
+    if !grammar_name
+      grammar_name = item.file_type
+    gramers = @getGrammars(grammar_name)
     tmp_editor.setGrammar(gramers[0]) unless gramers[0] is undefined
 
   # set the opened editor grammar, default is HTML
-  # getGrammars: ->
-  #   console.log "3333333333333"
-  #   console.log atom.syntax.getGrammars()
-  #   grammars = atom.syntax.getGrammars().filter (grammar) ->
-  #     (grammar isnt atom.syntax.nullGrammar) and
-  #     grammar.name is 'HTML'
-  #   grammars
+  getGrammars: (grammar_name='Emp View')->
 
-  getGrammars: (grammar_name)->
+    if grammar_name is 'xhtml'
+      grammar_name='Emp View'
+    else
+      grammar_name=grammar_name.toUpperCase()
     grammars = atom.grammars.getGrammars().filter (grammar) ->
       (grammar isnt atom.grammars.nullGrammar) and
-      grammar.name is 'Emp View'
+      grammar.name is grammar_name
     grammars

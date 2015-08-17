@@ -42,6 +42,12 @@ class emp_client_view
     tmp_view_obj = new ele_view(@view_content_obj, @view_content_obj["view"], @show_name, @fa_from, @fa_address, emp.OFF_EXTENSION_XHTML)
     @detail_map.push(tmp_view_obj)
 
+    expand_name = "SLT2 Expand:"
+    if @show_name
+      expand_name = expand_name+@show_name
+    expand_view_obj = new ele_view(@view_content_obj, @view_content_obj["expand_view"], expand_name, @fa_from, @fa_address, emp.OFF_EXTENSION_XHTML, expand_name)
+    @detail_map.push(expand_view_obj)
+
     for tmp_name, tmp_con of @view_content_obj["script"]
       tmp_script_obj = new ele_view(@view_content_obj, tmp_con, tmp_name, @fa_from, @fa_address, emp.OFF_EXTENSION_LUA)
       @detail_map.push(tmp_script_obj)

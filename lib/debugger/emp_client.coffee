@@ -44,10 +44,17 @@ class emp_client
     tmp_obj = {}
     # console.log data_obj
     origin_data = data_obj["originMessage"]
+
     view = origin_data?["staticContent"]
     unless !view
       view_str = emp.base64_decode(view)
       tmp_obj["view"] = view_str
+
+    expand_data = data_obj["expandedMessage"]
+    expand_view = expand_data?["staticContent"]
+    unless !expand_view
+      expand_view_str = emp.base64_decode(expand_view)
+      tmp_obj["expand_view"] = expand_view_str
 
     tmp_script_obj = {}
     script_arr = origin_data?["script"]

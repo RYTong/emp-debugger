@@ -186,6 +186,7 @@ module.exports =
 
   DEFAULT_TEMP_HEADER:'<!--<atom_emp_related_file_info>${atom_related_info}</atom_emp_related_file_info>-->\n'
   DEFAULT_LUATEMP_HEADER:'--<atom_emp_related_file_info>${atom_related_info}</atom_emp_related_file_info>--\n'
+  DEFAULT_CSSTEMP_HEADER:'/*<atom_emp_related_file_info>${atom_related_info}</atom_emp_related_file_info>*/\n'
   DEFAULT_HEADER:'<atom_emp_related_file_info>${atom_related_info}</atom_emp_related_file_info>\n'
 
   # 提示信息

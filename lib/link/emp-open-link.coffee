@@ -32,7 +32,7 @@ class emp_open_link
     path_fliter.load_all_path_unignore "", (@path_list) =>
 
     emp.show_info "刷新 link 路径成功!"
-    
+
   forward: ->
     editor = atom.workspace.getActiveTextEditor()
     @uri = editor.getSelectedText()
@@ -144,24 +144,6 @@ class emp_open_link
         project_path = atom.project.getPaths()[0]
         tmp_editor.setCursorScreenPosition(url[1]) if url[1]
         @link_view["#{tmp_editor.getPath()}"] = [editor.getPath(),editor.getCursorScreenPosition()] unless back
-        # if @new then @new = false else editor.destroy()
-
-  # globSearch: ->
-  #   ignore = atom.config.get('navigate.ignore') or []
-  #   glob "**/*#{filename}*",{cwd:projectPath,stat:false,nocase:true,nodir:true,ignore:ignore}, (err,files)=>
-  #     if err or not files.length
-  #       fpaths = findup filename,{cwd:projectPath,nocase:true}
-  #       if fpaths
-  #         stats = fs.lstatSync(fpaths)
-  #         if not stats or stats.isDirectory() or stats.isSymbolicLink()
-  #           console.log 'Found Path but it is directory',fpaths
-  #           @modalPanel.hide()
-  #           return
-  #         @matchFile(@uri,ext,fpaths,editor)
-  #       else
-  #         @modalPanel.hide()
-  #     else
-  #       @matchFile(@uri,ext,files,editor)
 
   get_publick_dir: (project_path)->
     default_dir = emp.OFF_LINE_LINK_DIR

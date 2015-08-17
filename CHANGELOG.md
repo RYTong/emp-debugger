@@ -1,6 +1,9 @@
 ![EMP](https://raw.githubusercontent.com/wiki/RYTong/emp-debugger/images/emp.png)
 
 # Emp Debugger Package Change Log
+## Version 0.8.18
+1. 添加文件跳转功能, 在 link 文件处通过 'ctrl-o','ctrl-{','ctrl-}','ctrl-l' 实现文件跳转(倾向于 emp app 内文件跳转,其他跳转可能会有 bug)
+
 ## Version 0.8.16
 1. 添加 清除下行视图功能,现在你可以主动清除 enable view 中保存的视图了.
 

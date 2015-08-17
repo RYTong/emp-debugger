@@ -22,7 +22,8 @@
     "emp-debugger:show-channel",
     "emp-debugger:create-app",
     "emp-debugger:create-temp",
-    "emp-debugger:show-guide"
+    "emp-debugger:show-guide",
+    "emp-debugger:open_link"
   ],
   "repository": "https://github.com/RYTong/emp-debugger",
   "license": "MIT",
@@ -35,7 +36,8 @@
     "fuzzaldrin": "^2.1",
     "moxie-zip": "*",
     "atom-space-pen-views": "^2.0.2",
-    "fs-plus": "*"
+    "fs-plus": "*",
+    "resolve": "~1.1.0"
   },
   "packageDependencies": {
     "language-lua": "*",

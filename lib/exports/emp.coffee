@@ -140,6 +140,7 @@ module.exports =
   STATIC_UI_CSS_TEMPLATE:"/templates/css/eui.css"
   STATIC_UI_CSS_TEMPLATE_DEST_PATH:"public/www/resource_dev/common/css/eui.css"
   STATIC_UI_CSS_TEMPLATE_DEST_DIR:"public/www/resource_dev/common/css/"
+  STATIC_UI_CSS_DEF_FILE:"eui.css"
   STATIC_UI_LUA_TEMPLATE:"/templates/lua/ert.lua"
   STATIC_UI_LUA_TEMPLATE_DEST_PATH:"public/www/resource_dev/common/lua/ert.lua"
 

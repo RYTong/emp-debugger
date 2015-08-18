@@ -268,6 +268,9 @@ class EmpAppWizardView extends ScrollView
       tmp_emp = require emp.get_temp_emp_path()
       temp_ui_path = atom.config.get(tmp_emp.EMP_APP_STORE_UI_PATH)
       temp_ui_css_path = path.join temp_ui_path, emp.OFF_EXTENSION_CSS
+      if !fs.existsSync dest_dir
+        emp.mkdir_sync_safe dest_dir
+
       if fs.existsSync temp_ui_css_path
         fs_plus.copySync  temp_ui_css_path, dest_dir
     else

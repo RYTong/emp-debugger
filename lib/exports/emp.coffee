@@ -214,7 +214,11 @@ module.exports =
     atom.packages.resolvePackagePath(this.TEMP_PACKAGE_NAME)
 
   get_temp_emp_path: ->
-    path.join(atom.packages.resolvePackagePath(this.TEMP_PACKAGE_NAME), "lib/exports/emp")
+    pack_path = atom.packages.resolvePackagePath(this.TEMP_PACKAGE_NAME)
+    if pack_path
+      path.join(pack_path, "lib/exports/emp")
+    else
+      null
 
   create_editor:(tmp_file_path, tmp_grammar, callback, content) ->
     changeFocus = true

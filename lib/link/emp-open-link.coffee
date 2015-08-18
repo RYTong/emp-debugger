@@ -42,11 +42,11 @@ class emp_open_link
     @uri = editor.getSelectedText() or @get_text(editor)
     # console.log @uri
     # split = @getPosition()
-
-    if @uri.indexOf('http:') is 0  or @uri.indexOf('https:') is 0 or @uri.indexOf('localhost:') is 0
-      atom.workspace.open @uri #, split:split
-    else
-      @open_uri(editor, line)
+    if @uri
+      if @uri.indexOf('http:') is 0  or @uri.indexOf('https:') is 0 or @uri.indexOf('localhost:') is 0
+        atom.workspace.open @uri #, split:split
+      else
+        @open_uri(editor, line)
 
   open_uri: (editor, line)->
     try

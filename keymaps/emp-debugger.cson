@@ -25,15 +25,11 @@
 
 
 '.platform-win32 atom-text-editor:not(.mini), .platform-linux atom-text-editor:not(.mini) ':
-  'ctrl-click': 'emp-debugger:open_link'
   'ctrl-}': 'emp-debugger:open_link'
   'ctrl-{': 'emp-debugger:open_link'
-  'ctrl-l': 'emp-debugger:open_link'
 
 
 '.platform-darwin atom-text-editor:not(.mini)':
-  'cmd-click': 'emp-debugger:open_link'
   'ctrl-o': 'emp-debugger:open_link'
   'ctrl-}': 'emp-debugger:open_link'
   'ctrl-{': 'emp-debugger:open_link'
-  'ctrl-l': 'emp-debugger:open_link'

@@ -1,6 +1,11 @@
 ![EMP](https://raw.githubusercontent.com/wiki/RYTong/emp-debugger/images/emp.png)
 
 # Emp Debugger Package Change Log
+## Version 0.8.19
+1. 修改文件跳转功能热键为 Darwin: 'ctrl-o','ctrl-{','ctrl-}', Win32:'ctrl-{','ctrl-}'
+2. 修改跳转打开空白文件的 bug
+3. 修改其他隐患.
+
 ## Version 0.8.18
 1. 添加文件跳转功能, 在 link 文件处通过 'ctrl-o','ctrl-{','ctrl-}','ctrl-l' 实现文件跳转(倾向于 emp app 内文件跳转,其他跳转可能会有 bug)
 

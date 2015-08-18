@@ -23,7 +23,8 @@
     "emp-debugger:create-app",
     "emp-debugger:create-temp",
     "emp-debugger:show-guide",
-    "emp-debugger:open_link"
+    "emp-debugger:open_link",
+    "emp-debugger:refresh_link"
   ],
   "repository": "https://github.com/RYTong/emp-debugger",
   "license": "MIT",

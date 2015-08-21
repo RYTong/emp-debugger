@@ -1,6 +1,8 @@
 {Disposable, CompositeDisposable} = require 'atom'
-{$, $$, View} = require 'atom-space-pen-views'
+{$, $$, View, TextEditorView} = require 'atom-space-pen-views'
 emp_log = require '../debugger/emp_view_log'
+default_client_id = 'All'
+emp = require '../exports/emp'
 
 module.exports =
 class EmpDebuggerLogView extends View
@@ -12,6 +14,7 @@ class EmpDebuggerLogView extends View
   first_show: true #是否为第一次显示
   show_state: false # 当前 log pane 是否为显示状态
   stop_state: false
+  selected_client: default_client_id
 
   color_arr: ["#000033", "#000066", "#000099", "#0000CC", "#0000FF",
               "#003300", "#003333", "#003366", "#003399", "#0033CC", "#0033FF",
@@ -51,8 +54,6 @@ class EmpDebuggerLogView extends View
               "#FFFF00", "#FFFF33", "#FFFF66", "#FFFF99", "#FFFFCC"]
   log_map: {}
 
-
-
   @content: ->
     @div class: 'emp-log-pane tool-panel pannel panel-bottom padding', =>
       # @div class: 'log-console-resize-handle', mousedown: 'resizeStarted', dblclick: 'resizeToMin'
@@ -67,13 +68,28 @@ class EmpDebuggerLogView extends View
           @div outlet: 'emp_lineNumber', class: 'line-numbers'
           @div outlet: 'log_detail', id:'emp_log_row', class: 'emp-log-row native-key-bindings',tabindex: -1
 
+      @div class: 'emp_footer panel-heading padded', =>
+        @ul class:'foot_ul', =>
+          @li class:'foot_lf_li', =>
+        # @div class:'foot_div', =>
+            @select outlet:"client_select", id: "client", class: '', =>
+              @option value: 'test', "test"
+          @li class:'foot_li', =>
+            @subview 'lua_console', new TextEditorView(mini: true, attributes: {id: 'lua_console', type: 'string'},  placeholderText: 'Lua Console')
+
+
+
   initialize: ()->
     @line_number = 1
     @disposable = new CompositeDisposable
     @disposable.add atom.commands.add "atom-workspace","emp-debugger:view-log", => @toggle()
     # atom.commands.add "core:move-up", => console.log "this is a roll ----------"
     # @emp_log_view.on "core:move-up", =>
+    @disposable.add atom.commands.add @lua_console.element, 'core:confirm', =>
+      @do_send_lua()
 
+    @disposable.add @client_select.change =>
+      @selected_client = @client_select.val()
     # @emp_log_view.scrollUp (e) =>
       # console.log "up up up up up up "
     # @emp_log_view.scroll (e)=>
@@ -85,6 +101,8 @@ class EmpDebuggerLogView extends View
       # console.log "---emp_log_view scroll"
 
     # @test()
+  dispose: ->
+    @disposable?.dispose()
 
   serialize: ->
     attached: @hasParent()
@@ -97,36 +115,6 @@ class EmpDebuggerLogView extends View
 
   set_conf_view: (@emp_conf_view)->
 
-  toggle: ->
-    # console.log @first_show
-    if @first_show
-      @first_show = false
-      if @hasParent()
-        @detach()
-        @show_state = false
-        @stop_state = false
-      else
-        @attach()
-        @stop_state = false
-        @show_state = true
-    else
-      # console.log @show_state
-      if @show_state
-        this.hide()
-        @show_state = false
-      else
-        this.show()
-        @show_state = true
-
-  attach: ->
-    # atom.workspaceView.prependToBottom(this)
-    @panel = atom.workspace.addBottomPanel(item:this,visible:true)
-    @disposable.add new Disposable =>
-      @panel.destroy()
-      @panel = null
-    @initial_height()
-    @update()
-    @update_ln()
 
   update_ln: ->
     html = ''
@@ -191,14 +179,14 @@ class EmpDebuggerLogView extends View
     @do_update_gutter(start_ln, end_ln, show_color, client_id) unless start_ln > end_ln
 
 
-  do_update_gutter: (start, end, show_color, client_id)->
+  do_update_gutter: (start, end, show_color)->
     # console.log "do_update_gutter:s: #{start} ,e: #{end}"
     @line_number = end
     html = ''
     for row in [start+1..end+1]
       rowValue = " "+ row
       classes = "line-number line-number-#{row}"
-      html += """<div id="ln_#{client_id}" class="#{classes}" style="background-color:#{show_color};" > #{rowValue}<div class="icon-right"></div></div>"""
+      html += """<div class="#{classes}" style="background-color:#{show_color};" > #{rowValue}<div class="icon-right"></div></div>"""
     @emp_lineNumber.append(html)
 
   do_update_gutter_css: (start_color_ln, show_color) ->
@@ -212,17 +200,12 @@ class EmpDebuggerLogView extends View
   update_log: (client_id, log_ga, show_color)->
     @log_detail.append $$ ->
       # @pre id:"log_#{client_id}", class: "emp-log-con", style:"color:#{show_color};padding:0px;", "######################### CLIENT:#{client_id} ##########################"
-
       for log in log_ga.split("\n")
         # console.log "|#{log}|"
         if log isnt "" and log isnt " "
           @pre id:"log_#{client_id}",class: "emp-log-con",style:"color:#{show_color};padding:0px;", "#{log}"
-          # @div class: "emp-log-line", =>
-          # @p class: "emp-log-con", style:"color:#{show_color};padding:0px;", "#{log}"
-    # console.log @log_detail.context
     @emp_log_view.scrollToBottom()
     # $('#emp_log_view').stop().animate({scrollTop:@log_detail.context.scrollHeight}, 1000)
-
 
   store_log: (client_id, log) ->
     # console.log @log_map
@@ -238,12 +221,21 @@ class EmpDebuggerLogView extends View
     # else
       # console.log "store_log"
 
+  store_new_log: (client_id, log_obj)->
+    # console.log log_obj
+    log_msg = emp.base64_decode log_obj.message
+    console.log log_msg
+    @store_log(client_id, log_msg)
+
+
   refresh_conf_view: (client_id, color)->
     # unless !emp_conf_view
     # console.log @emp_conf_view
+    @add_clients(client_id)
     @emp_conf_view.refresh_log_view(client_id, color) unless !@emp_conf_view
 
   remove_client_log: (client_id)->
+    @refresh_clients()
     delete @log_map[client_id]
     # @emp_conf_view.remove_log_view(client_id) unless !@emp_conf_view
 
@@ -300,10 +292,47 @@ class EmpDebuggerLogView extends View
     @log_map
 
   # -------------------------------------------------------------------------
+  # call by command
+  # initial log pane
+  toggle: ->
+    # console.log @first_show
+    if @first_show
+      @first_show = false
+      if @hasParent()
+        @detach()
+        @show_state = false
+        @stop_state = false
+      else
+        @refresh_clients()
+        @attach()
+        @stop_state = false
+        @show_state = true
+    else
+      # console.log @show_state
+      if @show_state
+        this.hide()
+        @show_state = false
+      else
+        @refresh_clients()
+        this.show()
+        @show_state = true
+
+  attach: ->
+    # atom.workspaceView.prependToBottom(this)
+    @panel = atom.workspace.addBottomPanel(item:this,visible:true)
+    @disposable.add new Disposable =>
+      @panel.destroy()
+      @panel = null
+    @initial_height()
+    @update()
+    @update_ln()
+
+  # -------------------------------------------------------------------------
   # call by config vieww
   # show log pane
   show_log: ->
     # console.log "show_log"
+    @refresh_clients()
     if @first_show
       @first_show = false
       @attach()
@@ -386,7 +415,7 @@ class EmpDebuggerLogView extends View
     return @resizeStopped() unless which is 1
     height = $(document.body).height()-pageY
 
-    return if height < 25
+    return if height < 70
     # console.log height
     @height(height)
     @emp_log_panel.css("max-height", height)
@@ -398,6 +427,66 @@ class EmpDebuggerLogView extends View
     @emp_log_view.scrollToBottom()
 
   # -------------------------------------------------------------------------
+  # -------------------------------------------------------------------------
+  ## @doc  Lua console
+  do_send_lua: ->
+    # console.log @snippet_obj
+    lua_code = @lua_console.getText()?.trim()
+    console.log lua_code
+    @do_show_in_console(lua_code)
+    console.log @selected_client
+    @emp_socket_server.send_lua_console(lua_code, @selected_client)
+
+  do_show_in_console: (lua_code) ->
+    show_color = "#000033"
+    start_color_ln = @get_line_number_count()
+    @update_console_log(lua_code, show_color)
+    @update_gutter(show_color, start_color_ln)
+
+  update_console_log: (log_ga, show_color)->
+    @log_detail.append $$ ->
+      for log in log_ga.split("\n")
+        # console.log "|#{log}|"
+        if log isnt "" and log isnt " "
+          log = "Console Input: "+log
+          @pre class: "emp-log-con",style:"color:#{show_color};padding:0px;", "#{log}"
+    @emp_log_view.scrollToBottom()
+
+  refresh_clients: ->
+    client_ids = @emp_socket_server.get_all_id()
+    @client_select.empty()
+    # client_ids.push default_client_id
+    selectd_flag = false
+    if client_ids.indexOf(@selected_client) < 0
+      @selected_client = default_client_id
+
+    client_ids.push default_client_id
+    for tmp_id in client_ids
+      if tmp_id is @selected_client
+        tmp_view = @new_selec_option tmp_id, tmp_id
+        @client_select.append tmp_view
+        selectd_flag = true
+      else
+        tmp_view = @new_option tmp_id, tmp_id
+        @client_select.append tmp_view
+
+  # set_clients_map: (@emp_clients)->
+
+  set_socket_server: (@emp_socket_server) ->
+
+  add_clients: (client_id)->
+    @client_select.append @new_option(client_id, client_id)
+
+  new_option: (name, value=name)->
+    $$ ->
+      @option value: value, name
+
+  new_selec_option: (name, value=name) ->
+    $$ ->
+      @option selected:'select', value: value, name
+
+  # -------------------------------------------------------------------------
+
   test: ->
     @store_log("test", "\nasdasd `    asda;")
     @store_log("test", "------\nasdasd\n\n test functione")

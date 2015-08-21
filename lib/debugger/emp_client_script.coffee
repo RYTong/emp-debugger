@@ -1,3 +1,5 @@
+path = require 'path'
+
 module.exports =
 class emp_client_script
   fa_from: null

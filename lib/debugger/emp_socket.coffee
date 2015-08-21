@@ -34,6 +34,7 @@ class emp_socket
     # console.log "init socket~"
     emp_client_map = new emp_clients_map(tmp_log_storage)
     log_storage = tmp_log_storage
+    log_storage.set_socket_server(this)
 
   set_conf_view: (tmp_conf_view)->
     emp_conf_view = tmp_conf_view
@@ -313,6 +314,9 @@ class emp_socket
   get_client_map: ->
     emp_client_map
 
+  get_all_id: ->
+    emp_client_map.get_all_id()
+
   get_enable_view_list: ->
     emp_view_map
 
@@ -334,6 +338,17 @@ class emp_socket
     emp_server_error = null
 
 
+  send_lua_console: (lua_code, client_id) ->
+    if lua_code
+      lua_obj = {"lua_console": emp.base64_encode lua_code}
+      lua_json_str = JSON.stringify lua_obj
+      lua_json_str = new_start_str+lua_json_str+new_end_str
+      all_socket = emp_client_map.get_all_socket()
+      new_p_socket = all_socket.new_p
+      for socket_m in new_p_socket
+        socket_m.write(lua_json_str)
+    else
+      console.log "do nothing"
   # argsContent = message.split "#EditorContent#"
   # content = argsContent[1]
   # emp_client_map.put_spec_view(client_id, content) unless content is undefined

@@ -18,6 +18,7 @@ class emp_clients
     @index = 0
     @views_map = new Array()
     @script_map = {}
+    # @log_storage.set_clients_map(this)
     # @css_map = {}
 
   new_client: (id, obj) ->
@@ -25,6 +26,7 @@ class emp_clients
     @clients_map[id] = new_client
     @obj_len += 1
     @active_len += 1
+
     new_client
 
   remove_client: (id)->
@@ -54,6 +56,13 @@ class emp_clients
 
   get_client_socket: (id) ->
     @clients_map[id]?.get_view_socket()
+
+  get_all_id: ->
+    id_lists = new Array()
+    for id, client of @clients_map
+      id_lists.push id
+    id_lists
+
 
   get_all_socket: ->
     # result = new Array()

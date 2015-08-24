@@ -231,7 +231,7 @@ class EmpDebuggerLogView extends View
   refresh_conf_view: (client_id, color)->
     # unless !emp_conf_view
     # console.log @emp_conf_view
-    @add_clients(client_id)
+    # @add_clients(client_id)
     @emp_conf_view.refresh_log_view(client_id, color) unless !@emp_conf_view
 
   remove_client_log: (client_id)->

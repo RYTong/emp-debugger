@@ -362,7 +362,7 @@ class EmpDebuggerSettingView extends View
 
   remove_log_view: (client_id)->
     # console.log @emp_client_list
-    @emp_client_list.find("option[id=#{client_id}]").remove()
+    # @emp_client_list.find("option[id=#{client_id}]").remove()
     @emp_default_client.attr('selected', true)
     @emp_default_color.attr('selected', true)
     @emp_log_color_list.css('background-color', @default_color_value)

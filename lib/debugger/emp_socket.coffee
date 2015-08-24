@@ -47,6 +47,7 @@ class emp_socket
 
     new_client = emp_client_map.new_client(remotePort, socket) #创建新的client 对象
     emp_conf_view.refresh_state_pane_ln() unless !emp_conf_view# 刷新状态页面链接数量
+    log_storage.add_clients(remotePort)
 
     buffers = ''
     #  设置监听--接受消息的方法
@@ -345,6 +346,7 @@ class emp_socket
       lua_json_str = new_start_str+lua_json_str+new_end_str
       all_socket = emp_client_map.get_all_socket()
       new_p_socket = all_socket.new_p
+      # console.log lua_json_str
       for socket_m in new_p_socket
         socket_m.write(lua_json_str)
     else

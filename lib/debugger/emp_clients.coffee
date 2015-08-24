@@ -43,6 +43,9 @@ class emp_clients
 
   remove_client_socket: (id) ->
     @clients_map[id].remove_socket()
+    @clients_map[id] = null
+    delete @clients_map[id]
+    @obj_len -= 1
     @active_len -= 1 unless @active_len <=0
     @log_storage.remove_client_log(id)
 

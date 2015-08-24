@@ -2,6 +2,7 @@
 remote = require 'remote'
 dialog = remote.require 'dialog'
 fs = require 'fs'
+fs_plus = require 'fs-plus'
 path = require 'path'
 # EmpEditView = require '../channel_view/item-editor-view'
 emp = require '../exports/emp'

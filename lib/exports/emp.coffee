@@ -6,6 +6,10 @@ os = require 'os'
 module.exports =
   parser_beam_file_mod : 'atom_pl_parse_json'
 
+  EMP_APP_EXPORT_UI_PATH :'emp-template-management.Store-UI-Snippet-Export-Path'
+  EMP_APP_IMPORT_UI_PATH :'emp-template-management.Store-UI-Snippet-Import-Path'
+  EMP_APP_STORE_UI_PATH :'emp-template-management.Store-UI-Snippet-Path'
+
   EMP_APP_WIZARD_APP_P :'emp-debugger.Default-App-Wizard-App-Path'
   EMP_APP_WIZARD_EWP_P :'emp-debugger.Default-App-Wizard-Ewp-Path'
   EMP_TEMP_WIZARD_NAME :'emp-debugger.Default-Template-App-Name'

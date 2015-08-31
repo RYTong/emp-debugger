@@ -347,6 +347,7 @@ class emp_socket
       all_socket = emp_client_map.get_all_socket()
       new_p_socket = all_socket.new_p
       # console.log lua_json_str
+      # console.log new_p_socket
       for socket_m in new_p_socket
         socket_m.write(lua_json_str)
     else
@@ -414,7 +415,6 @@ deal_with_msg_detail =(data_flag=false, data, client_id, new_client) ->
   new_client.set_protocal_type(data_flag)
   if !data_flag
     dealWithMessageFromTarget(data, client_id)
-
   else
     deal_with_msg_from_new_pro(data, client_id)
 
@@ -457,11 +457,11 @@ deal_with_detail_msg_from_new_pro = (detai_msg, client_id) ->
   for tmp_con in new_data
     if tmp_con?.trim().length > 2
       # result_con = tmp_con
-      # try
-      result_obj = JSON.parse tmp_con
-      if result_obj["level"]
-        log_storage.store_new_log(client_id, result_obj)
-      else
-        emp_client_map.store_new_view(client_id, result_obj)
-      # catch err
-      #   console.error err
+      try
+        result_obj = JSON.parse tmp_con
+        if result_obj["level"]
+          log_storage.store_new_log(client_id, result_obj)
+        else
+          emp_client_map.store_new_view(client_id, result_obj)
+      catch err
+        console.error err

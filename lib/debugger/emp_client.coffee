@@ -154,4 +154,6 @@ class emp_client
   get_script_readed: (script_name)->
     @script_map[script_name].readed
 
-  set_protocal_type:(@new_type_protocal) ->
+  set_protocal_type:(tmp_type_protocal) ->
+    if !@new_type_protocal
+      @new_type_protocal = tmp_type_protocal

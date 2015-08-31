@@ -1,8 +1,10 @@
 {Disposable, CompositeDisposable} = require 'atom'
 {$, $$, View, TextEditorView} = require 'atom-space-pen-views'
 emp_log = require '../debugger/emp_view_log'
+_ = require 'underscore-plus'
 default_client_id = 'All'
 emp = require '../exports/emp'
+default_history_length=30
 
 module.exports =
 class EmpDebuggerLogView extends View
@@ -81,12 +83,61 @@ class EmpDebuggerLogView extends View
 
   initialize: ()->
     @line_number = 1
+    @history = new Array()
+    @history_index = 0
+    @current_input = ""
     @disposable = new CompositeDisposable
     @disposable.add atom.commands.add "atom-workspace","emp-debugger:view-log", => @toggle()
-    # atom.commands.add "core:move-up", => console.log "this is a roll ----------"
-    # @emp_log_view.on "core:move-up", =>
     @disposable.add atom.commands.add @lua_console.element, 'core:confirm', =>
       @do_send_lua()
+
+    @disposable.add atom.commands.add @lua_console.element, 'core:move-up', =>
+      # console.log "move-up"
+      # console.log @history_index
+      his_len = @history.length
+      # if !@history_index or @history_index is his_len
+      #   @history_index = his_len
+      #   history_input = @history.slice @history_index-1, @history_index
+      #   if history_input?[0]
+      #     @lua_console.setText history_input[0]
+      #     @history_index = @history_index-1
+      # else if @history_index > 1
+      #   history_input = @history.slice @history_index-1, @history_index
+      #   if history_input?[0]
+      #     @lua_console.setText history_input[0]
+      #     @history_index = @history_index-1
+      # else
+      #   history_input = @history.slice @history_index-1, @history_index
+      #   if history_input?[0]
+      #     @lua_console.setText history_input[0]
+      if !@history_index
+        @current_input = @lua_console.getText()
+        @history_index = his_len
+        history_input = @history.slice @history_index-1, @history_index
+        if history_input?[0]
+          @lua_console.setText history_input[0]
+      else if @history_index > 1
+        @history_index = @history_index-1
+        history_input = @history.slice @history_index-1, @history_index
+        if history_input?[0]
+          @lua_console.setText history_input[0]
+      else
+        history_input = @history.slice @history_index-1, @history_index
+        if history_input?[0]
+          @lua_console.setText history_input[0]
+
+    @disposable.add atom.commands.add @lua_console.element, 'core:move-down', =>
+      # console.log "move-down"
+      # console.log @history_index
+      if @history_index
+        history_input = @history.slice @history_index, @history_index+1
+        if history_input?[0]
+          @lua_console.setText history_input?[0]
+          @history_index = @history_index+1
+        else
+          @history_index = @history.length+1
+          @lua_console.setText @current_input
+
 
     @disposable.add @client_select.change =>
       @selected_client = @client_select.val()
@@ -432,10 +483,16 @@ class EmpDebuggerLogView extends View
   do_send_lua: ->
     # console.log @snippet_obj
     lua_code = @lua_console.getText()?.trim()
-    console.log lua_code
+    # console.log lua_code
     @do_show_in_console(lua_code)
-    console.log @selected_client
+    # console.log @selected_client
     @emp_socket_server.send_lua_console(lua_code, @selected_client)
+    if @history.length >= default_history_length
+      @history.shift()
+    @history.push lua_code
+    @history_index = 0
+    @current_input = ""
+    @lua_console.setText("")
 
   do_show_in_console: (lua_code) ->
     show_color = "#000033"

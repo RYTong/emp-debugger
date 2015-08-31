@@ -26,9 +26,9 @@ class AdapterPanel extends View
         @div class: 'checkbox_ucolumn', =>
           @input outlet:'off_use_off', type: 'checkbox', checked:'true'
           @text "生成离线资源文件(Create Offline Resouce)"
-        @div class: 'checkbox_ucolumn', =>
-          @input outlet:'off_use_front', type: 'checkbox', checked:'true'
-          @text "生成前端资源配置(Create Front Template Config)"
+        # @div class: 'checkbox_ucolumn', =>
+        #   @input outlet:'off_use_front', type: 'checkbox', checked:'true'
+        #   @text "生成前端资源配置(Create Front Template Config)"
 
 
       @div outlet:'off_info', class: 'off_info_div',  =>
@@ -124,8 +124,8 @@ class AdapterPanel extends View
     @off_use_off.on  'click', (e, el)=>
       @refresh_off_type(e, el)
 
-    @off_use_front.on  'click', (e, el)=>
-      @refresh_front_type(e, el)
+    # @off_use_front.on  'click', (e, el)=>
+    #   @refresh_front_type(e, el)
 
 
     this
@@ -172,13 +172,13 @@ class AdapterPanel extends View
     @ocs_flag = @off_use_cs.prop('checked')
     @refresh_adapter_btn_type()
 
-  refresh_front_type: ->
-    @ofront_flag = @off_use_front.prop('checked')
-    @refresh_adapter_btn_type()
+  # refresh_front_type: ->
+  #   @ofront_flag = @off_use_front.prop('checked')
+  #   @refresh_adapter_btn_type()
 
 
   refresh_adapter_btn_type: ->
-    if @ofile_flag or @ocode_flag or @ocs_flag or @off_use_front
+    if @ofile_flag or @ocode_flag or @ocs_flag
       @addAda.enable()
     else
       @addAda.disable()
@@ -200,7 +200,7 @@ class AdapterPanel extends View
     @cha_obj.use_code = @ocode_flag
     @cha_obj.use_cs = @ocs_flag
     @cha_obj.use_off = @ofile_flag
-    @cha_obj.use_front = @off_use_front
+    # @cha_obj.use_front = @off_use_front
 
     @set_off_detail()
     @store_adapter()
@@ -222,7 +222,7 @@ class AdapterPanel extends View
     # console.log @item_list.length
     # console.log @item_list
     @cha_obj.initial_adapter()
-    if @ofile_flag or @ocode_flag or @ocs_flag or @off_use_front
+    if @ofile_flag or @ocode_flag or @ocs_flag
       for a_view in @item_list
         if a_view.ex_state
           tmp_obj = a_view.submit_detail()

@@ -14,7 +14,8 @@ class emp_open_link
     @subscriptions = new CompositeDisposable
     @pathCache =  {}
     @link_view = {}
-    path_fliter.load_all_path_unignore "", (@path_list) =>
+    if atom.project.getPaths().length isnt 0
+      path_fliter.load_all_path_unignore "", (@path_list) =>
       # console.log @path_list
     @subscriptions.add atom.commands.add 'atom-text-editor',
       'emp-debugger:open_link': (event) =>
@@ -36,11 +37,12 @@ class emp_open_link
   forward: ->
     editor = atom.workspace.getActiveTextEditor()
     @uri = editor.getSelectedText()
-    # console.log @uri
-    line =  editor.lineTextForScreenRow editor.getCursorScreenPosition().row
-    # console.log line
+    console.log @uri
+    line =  editor.lineTextForBufferRow editor.getCursorBufferPosition().row
+    # line =  editor.lineTextForScreenRow editor.getCursorScreenPosition().row
+    console.log line
     @uri = editor.getSelectedText() or @get_text(editor)
-    # console.log @uri
+    console.log @uri
     # split = @getPosition()
     if @uri
       if @uri.indexOf('http:') is 0  or @uri.indexOf('https:') is 0 or @uri.indexOf('localhost:') is 0
@@ -59,6 +61,10 @@ class emp_open_link
       if line.includes 'require'
         filepath = resolve.sync(@uri, basedir:file_path,extensions:['.js','.coffee'])
         return @do_open([filepath],editor) if fs.statSync filepath
+      else
+
+        console.log line
+        console.log "asd"
       @open_file(editor, file_path)
     catch e
       console.log 'Error finding the filepath',e
@@ -128,6 +134,8 @@ class emp_open_link
 
       file_name = path.basename(@uri)
       # @complex = true
+      if @path_list.length is 0
+        @refresh()
       filter_result = path_fliter.filter_path(@path_list, file_name)
       if filter_result.length is 1
         @do_open([filter_result[0].dir],editor)
@@ -183,12 +191,15 @@ class emp_open_link
   get_text: (editor)->
     cursor = editor.getCursors()[0]
     range = editor.displayBuffer.bufferRangeForScopeAtPosition '.string.quoted',cursor.getBufferPosition()
-    # console.log range
+    console.log range
+    # console.log editor.getWordUnderCursor wordRegex:/[\/A-Z\.\-\d\\-_:]+(:\d+)?/i
     if range
       text = editor.getTextInBufferRange(range)[1..-2]
+      # if text.includes ","
+      #   text = editor.getWordUnderCursor wordRegex:/[\/A-Z\.\-\d\\-_:]+(:\d+)?/i
     else
       text = editor.getWordUnderCursor wordRegex:/[\/A-Z\.\-\d\\-_:]+(:\d+)?/i
-    # console.log text
+    console.log text
     text = text[0..-2] if text.slice(-1) is ':'
     text.trim()
 

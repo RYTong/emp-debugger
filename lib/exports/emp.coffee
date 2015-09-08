@@ -37,7 +37,7 @@ module.exports =
   EMP_OFFLINE_DIR: 'emp-debugger.emp-offline-dev-path'
   EMP_OFFLINE_RELATE_DIR: 'emp-debugger.emp-offline-relate-path'
   EMP_OFFLINE_RELATE_PATH_V: "public/www/resource_dev"
-  EMP_VIEW_FILTER_IGNORE:["*.json", "*.lua", "*.png", "*.jpg", "*.css"]
+  EMP_VIEW_FILTER_IGNORE:["*.json", "*.lua", "*.png", "*.jpg", "*.css", "*.js"]
   EMP_SCRIPT_FILTER_IGNORE:["*.json", "*.xhtml", "*.png", "*.jpg", "*.css"]
 
 
@@ -147,6 +147,11 @@ module.exports =
   STATIC_UI_CSS_DEF_FILE:"eui.css"
   STATIC_UI_LUA_TEMPLATE:"/templates/lua/ert.lua"
   STATIC_UI_LUA_TEMPLATE_DEST_PATH:"public/www/resource_dev/common/lua/ert.lua"
+  STATIC_UI_JS_TEMPLATE:"/templates/js/"
+  STATIC_UI_JS_TEMPLATE_DEST_PATH:"public/www/resource_dev/common/js/"
+  STATIC_MOB_HTML_PATH:"/templates/mobile/"
+  STATIC_MOB_HTML_TEMPLATE:"/templates/mobile/html/default.html"
+
 
   STATIC_ERL_TEMPLATE : "/channel_adapter_erl_template.tmp"
   STATIC_ERL_FUN_TEMPLATE : "/channel_adapter_erl_function.tmp"
@@ -155,6 +160,7 @@ module.exports =
   STATIC_CSS_TEMPLATE : "/channel_adapter_css_template.tmp"
   STATIC_LUA_TEMPLATE : "/channel_adapter_lua_template.tmp"
 
+  STATIC_WEBVIEW_TEMPLATE : "/channel_webview_template.tmp"
 
   STATIC_APP_FRONT_TEMP:"/templates/temp_app/"
 
@@ -164,6 +170,11 @@ module.exports =
   OFF_BASE_DIR_LIST:["default"]
   OFF_DEFAULT_BASE:"channels"
   OFF_COMMON_BASE:"default"
+  OFF_COMMON_HTML: "webview"
+  OFF_WEBVIEW_DEF_APP: "app"
+  OFF_STORE_HTML_PATH: "module"
+  OFF_HTML_LIST:["js", "css", "images", "html", "module"]
+  OFF_HTML_CHI_DIR_LIST : ["html", "css", "js", "json"]
 
   OFF_EXTENSION_ERL: "erl"
   OFF_EXTENSION_CS: "cs"
@@ -171,6 +182,12 @@ module.exports =
   OFF_EXTENSION_XHTML:"xhtml"
   OFF_EXTENSION_LUA:"lua"
   OFF_EXTENSION_CSS: "css"
+  OFF_EXTENSION_JS: "js"
+  OFF_EXTENSION_HTML:"html"
+
+  # the type of emp step
+  EMP_ADD_CHA_VIEW_TYPE_EMP: 'emp'
+  EMP_ADD_CHA_VIEW_TYPE_HTML: 'html'
 
 
   DEFAULT_COL_ITEM:'[{item_id,"$cha_id"},{item_type,$itype},{menu_order,$order}]'
@@ -190,6 +207,7 @@ module.exports =
   DEFAULT_EXT_LUA : '.lua'
   DEFAULT_EXT_CSS : '.css'
   DEFAULT_EXT_XHTML :'.xhtml'
+  DEFAULT_EXT_JS :'.js'
 
   DEFAULT_TEMP_HEADER:'<!--<atom_emp_related_file_info>${atom_related_info}</atom_emp_related_file_info>-->\n'
   DEFAULT_LUATEMP_HEADER:'--<atom_emp_related_file_info>${atom_related_info}</atom_emp_related_file_info>--\n'

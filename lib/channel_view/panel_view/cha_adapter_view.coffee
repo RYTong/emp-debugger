@@ -4,6 +4,7 @@
 emp = require '../../exports/emp'
 
 ItemView = require './adapter_item_view'
+# HtmlItemPanel = require './adapter_html_view'
 
 module.exports =
 class AdapterPanel extends View
@@ -26,6 +27,10 @@ class AdapterPanel extends View
         @div class: 'checkbox_ucolumn', =>
           @input outlet:'off_use_off', type: 'checkbox', checked:'true'
           @text "生成离线资源文件(Create Offline Resouce)"
+
+        # @div class: 'checkbox_ucolumn', =>
+        #   @input outlet:'off_use_off', type: 'checkbox', checked:'true'
+        #   @text "(Create Offline Resouce)"
         # @div class: 'checkbox_ucolumn', =>
         #   @input outlet:'off_use_front', type: 'checkbox', checked:'true'
         #   @text "生成前端资源配置(Create Front Template Config)"
@@ -72,11 +77,18 @@ class AdapterPanel extends View
           @div class: 'checkbox_column', =>
             @input outlet:'off_json', type: 'checkbox', checked:'true'
             @text "json"
+          @div class: 'checkbox_column', =>
+            @input outlet:'off_json', type: 'checkbox', checked:'true'
+            @text "js"
       @div outlet:'off_params', class: 'off_params_div',  =>
         @div class:'off_pb_div', =>
-          @button outlet:'addAda', class: 'off_btn_w btn btn-info inline-block-tight', click:'add_adpter_item_btn',' Add a step... '
+          @button outlet:'addAda', class: 'off_btn_w btn btn-info inline-block-tight', click:'add_adpter_item_btn',' Add an EMP step... '
         @div outlet:'adapter_item', class:'off_param_div'
 
+      # @div class: 'off_params_div',  =>
+      #   @div class:'off_pb_div', =>
+      #     @button outlet:'add_html', class: 'off_btn_w btn btn-info inline-block-tight', click:'add_html_step',' Add a Html step... '
+      #   @div outlet:'html_adapter_item', class:'off_param_div'
 
   initialize: (@cha_obj, edit_obj)->
     # console.log "adapter view initial"
@@ -189,12 +201,20 @@ class AdapterPanel extends View
     @adapter_item.append(tmp_item)
     @item_list.push(tmp_item)
 
+  # 创建页面主题为 EMP 页面的步骤
   add_adpter_item_btn: ->
     # console.log 'add_step'
     tmp_item = new ItemView(@cha_obj)
     @adapter_item.append(tmp_item)
     @item_list.push(tmp_item)
     tmp_item.focus()
+  #
+  # # 创建 页面主题为 html 的步骤
+  # add_html_step: ->
+  #   tmp_item = new HtmlItemPanel(@cha_obj)
+  #   @html_adapter_item.append(tmp_item)
+  #   @html_item_list.push(tmp_item)
+  #   tmp_item.focus()
 
   submit_detail: ->
     @cha_obj.use_code = @ocode_flag

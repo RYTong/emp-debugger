@@ -24,7 +24,11 @@
     "emp-debugger:create-temp",
     "emp-debugger:show-guide",
     "emp-debugger:open_link",
-    "emp-debugger:refresh_link"
+    "emp-debugger:refresh_link",
+    "emp-debugger:create_erl",
+    "emp-debugger:create_html",
+    "emp-debugger:create_xhtml",
+    "emp-debugger:create_cha"
   ],
   "repository": "https://github.com/RYTong/emp-debugger",
   "license": "MIT",

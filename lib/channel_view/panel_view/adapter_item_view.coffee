@@ -15,6 +15,12 @@ class AdapterItemPanel extends View
   @content: ->
     @div class:'off_param_item_div', =>
       @ul outlet:'item_detail', class:'off_ul', =>
+
+        @li class:'off_li', =>
+          @span "View Type"
+          @select outlet: "view_type", class: "form-control", =>
+            @option value: emp.EMP_ADD_CHA_VIEW_TYPE_EMP, selected:"selected", "EMP"
+            @option value: emp.EMP_ADD_CHA_VIEW_TYPE_HTML, "HTML"
         @li class:'off_li', =>
           @span "Trancode:"
           @subview "trancode", new TextEditorView(mini: true, attributes: {id: 'trancode', type: 'string'},  placeholderText: 'Trancode')
@@ -27,12 +33,13 @@ class AdapterItemPanel extends View
         @li class:'off_li', =>
           @span "View:"
           @subview "view_name", new TextEditorView(mini: true, attributes: {id: 'view_name', type: 'string'},  placeholderText: 'View Name')
-        @button class: 'off_ul_btn btn btn-info inline-block-tight', click:'add_arg',' Add Arg'
+        @button outlet:'add_arg_btn', class: 'off_ul_btn btn btn-info inline-block-tight', click:'add_arg',' Add Arg'
         @button class: 'off_ul_btn btn btn-info inline-block-tight', click:'destroy',' Delete '
 
 
   initialize: (@cha_obj, key, val)->
     # console.log "new adapter item"
+    # @view_type = emp.EMP_ADD_CHA_VIEW_TYPE_EMP
     @arg_list = []
     @trancode_detail = null
     @view_detail = null
@@ -48,6 +55,17 @@ class AdapterItemPanel extends View
       @adapter.setText(val.adapter)
       @procedure.setText(val.procedure)
       @view_name.setText(val.view)
+
+    # @view_type.change =>
+    #   tmp_view_type = @view_type.val()
+    #   if tmp_view_type is emp.EMP_ADD_CHA_VIEW_TYPE_HTML
+    #     @add_arg_btn.hide()
+    #     for tmp_view in @arg_list
+    #       tmp_view.hide()
+    #   else
+    #     @add_arg_btn.show()
+    #     for tmp_view in @arg_list
+    #       tmp_view.show()
 
     @trancode.getModel().onDidStopChanging =>
       if initial_flag
@@ -77,7 +95,8 @@ class AdapterItemPanel extends View
     tmp_ada = @adapter.getText().trim()
     tmp_pro = @procedure.getText().trim()
     tmp_view = @view_name.getText().trim()
-    ada_obj = new adapter_obj(tmp_tran, tmp_ada, tmp_pro, tmp_view, @cha_obj.id)
+    tmp_type = @view_type.val()
+    ada_obj = new adapter_obj(tmp_tran, tmp_ada, tmp_pro, tmp_view, @cha_obj.id, tmp_type)
     @get_params(ada_obj)
     ada_obj
 

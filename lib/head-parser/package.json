@@ -1,0 +1,29 @@
+{
+  "name": "head-parser",
+  "version": "1.0.0",
+  "description": "A library for parsing and formatting EMP xhtml head.",
+  "main": "index.js",
+  "scripts": {
+    "make": "node_modules/pegjs/bin/pegjs grammar/head.pegjs lib/parser.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RYTong/head-parser"
+  },
+  "keywords": [
+    "EMP",
+    "head",
+    "parsing",
+    "formatting"
+  ],
+  "author": "lu.jingbo",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RYTong/head-parser/issues"
+  },
+  "homepage": "https://github.com/RYTong/head-parser",
+  "devDependencies": {
+    "pegjs": "^0.8.0"
+  }
+}

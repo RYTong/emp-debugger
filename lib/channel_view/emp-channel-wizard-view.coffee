@@ -32,7 +32,7 @@ class EmpChannelWizardView extends ScrollView
           @div class: 'panel-menu-separator', outlet: 'menuSeparator'
         # @div class: 'panel-menu-separator', outlet: 'menuSeparator'
         @div class: 'button-area', =>
-          @button class: 'btn btn-default icon icon-link-external', outlet: 'openDotAtom', 'Open ~/.channel'
+          @button class: 'btn btn-default icon icon-link-external', outlet: 'openDotAtom', click: 'open_cha_file', 'Open ~/.channel'
       @div class: 'panels padded', outlet: 'panels'
 
   initialize: ({@uri}={}) ->
@@ -248,3 +248,14 @@ class EmpChannelWizardView extends ScrollView
     # console.log "info view"
     @gen_info_view.refresh_edit_col(tmp_col_obj, @all_objs)
     @show_panel(@gen_info_view.name)
+
+  open_cha_file: ->
+    pro_path = atom.project.getPaths()[0]
+    if pro_path
+      conf_path = path.join pro_path, emp.ATOM_CONF_CHANNEL_DIR_DEFAULT
+      if fs.existsSync conf_path
+        atom.open(conf_path)
+      else
+        emp.show_warnning "No Config file in this project!"
+    else
+      emp.show_warnning "Thers is not a project!"

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+${atom_related_info}
+<content>
+  <head>
+    <style>
+        .divWeb {width:320px;height:480px;}
+    </style>
+  <script type="text/x-lua" src="RYTL.lua"></script>
+  <script type="text/x-lua">
+    ryt = RYTL:new{};
+    local function initial()
+    	local p = screen:width()/320;
+        local height = screen:height()/p;
+        height = height -20;
+        document:getElementsByName("divWeb")[1]:setStyleByName("height",height.."px");
+    end;
+    initial();
+  </script>
+</head>
+
+<body>
+  <div type="webview" name="divWeb"
+    url="http://182.207.129.191:9080/mobs/main.html?app=yes#financial/financialController/financial" class="divWeb">
+  </div>
+</body>
+</content>

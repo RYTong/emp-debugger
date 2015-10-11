@@ -413,7 +413,7 @@ class emp_socket
 
 deal_with_msg_detail =(data_flag=false, data, client_id, new_client) ->
   new_client.set_protocal_type(data_flag)
-  console.log data
+  # console.log data
   if !data_flag
     dealWithMessageFromTarget(data, client_id)
   else
@@ -451,9 +451,9 @@ deal_with_msg_from_new_pro = (data, client_id) ->
       deal_with_detail_msg_from_new_pro(tmp_con, client_id)
 
 deal_with_detail_msg_from_new_pro = (detai_msg, client_id) ->
-  console.log detai_msg
+  # console.log detai_msg
   new_data = detai_msg.split new_start_str
-  console.log new_data
+  # console.log new_data
   result_con = ""
   for tmp_con in new_data
     if tmp_con?.trim().length > 2
@@ -465,4 +465,5 @@ deal_with_detail_msg_from_new_pro = (detai_msg, client_id) ->
         else
           emp_client_map.store_new_view(client_id, result_obj)
       catch err
+        console.log tmp_con
         console.error err

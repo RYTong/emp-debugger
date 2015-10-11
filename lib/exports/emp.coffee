@@ -17,6 +17,11 @@ module.exports =
   EMP_TEMP_WIZARD_PORT :'emp-debugger.Default-Template-App-Port'
   EMP_TEMP_WIZARD_APORT :'emp-debugger.Default-Template-App-APort'
   EMP_LINK_UNIGNORE_CONF :'emp-debugger.EMP-Link-Unignore'
+  EMP_LOG_LINE_LIMIT :'emp-debugger.defLimitOfLogLine'
+  EMP_LOG_LINE_LIMIT_SELECTED :'emp-debugger.defLimitOfLogLineSelected'
+  EMP_DEF_LINE_LIMIT_SELECTED : 1000
+
+  EMP_DEF_LOG_LINE_LIMIT:[500, 1000, 2000, 5000, 10000]
 
   EMP_NODE_NAME :'emp-debugger.Default-EMP-NODE-NAME'
   EMP_NODE_COOKIE :'emp-debugger.Default-EMP-NODE-COOKIE'
@@ -173,7 +178,7 @@ module.exports =
   OFF_COMMON_HTML: "webview"
   OFF_WEBVIEW_DEF_APP: "app"
   OFF_STORE_HTML_PATH: "module"
-  OFF_HTML_LIST:["js", "css", "images", "html", "module"]
+  OFF_HTML_LIST:["js", "css", "images", "html", "module", "fonts", "jsMobile"]
   OFF_HTML_CHI_DIR_LIST : ["html", "css", "js", "json"]
 
   OFF_EXTENSION_ERL: "erl"
@@ -213,6 +218,7 @@ module.exports =
   DEFAULT_LUATEMP_HEADER:'--<atom_emp_related_file_info>${atom_related_info}</atom_emp_related_file_info>--\n'
   DEFAULT_CSSTEMP_HEADER:'/*<atom_emp_related_file_info>${atom_related_info}</atom_emp_related_file_info>*/\n'
   DEFAULT_HEADER:'<atom_emp_related_file_info>${atom_related_info}</atom_emp_related_file_info>\n'
+  DEFAULT_HEADER_CON:'<atom_emp_related_file_info>${atom_related_info}</atom_emp_related_file_info>'
 
   # 提示信息
   EMP_PACKAGE_UNION_PKG_SUCCESS:"普通资源整合包，打包成功~"

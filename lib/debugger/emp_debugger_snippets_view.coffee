@@ -20,27 +20,43 @@ class EmpSnippetsView extends View
 
         @div class: "emp-set-div-content", =>
           @button class: 'btn btn-else btn-info inline-block-tight', click: 'add_link', "Add Relate Link For File"
-          # @button class: 'btn btn-else btn-info inline-block-tight', click: 'add_link_for_all', "Add Relate Link For All Files"
+          @button class: 'btn btn-else btn-info inline-block-tight', click: 'add_link_for_all', "Add Relate Link For All Files"
   initialize: ->
     this
 
   add_link_for_all: ->
     console.log " add snippet for all"
-    project_path = emp.get_project_path()
-    fs_plus.traverseTree project_path, @on_file, @on_dir, @on_done
+    @project_path = emp.get_project_path()
+    console.log @project_path
+    fs_plus.traverseTree @project_path, @on_file, @on_dir, @on_done
 
-  on_file: (param)->
-    console.log "file"
-    console.log param
+  on_file: (file_path)=>
+    # console.log "file"
+    # console.log file_path
+    file_ext  = path.extname(file_path?='')?.toLowerCase()
+    relative_path = path.relative @project_path, file_path
+    # 判断文件类型,目前基本只支持 xhtml 和 lua
+
+    if file_ext is emp.DEFAULT_EXT_XHTML
+      replace_con = emp.DEFAULT_TEMP_HEADER
+      do_check_file(file_path, relative_path, replace_con)
+    else if file_ext is emp.DEFAULT_EXT_LUA
+      replace_con = emp.DEFAULT_LUATEMP_HEADER
+      do_check_file(file_path, relative_path, replace_con)
+    else if file_ext is emp.DEFAULT_EXT_CSS
+      replace_con = emp.DEFAULT_CSSTEMP_HEADER
+      do_check_file(file_path, relative_path, replace_con)
 
   on_dir: (param)->
-    console.log "dir"
-    console.log param
+    # console.log "dir"
+    # console.log param
     true
 
   on_done: (param)->
-    console.log "done"
-    console.log param
+    # console.log "done"
+    # console.log param
+    emp.show_info "全工程添加文件关联完成."
+    true
 
 
   add_link: ->
@@ -55,21 +71,29 @@ class EmpSnippetsView extends View
       # console.log project_path
 
       replace_con = ''
-      # 判断文件类型,目前基本只支持 xhtml 和 lua
-      if text_ext is emp.DEFAULT_EXT_XHTML
-        replace_con = emp.DEFAULT_TEMP_HEADER
-        do_add(replace_con, relative_path, editor)
-      else if text_ext is emp.DEFAULT_EXT_LUA
-        replace_con = emp.DEFAULT_LUATEMP_HEADER
-        do_add(replace_con, relative_path, editor)
-      else if text_ext is emp.DEFAULT_EXT_CSS
-        replace_con = emp.DEFAULT_CSSTEMP_HEADER
-        do_add(replace_con, relative_path, editor)
+
+      editor_text = editor.getText()
+      if editor_text.match /\<atom_emp_related_file_info\>[^\<]*\<\/atom_emp_related_file_info\>/ig
+        replace_con = emp.DEFAULT_HEADER_CON
+        replace_con = replace_con.replace(/\$\{atom_related_info\}/ig, relative_path)
+        editor_text = editor_text.replace /\<atom_emp_related_file_info\>[^\<]*\<\/atom_emp_related_file_info\>/ig, replace_con
+        editor.setText editor_text
+
       else
-        replace_con = emp.DEFAULT_HEADER
-        @show_alert(replace_con, relative_path, editor)
+        # 判断文件类型,目前基本只支持 xhtml 和 lua
+        if text_ext is emp.DEFAULT_EXT_XHTML
+          replace_con = emp.DEFAULT_TEMP_HEADER
 
-
+          do_add(replace_con, relative_path, editor)
+        else if text_ext is emp.DEFAULT_EXT_LUA
+          replace_con = emp.DEFAULT_LUATEMP_HEADER
+          do_add(replace_con, relative_path, editor)
+        else if text_ext is emp.DEFAULT_EXT_CSS
+          replace_con = emp.DEFAULT_CSSTEMP_HEADER
+          do_add(replace_con, relative_path, editor)
+        else
+          replace_con = emp.DEFAULT_HEADER
+          @show_alert(replace_con, relative_path, editor)
 
 
   # 如果为非 lua 或者 xhtml ,提示是否强制添加
@@ -92,3 +116,15 @@ do_add = (replace_con, relative_path, editor)->
     file_header = replace_con.replace(/\$\{atom_related_info\}/ig, relative_path)
     console.log "insert: #{file_header}"
     editor.insertText file_header, autoIndentNewline:true,select:true
+
+do_check_file = (file_path, relative_path, replace_con) ->
+  # console.log "check file"
+  temp_con = fs.readFileSync(file_path, 'utf-8')
+  if temp_con.match /\<atom_emp_related_file_info\>[^\<]*\<\/atom_emp_related_file_info\>/ig
+    replace_con = emp.DEFAULT_HEADER_CON
+    replace_con = replace_con.replace(/\$\{atom_related_info\}/ig, relative_path)
+    temp_con = temp_con.replace /\<atom_emp_related_file_info\>[^\<]*\<\/atom_emp_related_file_info\>/ig, replace_con
+  else
+    file_header = replace_con.replace(/\$\{atom_related_info\}/ig, relative_path)
+    temp_con = file_header+temp_con
+  fs.writeFileSync file_path, temp_con, 'utf-8'

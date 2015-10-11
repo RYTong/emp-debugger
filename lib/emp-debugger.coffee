@@ -14,6 +14,16 @@ n_state = null
 path = require 'path'
 
 module.exports =
+
+  config:
+    defLimitOfLogLine:
+      type: 'array'
+      default: [500, 1000, 2000, 5000, 10000]
+
+    defLimitOfLogLineSelected:
+      type: 'integer'
+      default: 1000
+
   empDebuggerInitView: null
   empDebuggerStateView: null
   empDebuggerErrView: null

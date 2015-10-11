@@ -7,6 +7,21 @@
     }
   ]
 
+  '.tree-view.full-menu': [
+    {'type': 'separator'}
+    {
+      'label': 'Emp '
+      'submenu': [
+        {'label': 'Add a Emp Erl', 'command': 'emp-debugger:create_erl'}
+        {'label': 'Add a Emp Page', 'command': 'emp-debugger:create_xhtml'}
+        {'label': 'Add a Emp Html ', 'command': 'emp-debugger:create_html'}
+        {'label': 'Add a Emp Html Page', 'command': 'emp-debugger:create_html'}
+        {'label': 'Add a Emp Channel', 'command': 'emp-debugger:create_channel'}
+       ]
+    }
+    {'type': 'separator'}
+  ]
+
 'menu': [
   {
     'label': 'Packages'

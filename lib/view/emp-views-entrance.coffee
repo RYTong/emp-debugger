@@ -1,4 +1,4 @@
-
+{Disposable, CompositeDisposable} = require 'atom'
 EmpChannelWizardView = require '../channel_view/emp-channel-wizard-view'
 EmpCreateAppWizardView = require '../app_wizard/emp-app-wizard-view'
 EmpCreateTempWizardView = require '../temp_wizard/emp-temp-wizard-view'
@@ -83,10 +83,23 @@ cha_deserializer =
 
 atom.deserializers.add(cha_deserializer)
 
+create_xhtml = ->
+  console.log "create_xhtml "
+
+create_html = ->
+  console.log "create_html "
+
+create_erl = ->
+  console.log "create_erl "
+
+create_cha = ->
+  console.log "create_cha "
+
 module.exports =
   activate: (state)->
+    @disposables = new CompositeDisposable
     # console.log "emp active~:#{state}"
-    atom.workspace.addOpener (uri) ->
+    @disposables.add atom.workspace.addOpener (uri) ->
       # console.log "emp registerOpener: #{uri}"
       # console.log atom.workspace.activePane
       # console.log atom.workspace.activePane.itemForUri(configUri)
@@ -98,16 +111,25 @@ module.exports =
         create_temp_wizard_view({uri})
 
 
-    atom.commands.add "atom-workspace",
-      "emp-debugger:show-channel", -> open_cha_wizard_panel()
-    atom.commands.add "atom-workspace",
-      "emp-debugger:create-app", -> open_app_wizard_panel()
-    atom.commands.add "atom-workspace",
-      "emp-debugger:create-temp", -> open_temp_wizard_panel()
-
-    atom.commands.add "atom-workspace",
-      "emp-debugger:create-front-page", -> open_front_page_wizard_panel()
+    @disposables.add atom.commands.add("atom-workspace", {
+      "emp-debugger:show-channel": => open_cha_wizard_panel()
+      "emp-debugger:create-app": => open_app_wizard_panel()
+      "emp-debugger:create-temp": => open_temp_wizard_panel()
+      "emp-debugger:create-front-page": => open_front_page_wizard_panel()
+      "emp-debugger:create_erl": => create_erl()
+      "emp-debugger:create_xhtml": => create_xhtml()
+      "emp-debugger:create_html": => create_html()
+      "emp-debugger:create_channel": => create_cha()
+    })
       # "emp-debugger:temp-management", -> open_temp_wizard_panel()
+
+# {'label': 'Add a Emp Erl', 'command': 'emp-debugger:create_erl'}
+# {'label': 'Add a Emp Page', 'command': 'emp-debugger:create_xhtml'}
+# {'label': 'Add a Emp Html Page', 'command': 'emp-debugger:create_html'}
+# {'label': 'Add a Emp Channel', 'command': 'emp-debugger:create_channel'}
+
+
+
 
 module.exports.open_cha_wizard = open_cha_wizard_panel
 module.exports.open_app_wizard = open_app_wizard_panel

@@ -362,7 +362,18 @@ class emp_channel
             emp.show_error("创建辅助Cs代码失败~:#{tmp_cs_file}")
 
   # @doc 创建离线资源文件
-  create_off: (project_path)->
+  create_off: (project_path) ->
+    html_flag = false
+    for key,obj of @adapters
+      if obj.view_type is emp.EMP_ADD_CHA_VIEW_TYPE_HTML
+        html_flag = true
+    console.log html_flag
+    if html_flag
+      @do_create_html_off(project_path)
+    else
+      @do_create_normal_off(project_path)
+
+  do_create_normal_off: (project_path)->
     cha_dir_arr = @initial_dir(project_path)
     cha_dir = cha_dir_arr[0]
     relate_dir = cha_dir_arr[1]
@@ -376,11 +387,8 @@ class emp_channel
     json_template = fs.readFileSync tmp_json_dir, 'utf8'
     json_template = json_template.replace(/\$channel/ig, @id)
     xhtml_template = xhtml_template.replace(/\$\{app\}/ig, @app).replace(/\$\{channel\}/ig, @id)
-
     css_template = fs.readFileSync tmp_css_dir, 'utf8'
-
     lua_template = fs.readFileSync tmp_lua_dir, 'utf8'
-
 
     tmp_arr = []
     for key,obj of @adapters
@@ -402,8 +410,6 @@ class emp_channel
         tmp_xhtml_template = xhtml_template.replace(/\$\{trancode\}/ig, tmp_tran)
         tmp_relate_file = path.join relate_dir, ext_xhtml, tmp_xhtml_name
         tmp_xhtml_template = tmp_xhtml_template.replace(/\$\{atom_related_info\}/ig, emp.DEFAULT_TEMP_HEADER.replace(/\$\{atom_related_info\}/ig,tmp_relate_file))
-
-
 
         fs.writeFile tmp_xhtml_file, tmp_xhtml_template, 'utf8', (err) =>
           if err
@@ -447,6 +453,90 @@ class emp_channel
             console.error(err)
             emp.show_error("创建离线资源代码失败~:#{tmp_css_file}")
 
+
+  do_create_html_off:(project_path) ->
+    cha_dir_arr = @initial_dir(project_path)
+    cha_dir = cha_dir_arr[0]
+    relate_dir = cha_dir_arr[1]
+
+    dir_arr = @initial_html_dir(project_path)
+    html_dir = dir_arr[0]
+    html_rel_dir = dir_arr[1]
+
+    pro_dir = path.join __dirname, '../../../', emp.STATIC_CHANNEL_TEMPLATE, @entry_dir
+    tmp_xhtml_dir = path.join pro_dir,emp.STATIC_WEBVIEW_TEMPLATE
+    tmp_json_dir = path.join pro_dir,emp.STATIC_CS_TEMPLATE
+    tmp_html_dir = path.join __dirname, '../../../', emp.STATIC_MOB_HTML_TEMPLATE
+    # tmp_html_fdir = path.join tmp_html_dir,
+    # tmp_css_dir = path.join pro_dir,emp.STATIC_CSS_TEMPLATE
+    # tmp_lua_dir = path.join pro_dir,emp.STATIC_LUA_TEMPLATE
+
+    xhtml_template = fs.readFileSync tmp_xhtml_dir, 'utf8'
+    html_template = fs.readFileSync tmp_html_dir, 'utf8'
+    json_template = fs.readFileSync tmp_json_dir, 'utf8'
+    json_template = json_template.replace(/\$channel/ig, @id)
+    xhtml_template = xhtml_template.replace(/\$\{app\}/ig, @app).replace(/\$\{channel\}/ig, @id)
+    # css_template = fs.readFileSync tmp_css_dir, 'utf8'
+    # lua_template = fs.readFileSync tmp_lua_dir, 'utf8'
+
+    tmp_arr = []
+    for key,obj of @adapters
+      tmp_arr.push(obj)
+    tmp_arr.reverse()
+    if tmp_arr.length >1
+      tmp_arr.pop()
+
+    for key,obj of @adapters
+      # emp page
+      if obj.view_type is emp.EMP_ADD_CHA_VIEW_TYPE_EMP
+        tmp_tran = key
+        # tmp_view = obj.trancode
+        ext_xhtml = emp.OFF_EXTENSION_XHTML
+        tmp_xhtml_name = tmp_tran+'.'+ext_xhtml
+        tmp_xhtml_file = path.join cha_dir, ext_xhtml, tmp_xhtml_name
+        #doc:文件的相对地址
+
+        if !fs.existsSync tmp_xhtml_file
+          tmp_xhtml_template = xhtml_template.replace(/\$\{trancode\}/ig, tmp_tran)
+          tmp_relate_file = path.join relate_dir, ext_xhtml, tmp_xhtml_name
+          tmp_xhtml_template = tmp_xhtml_template.replace(/\$\{atom_related_info\}/ig, emp.DEFAULT_TEMP_HEADER.replace(/\$\{atom_related_info\}/ig,tmp_relate_file))
+
+          fs.writeFile tmp_xhtml_file, tmp_xhtml_template, 'utf8', (err) =>
+            if err
+              console.error(err)
+              emp.show_error("创建离线资源代码失败~:#{tmp_xhtml_file}")
+
+        ext_json = emp.OFF_EXTENSION_JSON
+        tmp_json_file = path.join cha_dir, ext_json, (tmp_tran+'.'+ext_json)
+        if !fs.existsSync tmp_json_file
+          tmp_json_con = json_template.replace(/\$trancode/ig, tmp_tran)
+          fs.writeFile tmp_json_file, tmp_json_con, 'utf8', (err) =>
+            if err
+              console.error(err)
+              emp.show_error("创建离线资源代码失败~:#{tmp_json_file}")
+
+      else
+        # emp html
+        # dit_arr = @initial_html_dir(project_path)
+        # html_mod_dir = dit_arr[0]
+        # html_rel_dir = dit_arr[1]
+
+        tmp_tran = key
+        # tmp_view = obj.trancode
+        ext_html = emp.OFF_EXTENSION_HTML
+        tmp_html_name = tmp_tran+'.'+ext_html
+        tmp_html_file = path.join html_dir, tmp_html_name
+
+        if !fs.existsSync tmp_html_file
+          tmp_html_template = html_template.replace(/\$\{trancode\}/ig, tmp_tran)
+          tmp_relate_file = path.join html_rel_dir, tmp_xhtml_name
+          tmp_html_template = tmp_html_template.replace(/\$\{atom_related_info\}/ig, emp.DEFAULT_TEMP_HEADER.replace(/\$\{atom_related_info\}/ig,tmp_relate_file))
+
+          fs.writeFile tmp_html_file, tmp_html_template, 'utf8', (err) =>
+            if err
+              console.error(err)
+              emp.show_error("创建离线资源代码失败~:#{tmp_xhtml_file}")
+
   # @doc 初始化离线资源文件的路径
   initial_dir:(project_path) ->
     pub_dir = path.join project_path,emp.CHA_PUBLIC_DIR
@@ -484,11 +574,66 @@ class emp_channel
       if !fs.existsSync(res_dir)
         fs.mkdirSync(res_dir)
         @initial_channels_dir(res_dir)
+
       cha_dir = path.join res_dir,emp.OFF_DEFAULT_BASE,@id
       relate_dir = path.join relate_dir,adapter_res, emp.OFF_DEFAULT_BASE,@id
       @initial_cha_temp_dir(cha_dir)
     # console.log cha_dir
     [cha_dir, relate_dir]
+
+
+  initial_html_dir: (project_path)->
+    pub_dir = path.join project_path,emp.CHA_PUBLIC_DIR
+    www_dir = path.join pub_dir, "/www"
+    resrc_dir = path.join www_dir, "/resource_dev"
+    relate_dir = path.join emp.CHA_PUBLIC_DIR, "/www", "/resource_dev"
+
+    adapter_plat = emp.ADAPTER_PLT_D
+    adapter_res = ''
+    dest_dir = path.join resrc_dir,adapter_plat
+    relate_dir = path.join relate_dir, adapter_plat
+    mob_dir = path.join dest_dir, emp.OFF_COMMON_HTML
+    relate_dir = path.join relate_dir, emp.OFF_COMMON_HTML
+
+    temp_mob_dir = path.join __dirname, '../../../', emp.STATIC_MOB_HTML_PATH
+
+    if !fs.existsSync(mob_dir)
+      fs.mkdirSync(mob_dir)
+      for tmp_dir in emp.OFF_HTML_LIST
+        base_dir = path.join mob_dir, tmp_dir
+        temp_dir = path.join temp_mob_dir, tmp_dir
+        if !fs.existsSync(base_dir)
+          fs.mkdirSync(base_dir)
+        if fs.existsSync(temp_dir)
+          @copy_template(base_dir, temp_dir)
+    # console.log "dest dir :#{dest_dir}"
+
+    # cha_dir =
+    cha_dir = path.join mob_dir, emp.OFF_STORE_HTML_PATH, @id
+    relate_dir = path.join relate_dir, emp.OFF_STORE_HTML_PATH, @id
+    if !fs.existsSync(cha_dir)
+      fs.mkdirSync(cha_dir)
+    # console.log cha_dir
+    [cha_dir, relate_dir]
+
+  copy_template: (to_path, basic_dir)->
+    # console.log "copy  template`````--------"
+    # console.log to_path
+    # console.log basic_dir
+    files = fs.readdirSync(basic_dir)
+    for template in files
+      f_path = path.join basic_dir, template
+      t_path = path.join to_path, template
+      if fs.lstatSync(f_path).isDirectory()
+        emp.mkdir_sync(t_path)
+        @copy_template(t_path, f_path)
+      else
+        @copy_content(t_path, f_path)
+
+  copy_content: (t_path, f_path)->
+    f_name = path.basename f_path
+    f_con = fs.readFileSync f_path, 'utf8'
+    fs.writeFileSync(t_path, f_con, 'utf8')
 
   # @doc 构建 离线资源的根目录（平台） root=/resource_dev/plateform
   initial_root_dir: (resrc_dir) ->
@@ -528,6 +673,12 @@ class emp_channel
       if !fs.existsSync(tmp_dir)
         fs.mkdirSync(tmp_dir)
 
+  # @doc 构建指定 html 的资源存放路径
+  initial_html_temp_dir:(cha_dir) ->
+    for dir in emp.OFF_CHA_DIR_LIST
+      tmp_dir = path.join cha_dir,dir
+      if !fs.existsSync(tmp_dir)
+        fs.mkdirSync(tmp_dir)
 
   # @doc 创建前端资源文件
   # emp.EMP_DEFAULT_FRONT_MSG

@@ -1,6 +1,13 @@
 ![EMP](https://raw.githubusercontent.com/wiki/RYTong/emp-debugger/images/emp.png)
 
 # Emp Debugger Package Change Log
+
+## Version 0.9.3
+1. 补全跳转功能, 添加基于样式和 lua 跳转到文件的功能.
+2. 日志颜色选择流程优化
+3. 日志输出优化, 限定输出行数, 删除无用的缓存
+4. 添加全局文件关联
+
 ## Version 0.8.19
 1. 修改文件跳转功能热键为 Darwin: 'ctrl-o','ctrl-{','ctrl-}', Win32:'ctrl-{','ctrl-}'
 2. 修改跳转打开空白文件的 bug

@@ -61,7 +61,10 @@ class EmpDebuggerLogView extends View
       # @div class: 'log-console-resize-handle', mousedown: 'resizeStarted', dblclick: 'resizeToMin'
       @div class: 'emp_bar panel-heading padded', mousedown: 'resizeStarted', dblclick: 'resizeToMin',=>
         @span 'Log From The Script Of Views: '
+
+
         @div class:'bar_div', =>
+          @select outlet: "line_control", class: "select_bar"
           @button class: 'btn btn_right2', click: 'clear_log', 'Clear'
           @button class: 'btn-warning btn  inline-block-tight btn_right', click: 'hide_log_view', 'Hide'
       # @ul class: 'log-console list-group', outlet:'listView'
@@ -80,13 +83,35 @@ class EmpDebuggerLogView extends View
             @subview 'lua_console', new TextEditorView(mini: true, attributes: {id: 'lua_console', type: 'string'},  placeholderText: 'Lua Console')
 
 
-
   initialize: ()->
     @line_number = 1
     @history = new Array()
     @history_index = 0
     @current_input = ""
     @disposable = new CompositeDisposable
+    @log_line_limit = atom.config.get(emp.EMP_LOG_LINE_LIMIT)
+    @def_line_limit_sel = atom.config.get(emp.EMP_LOG_LINE_LIMIT_SELECTED)
+    if !@def_line_limit_sel
+      @def_line_limit_sel = emp.EMP_DEF_LINE_LIMIT_SELECTED
+      atom.config.set(emp.EMP_LOG_LINE_LIMIT_SELECTED, emp.EMP_DEF_LINE_LIMIT_SELECTED)
+
+    if !@log_line_limit
+      @log_line_limit = emp.EMP_DEF_LOG_LINE_LIMIT
+
+    # 设置默认行数
+    for log_line in @log_line_limit
+      if log_line is @def_line_limit_sel
+        @line_control.append @new_select_option log_line, log_line
+      else
+        @line_control.append @new_option log_line, log_line
+
+
+    # 记住用户的行数选择
+    @disposable.add @line_control.change =>
+      def_line_selected = @line_control.val()
+      atom.config.set(emp.EMP_LOG_LINE_LIMIT_SELECTED, def_line_selected)
+
+
     @disposable.add atom.commands.add "atom-workspace","emp-debugger:view-log", => @toggle()
     @disposable.add atom.commands.add @lua_console.element, 'core:confirm', =>
       @do_send_lua()
@@ -197,11 +222,6 @@ class EmpDebuggerLogView extends View
           for log in tmp_log.split("\n")
             if log isnt "" and log isnt " "
               @pre class: "emp-log-con",style:"color:#{tmp_color};padding:0px;", "#{log}"
-
-    # console.log @log_detail.context.scrollHeight
-    # console.log
-    # console.log @log_detail.indexOf
-    # @log_detail.scrollToBottom()
     @emp_log_view.scrollToBottom()
     # $('#emp_log_view').stop().animate({scrollTop:@log_detail.context.scrollHeight}, 1000)
 
@@ -214,7 +234,13 @@ class EmpDebuggerLogView extends View
 
   do_show_live_log: (client_id, log, show_color)->
     # console.log "do_show_live_log"
+    limit_line = @line_control.val()
     start_color_ln = @get_line_number_count()
+
+    # 超过设定行数 清除日志
+    if start_color_ln > limit_line
+      @clear_log()
+
     @update_log(client_id, log, show_color)
     @update_gutter(show_color, start_color_ln, client_id)
 
@@ -266,7 +292,7 @@ class EmpDebuggerLogView extends View
       @refresh_conf_view(client_id, tmp_color)
       # @show_live_log(client_id, log, tmp_color)
     if !@stop_state and !@first_show and @show_state
-      @log_map[client_id].put_log(log)
+      # @log_map[client_id].put_log(log)
       # console.log "print"
       @show_live_log(client_id, log, @log_map[client_id].get_color())
     # else
@@ -275,7 +301,7 @@ class EmpDebuggerLogView extends View
   store_new_log: (client_id, log_obj)->
     # console.log log_obj
     log_msg = emp.base64_decode log_obj.message
-    console.log log_msg
+    # console.log log_msg
     @store_log(client_id, log_msg)
 
 
@@ -283,7 +309,7 @@ class EmpDebuggerLogView extends View
     # unless !emp_conf_view
     # console.log @emp_conf_view
     # @add_clients(client_id)
-    @emp_conf_view.refresh_log_view(client_id, color) unless !@emp_conf_view
+    @emp_conf_view.refresh_log_view(@log_map, client_id, color) unless !@emp_conf_view
 
   remove_client_log: (client_id)->
     @refresh_clients()
@@ -412,8 +438,6 @@ class EmpDebuggerLogView extends View
 
     @clear_store_log()
 
-
-
   # -------------------------------------------------------------------------
   # pause the log poutput
   stop_log: ->
@@ -520,7 +544,7 @@ class EmpDebuggerLogView extends View
     client_ids.push default_client_id
     for tmp_id in client_ids
       if tmp_id is @selected_client
-        tmp_view = @new_selec_option tmp_id, tmp_id
+        tmp_view = @new_select_option tmp_id, tmp_id
         @client_select.append tmp_view
         selectd_flag = true
       else
@@ -538,7 +562,7 @@ class EmpDebuggerLogView extends View
     $$ ->
       @option value: value, name
 
-  new_selec_option: (name, value=name) ->
+  new_select_option: (name, value=name) ->
     $$ ->
       @option selected:'select', value: value, name
 

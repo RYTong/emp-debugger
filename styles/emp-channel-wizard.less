@@ -11,7 +11,7 @@
 .emp-channel-wizard {
   display: -webkit-flex;
   font-family:@font-family;
-  
+
   .btn-default,
   .btn-group > .btn-default {
     background: #fff;
@@ -731,14 +731,14 @@
                 right:0;
                 min-width: 0;
                 border-bottom: 1px solid #858585;
-                padding:@component-padding/2;
+                padding:@component-padding/2 0 @component-padding/4 0;
 
                 .off_ul {
                   left:0px;
                   right:0px;
                   margin:0;
                   display: -webkit-flex;
-                  padding-left:@component-padding;
+                  padding-left: 0; //@component-padding;
 
                   .off_li {
                     -webkit-flex-direction: column;
@@ -747,6 +747,9 @@
                     margin-left:@component-padding/4;
                     margin-right:@component-padding/4;
 
+                    .form-control {
+                      height: @tab-height; //@component-line-height
+                    }
                     atom-text-editor[mini],
                     atom-text-editor[mini].is-focused::shadow {
                       // color: @text-color;

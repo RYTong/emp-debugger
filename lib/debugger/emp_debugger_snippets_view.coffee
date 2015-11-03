@@ -5,6 +5,8 @@ path = require 'path'
 # c_process = require 'child_process'
 emp = require '../exports/emp'
 
+VerifyProjectView = require './emp_verify_project_view'
+
 module.exports =
 class EmpSnippetsView extends View
 
@@ -21,18 +23,21 @@ class EmpSnippetsView extends View
         @div class: "emp-set-div-content", =>
           @button class: 'btn btn-else btn-info inline-block-tight', click: 'add_link', "Add Relate Link For File"
           @button class: 'btn btn-else btn-info inline-block-tight', click: 'add_link_for_all', "Add Relate Link For All Files"
+
   initialize: ->
+    @verify_view = new VerifyProjectView()
     this
 
   add_link_for_all: ->
     console.log " add snippet for all"
-    @project_path = emp.get_project_path()
-    console.log @project_path
-    fs_plus.traverseTree @project_path, @on_file, @on_dir, @on_done
+    project_path = emp.get_project_path()
+    @verify_view.toggle project_path, (@project_path) =>
+      fs_plus.traverseTree @project_path, @on_file, @on_dir, @on_done
 
   on_file: (file_path)=>
     # console.log "file"
     # console.log file_path
+    # console.log @project_path
     file_ext  = path.extname(file_path?='')?.toLowerCase()
     relative_path = path.relative @project_path, file_path
     # 判断文件类型,目前基本只支持 xhtml 和 lua
@@ -46,6 +51,7 @@ class EmpSnippetsView extends View
     else if file_ext is emp.DEFAULT_EXT_CSS
       replace_con = emp.DEFAULT_CSSTEMP_HEADER
       do_check_file(file_path, relative_path, replace_con)
+    true
 
   on_dir: (param)->
     # console.log "dir"
@@ -125,6 +131,6 @@ do_check_file = (file_path, relative_path, replace_con) ->
     replace_con = replace_con.replace(/\$\{atom_related_info\}/ig, relative_path)
     temp_con = temp_con.replace /\<atom_emp_related_file_info\>[^\<]*\<\/atom_emp_related_file_info\>/ig, replace_con
   else
-    file_header = replace_con.replace(/\$\{atom_related_info\}/ig, relative_path)
-    temp_con = file_header+temp_con
+    file_footer = replace_con.replace(/\$\{atom_related_info\}/ig, relative_path)
+    temp_con = temp_con+file_footer
   fs.writeFileSync file_path, temp_con, 'utf-8'

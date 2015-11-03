@@ -2,6 +2,8 @@
 fs = require 'fs'
 path = require 'path'
 os = require 'os'
+remote = require 'remote'
+dialog = remote.require 'dialog'
 
 module.exports =
   parser_beam_file_mod : 'atom_pl_parse_json'
@@ -22,6 +24,8 @@ module.exports =
   EMP_DEF_LINE_LIMIT_SELECTED : 1000
 
   EMP_DEF_LOG_LINE_LIMIT:[500, 1000, 2000, 5000, 10000]
+
+  EMP_DEF_LOG_TYPE:"lua"
 
   EMP_NODE_NAME :'emp-debugger.Default-EMP-NODE-NAME'
   EMP_NODE_COOKIE :'emp-debugger.Default-EMP-NODE-COOKIE'
@@ -399,6 +403,19 @@ mk_dirs_sync = (p, made) ->
           unless stat.isDirectory()
             throw err0
   made
+
+# 选择路径
+module.exports.chose_path_f = (callback)->
+  @chose_path(['openFile'], '', callback)
+
+module.exports.chose_path_d = (callback)->
+  @chose_path(['openFile', 'openDirectory'], '', callback)
+
+module.exports.chose_path = (opts=['openFile', "openDirectory"], def_path, callback)->
+  dialog.showOpenDialog title: 'Select', defaultPath:def_path, properties: opts, (cho_path) =>
+    if cho_path
+      if callback
+        callback(cho_path[0])
 
 valid_ip = (ip_add)->
     # console.log ip_add

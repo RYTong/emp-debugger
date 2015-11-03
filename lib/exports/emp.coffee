@@ -347,9 +347,13 @@ module.exports.isEmpty = (obj) ->
     true;
 
 module.exports.get_emp_os = () ->
-  if !atom.project.emp_os
-    atom.project.emp_os = os.platform().toLowerCase()
-  atom.project.emp_os
+  tmp_os = os.platform().toLowerCase()
+  if atom.project
+    if !atom.project.emp_os
+      atom.project.emp_os = tmp_os
+    atom.project.emp_os
+  else
+    tmp_os
 
 
 module.exports.mkdir_sync = (tmp_dir) ->

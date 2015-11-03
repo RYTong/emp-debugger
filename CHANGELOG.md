@@ -1,6 +1,8 @@
 ![EMP](https://raw.githubusercontent.com/wiki/RYTong/emp-debugger/images/emp.png)
 
 # Emp Debugger Package Change Log
+1. 离线资源包中去除调 Json 文件.
+2. 修改 bug.
 
 ## Version 0.9.4
 1. 修改添加全局文件关联, 现在关联语句添加在文件的尾部

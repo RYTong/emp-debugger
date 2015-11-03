@@ -107,6 +107,7 @@ class EmpPkgAdpView extends View
         re_arr.push tmp_ele.cha_obj.id
     console.log "package channels:#{re_arr}"
     @initial_channel(re_arr)
+    @detach()
 
   # @doc 执行
   initial_channel: (cha_arr) ->
@@ -262,7 +263,11 @@ check_file  = (dir_acc, re_acc, type) ->
           dir_acc.push [tmp_dir, dest_path, show_path]
         check_file(dir_acc.concat(tmp_acc), re_acc)
       else
-        re_acc.push(resource_entry(dest_path, show_path, dir_name))
+        tmp_ext = path.extname(dir_name)?.toLocaleLowerCase()
+
+        # 去掉资源包中的 json 文件
+        if tmp_ext isnt emp.DEFAULT_EXT_JSON
+          re_acc.push(resource_entry(dest_path, show_path, dir_name))
         check_file(dir_acc, re_acc, type)
   else
     re_acc

@@ -1,0 +1,242 @@
+@import "ui-variables";
+@font-family: 'sans regular','思源黑体 CN',sans-serif ;
+
+.verify-pro-view {
+  // max-height:600px;
+  // overflow:auto;
+  padding: 1px;
+  font-family:@font-family;
+
+  .verify_detail_panel{
+    top:0px;
+
+    .bar_div {
+      position:absolute;
+      top:5px;
+      min-width: 50px;
+      right:5px;
+      // padding:5px;
+
+      .btn_right {
+        right:0px;
+        top:0px;
+      }
+    }
+  }
+
+  .verify_detail_info{
+    overflow:auto;
+    max-height:500px;
+    padding: 5px 5px 0 5px;
+  }
+
+  .pack_detail_info{
+    overflow:auto;
+    max-height:500px;
+    padding: 5px 5px 5px 0;
+  }
+  .verify_detail_foot{
+    bottom:0px;
+  }
+
+  .snippet {
+      border: none;
+      font-size: 15px;
+      width: 100%;
+      min-width: 100%;
+      max-width: 100%;
+      margin-bottom: @component-padding/2;
+      // this makes sure the textarea doesn't resize when the .invalid or .valid border is added
+      border: 1px solid rgba(0, 0, 0, 0);
+  }
+
+  .div_snippet {
+    border-bottom: 1px solid #ccc;
+  }
+
+  .div_logo {
+    position: relative;
+    margin-top:5px;
+  }
+
+  .div_box {
+    // vertical-align:middle;
+    position: relative;
+    display: table;
+    border-collapse: separate;
+    max-width:100%;
+  }
+
+  .div_box_r {
+    position: relative;
+    // display: table;
+    border-collapse: separate;
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom:5px;
+    // max-width:100%;
+  }
+
+  .div_box_bor {
+    position: relative;
+    // display: table;
+    border-collapse: separate;
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom:10px;
+    border-bottom: 1px solid #ccc;
+    // max-width:100%;
+  }
+  .div_box_check {
+    padding: @component-padding/2;
+    right:0;
+    left:0;
+    position: relative;
+    // display: -webkit-flex;
+
+    .checkbox_ucolumn {
+      // -webkit-flex-direction: column;
+      display: block;
+      min-height: 20px;
+      // margin-top: 10px;
+      // margin-bottom: 5px;
+      padding-left: 5px;
+      vertical-align: middle;
+      color: @text-color;
+      font-size: 13px;
+
+      .div_padding {
+        padding-left:5px;
+      }
+
+    }
+  }
+  .control-ol {
+    // padding: 5px;
+    margin: 5px;
+    left: 0;
+    right: 9em;
+    min-width: 0;
+    // position: absolute;
+    overflow: auto;
+    -webkit-flex-direction: column;
+    border: 1px solid #ccc;
+    background-color: #e7e7e7;
+    box-shadow: -1px 0px 1px -1px #aeaeae inset;
+
+  }
+  .control-tab {
+    width:100%;
+    max-height:350px;
+    background-color: #e7e7e7;
+    box-shadow: -1px 0px 1px -1px #aeaeae inset;
+    .btn-td {
+      // align:"right";
+      max-width:25%;
+      .btn {
+        height:auto;
+        margin: 1px 1px 1px 0;
+      }
+    }
+  }
+
+  .div_box_check_col {
+    padding: @component-padding/2;
+    right:0;
+    left:0;
+    position: relative;
+    display: -webkit-flex;
+
+    .checkbox_ucolumn {
+      -webkit-flex-direction: column;
+      display: block;
+      min-height: 20px;
+      margin-top: 10px;
+      margin-bottom: 10px;
+      padding-left: 10px;
+      vertical-align: middle;
+      color: @text-color;
+      font-size: 13px;
+
+    }
+  }
+
+  .lab {
+    // display: inline-block;
+    // vertical-align: middle;
+    position: relative;
+    // white-space: nowrap;
+    display: table-cell;
+    width:5%;
+  }
+
+  .btn {
+    font-size: 1.2em;
+    font-weight: bold;
+    // margin-right:-1px;
+    margin-left:5px;
+    right:0px;
+  }
+
+  .snippet_select {
+    margin:@component-padding/2;
+  }
+
+  .avatar {
+    border-radius: @component-border-radius;
+    height: 48px;
+    width: 48px;
+    display: inline-block;
+    vertical-align: left;
+    background-color: hsla(0,0%,0%,.1);
+    margin: @component-padding/4 0 @component-padding/2 @component-padding/2;
+  }
+
+  .avatar_detail {
+    border-radius: @component-border-radius;
+    // height: 48px;
+    // width: 48px;
+    max-height:480px;
+    max-width:640px;
+    display: inline-block;
+    vertical-align: left;
+    background-color: hsla(0,0%,0%,.1);
+    margin: @component-padding/4 0 @component-padding/2 @component-padding/2;
+  }
+
+  .editor.mini {
+    margin: @component-padding/4 0 @component-padding/4 @component-padding/4;
+  }
+  .editor.mini,
+  .snippet {
+    transition: border .3s;
+
+  }
+
+  .editor.mini.invalid,
+  .snippet.invalid {
+    border: 1px solid fade(@background-color-warning, 40%);
+  }
+
+  .editor.mini.valid,
+  .snippet.valid {
+    border: 1px solid fade(@background-color-success, 40%);
+  }
+
+  .snippetScopeGroup {
+    > div {
+      margin-bottom: 0 !important;
+    }
+
+    .btn {
+      font-size: 1.2em;
+      font-weight: bold;
+      margin-right:-1px;
+      margin-left:0;
+      right:0px;
+    }
+    // margin-bottom: @component-padding/2;
+  }
+
+
+}

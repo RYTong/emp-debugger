@@ -217,6 +217,7 @@ module.exports =
   DEFAULT_EXT_CSS : '.css'
   DEFAULT_EXT_XHTML :'.xhtml'
   DEFAULT_EXT_JS :'.js'
+  DEFAULT_EXT_JSON :'.json'
 
   DEFAULT_TEMP_HEADER:'<!--<atom_emp_related_file_info>${atom_related_info}</atom_emp_related_file_info>-->\n'
   DEFAULT_LUATEMP_HEADER:'--<atom_emp_related_file_info>${atom_related_info}</atom_emp_related_file_info>--\n'

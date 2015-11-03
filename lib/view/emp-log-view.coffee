@@ -5,6 +5,50 @@ _ = require 'underscore-plus'
 default_client_id = 'All'
 emp = require '../exports/emp'
 default_history_length=30
+default_lv = "1"
+
+lv_list = ["lua", "i", "w", "e"]
+lv_lua = "lua"
+lv_info = "i"
+lv_warn = "w"
+lv_error = "e"
+# - Lua：用“lua”表示。
+# - 普通：用“i”表示。
+# - 警告：用“w”表示。
+# - 异常：用“e”表示。
+lv_val_l = "1"
+lv_val_cl = "2"
+lv_val_lcl = "3"
+lv_val_cli = "4"
+lv_val_clw = "5"
+lv_val_cle = "6"
+lv_val_clie = "7"
+lv_val_lcli = "8"
+lv_val_lcle = "9"
+lv_val_lclie = "10"
+
+lv_map = [{key:"Only Lua",val:"1"},
+          {key:"All Client",val: "2"},
+          {key:"Lua + Client",val:"3"},
+          {key:"Client Info",val: "4"},
+          {key:"Client Warning",val:"5"},
+          {key:"Client Err",val: "6"},
+          {key:"Client I+E",val:"7"},
+          {key:"Lua + I",val:"8"},
+          {key:"Lua + E",val:"9"},
+          {key:"Lua + I + E",val:"10"}]
+
+lv_unmap = {1:[lv_lua],
+2:[lv_info, lv_warn, lv_error],
+3:lv_list,
+4:[lv_info],
+5:[lv_warn],
+6:[lv_error],
+7:[lv_info, lv_error],
+8:[lv_lua, lv_info],
+9:[lv_lua, lv_error],
+10:[lv_lua, lv_info, lv_error]
+           }
 
 module.exports =
 class EmpDebuggerLogView extends View
@@ -64,6 +108,7 @@ class EmpDebuggerLogView extends View
 
 
         @div class:'bar_div', =>
+          @select outlet: "lv_control", class: "select_bar"
           @select outlet: "line_control", class: "select_bar"
           @button class: 'btn btn_right2', click: 'clear_log', 'Clear'
           @button class: 'btn-warning btn  inline-block-tight btn_right', click: 'hide_log_view', 'Hide'
@@ -97,6 +142,20 @@ class EmpDebuggerLogView extends View
 
     if !@log_line_limit
       @log_line_limit = emp.EMP_DEF_LOG_LINE_LIMIT
+
+    # 设置默认日志类型
+    for tmp_lv in lv_map
+      lv_key = tmp_lv.key
+      lv_val = tmp_lv.val
+      if lv_val is default_lv
+        @lv_selected = lv_val
+        @lv_control.append @new_select_option lv_key,lv_val
+      else
+        @lv_control.append @new_option lv_key,lv_val
+
+    # 记住日志类型
+    @disposable.add @lv_control.change =>
+      @lv_selected = @lv_control.val()
 
     # 设置默认行数
     for log_line in @log_line_limit
@@ -211,7 +270,6 @@ class EmpDebuggerLogView extends View
 
   update: ->
     tmp_log_map = @log_map
-
     for name, view_logs of tmp_log_map
       @log_detail.append $$ ->
         tmp_color = view_logs.get_color()
@@ -229,10 +287,10 @@ class EmpDebuggerLogView extends View
     #   scrollTop: document.getElementById("log_content").scrollHeight
     # }, 1000);
 
-  show_live_log: (client_id, log, show_color) ->
-    @do_show_live_log(client_id, log, show_color) unless @first_show
+  show_live_log: (client_id, log_lv, log, show_color) ->
+    @do_show_live_log(client_id, log_lv, log, show_color) unless @first_show
 
-  do_show_live_log: (client_id, log, show_color)->
+  do_show_live_log: (client_id, log_lv, log, show_color)->
     # console.log "do_show_live_log"
     limit_line = @line_control.val()
     start_color_ln = @get_line_number_count()
@@ -241,8 +299,19 @@ class EmpDebuggerLogView extends View
     if start_color_ln > limit_line
       @clear_log()
 
-    @update_log(client_id, log, show_color)
-    @update_gutter(show_color, start_color_ln, client_id)
+
+    # TODO: 判断日志类型,根据筛选规则输出
+    # console.log @lv_selected
+    if lv_list.indexOf(log_lv) >0
+      # console.log log_lv
+      lv_map_val = lv_unmap[@lv_selected]
+      if lv_map_val.indexOf(log_lv) >0
+        # if @lv_selected is lv_val_l
+        @update_log(client_id, log, show_color, log_lv)
+        @update_gutter(show_color, start_color_ln, client_id)
+    else
+      @update_log(client_id, log, show_color)
+      @update_gutter(show_color, start_color_ln, client_id)
 
   update_gutter: (show_color, start_color_ln, client_id)->
     # console.log @log_detail.css('height')
@@ -274,7 +343,7 @@ class EmpDebuggerLogView extends View
       chile_nodes[row].style.backgroundColor=show_color
 
 
-  update_log: (client_id, log_ga, show_color)->
+  update_log: (client_id, log_ga, show_color, log_lv)->
     @log_detail.append $$ ->
       # @pre id:"log_#{client_id}", class: "emp-log-con", style:"color:#{show_color};padding:0px;", "######################### CLIENT:#{client_id} ##########################"
       for log in log_ga.split("\n")
@@ -284,7 +353,7 @@ class EmpDebuggerLogView extends View
     @emp_log_view.scrollToBottom()
     # $('#emp_log_view').stop().animate({scrollTop:@log_detail.context.scrollHeight}, 1000)
 
-  store_log: (client_id, log) ->
+  store_log: (client_id, log, log_lv=emp.EMP_DEF_LOG_TYPE) ->
     # console.log @log_map
     if !@log_map[client_id]
       tmp_color = @get_color()
@@ -294,15 +363,17 @@ class EmpDebuggerLogView extends View
     if !@stop_state and !@first_show and @show_state
       # @log_map[client_id].put_log(log)
       # console.log "print"
-      @show_live_log(client_id, log, @log_map[client_id].get_color())
+      @show_live_log(client_id, log_lv, log, @log_map[client_id].get_color())
     # else
       # console.log "store_log"
 
   store_new_log: (client_id, log_obj)->
     # console.log log_obj
+    log_lv = log_obj.level.toLowerCase()
+
     log_msg = emp.base64_decode log_obj.message
     # console.log log_msg
-    @store_log(client_id, log_msg)
+    @store_log(client_id, log_msg, log_lv)
 
 
   refresh_conf_view: (client_id, color)->
@@ -520,6 +591,7 @@ class EmpDebuggerLogView extends View
 
   do_show_in_console: (lua_code) ->
     show_color = "#000033"
+    # a="#{@text-color}"
     start_color_ln = @get_line_number_count()
     @update_console_log(lua_code, show_color)
     @update_gutter(show_color, start_color_ln)

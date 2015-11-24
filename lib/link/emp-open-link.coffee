@@ -1,4 +1,5 @@
-{Emitter, Disposable, CompositeDisposable} = require 'atom'
+{Point, Range, Emitter, Disposable, CompositeDisposable} = require 'atom'
+_ = require 'underscore-plus'
 {EnableView} = require './emp-link-file'
 resolve = require 'resolve'
 path = require 'path'
@@ -39,16 +40,13 @@ class emp_open_link
 
   refresh: ->
     path_fliter.load_all_path_unignore "", (@path_list) =>
-
     emp.show_info "刷新 link 路径成功!"
 
   forward: ->
     editor = atom.workspace.getActiveTextEditor()
     @uri = editor.getSelectedText() or @get_text(editor)
-    console.log @uri
-
+    # console.log @uri
     return atom.workspace.open @uri unless !@check_http()
-
     # file_path = path.dirname editor.getPath()
     # ext = path.extname(editor.getPath()).toLowerCase()
     line =  editor.lineTextForBufferRow editor.getCursorBufferPosition().row
@@ -66,21 +64,21 @@ class emp_open_link
 
 
     # unless @uri.match
-    console.log "else----"
+    # console.log "else----"
     [@uri, uri_type] = @get_text_re(editor)
     filter_file_list = @parse_head_file(editor, uri_type)
     @filter_file_content(editor, filter_file_list, uri_type)
-    console.log @uri
+    # console.log @uri
 
   parse_head_file: (editor, uri_type) ->
     html_con = editor.getText()
     # console.log html_con
     re_con = /<head>[\s\S]*?<\/head>/g.exec(html_con)
-    console.log re_con
+    # console.log re_con
     new_re_arr = []
     if re_con
       re_objs = head_parse(re_con[0])
-      console.log re_objs
+      # console.log re_objs
       if uri_type is "css"
         for obj in re_objs
           if obj.type is parse_type_css
@@ -127,12 +125,12 @@ class emp_open_link
         if tmp_filter_path.split("/").length > 1
           # console.log "do in o spec"
           tmp_file_path = path.join cha_path, tmp_filter_path
-          console.log tmp_file_path
+          # console.log tmp_file_path
           if @exists tmp_file_path
             # TODO:
-            console.log "exist"
+            # console.log "exist"
             tmp_con = fs.readFileSync tmp_file_path, "utf-8"
-            console.log tmp_con.match @uri
+            # console.log tmp_con.match @uri
             if tmp_con.match @uri
               @do_open_re [tmp_file_path]
               return
@@ -141,13 +139,13 @@ class emp_open_link
         else
           # console.log "do in o com"
           tmp_file_path = path.join com_path, uri_type, tmp_filter_path
-          console.log tmp_file_path
+          # console.log tmp_file_path
           if @exists tmp_file_path
             # @do_open([tmp_file_path],editor)
             # TODO:
-            console.log "exist"
+            # console.log "exist"
             tmp_con = fs.readFileSync tmp_file_path, "utf-8"
-            console.log tmp_con.match @uri
+            # console.log tmp_con.match @uri
             if tmp_con.match @uri
               @do_open_re [tmp_file_path]
               return
@@ -157,11 +155,44 @@ class emp_open_link
   do_open_re: (url)->
     atom.workspace.open url[0]
       .then (tmp_editor)=>
+        # console.log "----------------"
+        # console.log @uri
+        expression = _.escapeRegExp(@uri)
+        regex = new RegExp(expression, 'ig')
         project_path = atom.project.getPaths()[0]
-        tmp_editor.setCursorScreenPosition(url[1]) if url[1]
+        newMarkers = []
+        tmp_editor.scanInBufferRange regex, Range(Point.ZERO, Point.INFINITY), ({range}) =>
+          # new_marker = @createMarker(range, tmp_editor)
+          newMarkers.push(@createMarker(range, tmp_editor))
+        # console.log newMarkers
+        if newMarkers.length > 0
+          new_marker = newMarkers[0]
+          ranges = new_marker.getBufferRange()
+          # console.log ranges
+          tmp_editor.setCursorBufferPosition ranges.start
+          # tmp_editor.setSelectedBufferRanges(ranges, flash: true)
+          # # tmp_editor.scrollToBufferPosition(new_marker.getStartBufferPosition(), center: true)
+          # console.log new_marker.getStartBufferPositio()
+          #
+          # tmp_editor.setCursorScreenPosition ranges.start
         # @pathCache[project_path] = @pathCache[project_path] or {}
         # @pathCache[project_path][@uri] = url[0]
         # @link_view["#{tmp_editor.getPath()}"] = [editor.getPath(),editor.getCursorScreenPosition()] unless back
+
+
+  createMarker: (range, tmp_editor) ->
+    marker = tmp_editor.markBufferRange(range,
+      invalidate: 'inside'
+      class: @constructor.markerClass
+      persistent: false
+      maintainHistory: false
+    )
+    # unless @useMarkerLayers
+    #   @decorationsByMarkerId[marker.id] = @editor.decorateMarker(marker,
+    #     type: 'highlight',
+    #     class: @constructor.markerClass
+    #   )
+    marker
 
   check_http:() ->
     if @uri.indexOf('http:') is 0  or @uri.indexOf('https:') is 0 or @uri.indexOf('localhost:') is 0
@@ -249,6 +280,7 @@ class emp_open_link
     atom.workspace.open url[0]
       .then (tmp_editor)=>
         project_path = atom.project.getPaths()[0]
+        console.log url
         tmp_editor.setCursorScreenPosition(url[1]) if url[1]
         @pathCache[project_path] = @pathCache[project_path] or {}
         @pathCache[project_path][@uri] = url[0]
@@ -292,13 +324,13 @@ class emp_open_link
   get_text: (editor)->
     cursor = editor.getCursors()[0]
     range = editor.displayBuffer.bufferRangeForScopeAtPosition '.string.quoted',cursor.getBufferPosition()
-    console.log range
+    # console.log range
     # console.log editor.getWordUnderCursor wordRegex:/[\/A-Z\.\-\d\\-_:]+(:\d+)?/i
     if range
       text = editor.getTextInBufferRange(range)[1..-2]
     else
       text = editor.getWordUnderCursor wordRegex:/[\/A-Z\.\-\d\\-_:]+(:\d+)?/i
-    console.log text
+    # console.log text
     text = text[0..-2] if text.slice(-1) is ':'
     text.trim()
 
@@ -307,19 +339,19 @@ class emp_open_link
 
     cursor = editor.getCursors()[0]
     range = editor.displayBuffer.bufferRangeForScopeAtPosition '.string.quoted',cursor.getBufferPosition()
-    console.log range
+    # console.log range
     tag_type = emp.OFF_EXTENSION_CSS
     # range = editor.displayBuffer.bufferRangeForScopeAtPosition( '.string.quoted',cursor.getBufferPosition())
     # console.log editor.getWordUnderCursor wordRegex:/[\/A-Z\.\-\d\\-_:]+(:\d+)?/i
     if range
       text = editor.getTextInBufferRange(range)[1..-2]
       # if text.includes ","
-      console.log text
+      # console.log text
       tag_type = emp.OFF_EXTENSION_LUA unless !text.includes "("
       text = editor.getWordUnderCursor wordRegex:/[\/A-Z\.\-\d\\-_:]+(:\d+)?/i
     else
       text = editor.getWordUnderCursor wordRegex:/[\/A-Z\.\-\d\\-_:]+(:\d+)?/i
-    console.log text
+    # console.log text
     text = text[0..-2] if text.slice(-1) is ':'
     # @get_tag_type(editor, text)
     [text.trim(), tag_type]

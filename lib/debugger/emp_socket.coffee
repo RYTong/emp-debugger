@@ -255,6 +255,9 @@ class emp_socket
     all_socket = emp_client_map.get_all_socket()
     new_p_socket = all_socket.new_p
     old_p_socket = all_socket.old_p
+    # console.log new_p_socket
+    # console.log new_msg
+    # console.log old_msg
     unless !new_msg
       for socket_m in new_p_socket
         socket_m.write(new_msg)

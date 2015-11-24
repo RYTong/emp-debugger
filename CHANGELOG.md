@@ -1,6 +1,12 @@
 ![EMP](https://raw.githubusercontent.com/wiki/RYTong/emp-debugger/images/emp.png)
 
 # Emp Debugger Package Change Log
+
+## Version 0.9.6
+1. 优化open link, 现在 link 可以跳到对应的行数
+2. 优化日志分级
+
+## Version 0.9.5
 1. 离线资源包中去除调 Json 文件.
 2. 修改 bug.
 

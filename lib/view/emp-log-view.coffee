@@ -29,14 +29,14 @@ lv_val_lclie = "10"
 
 lv_map = [{key:"Only Lua",val:"1"},
           {key:"All Client",val: "2"},
-          {key:"Lua + Client",val:"3"},
+          {key:"Lua & All Client",val:"3"},
           {key:"Client Info",val: "4"},
           {key:"Client Warning",val:"5"},
-          {key:"Client Err",val: "6"},
-          {key:"Client I+E",val:"7"},
-          {key:"Lua + I",val:"8"},
-          {key:"Lua + E",val:"9"},
-          {key:"Lua + I + E",val:"10"}]
+          {key:"Client Error",val: "6"},
+          {key:"Client Info & Error",val:"7"},
+          {key:"Lua & Info",val:"8"},
+          {key:"Lua & Error",val:"9"},
+          {key:"Lua & Info & Error",val:"10"}]
 
 lv_unmap = {1:[lv_lua],
 2:[lv_info, lv_warn, lv_error],

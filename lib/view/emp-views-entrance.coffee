@@ -3,14 +3,15 @@ EmpChannelWizardView = require '../channel_view/emp-channel-wizard-view'
 EmpCreateAppWizardView = require '../app_wizard/emp-app-wizard-view'
 EmpCreateTempWizardView = require '../temp_wizard/emp-temp-wizard-view'
 EmpCreateFrontPageWizardView = require '../temp_wizard/emp-front-page-wizard-view'
+EmpCreateAppWizardView = require '../app_wizard/emp-app-wizard-view'
+EMPConfigView = require '../config/emp-config-view'
 
 empChannelWizardView = null
 empAppWizardView = null
 empTempWizardView = null
+empConfigView = null
 
 emp = require '../exports/emp'
-
-
 
 # -------------------use for front page -------------------------
 create_front_page_wizard_view = (params) ->
@@ -95,6 +96,26 @@ create_erl = ->
 create_cha = ->
   console.log "create_cha "
 
+# -------------------use for Setting View -------------------------
+emp_config_view = (params) ->
+  console.log "-------emp_config_view"
+  empConfigView = new EMPConfigView(params)
+
+open_config_view = ->
+  # console.log "open_app_wizard_panel"
+  atom.workspace.open(emp.EMP_CONFIG_URI)
+  # empAppWizardView.add_new_panel()
+
+config_deserializer =
+  name: emp.EMP_CONFIG_VIEW
+  version: 1
+  deserialize: (state) ->
+    # console.log "emp deserialize"
+    emp_config_view(state) if state.constructor is Object
+
+atom.deserializers.add(config_deserializer)
+
+
 module.exports =
   activate: (state)->
     @disposables = new CompositeDisposable
@@ -109,7 +130,8 @@ module.exports =
         create_app_wizard_view({uri})
       else if uri is emp.EMP_TEMP_URI
         create_temp_wizard_view({uri})
-
+      else if uri is emp.EMP_CONFIG_URI
+        emp_config_view({uri})
 
     @disposables.add atom.commands.add("atom-workspace", {
       "emp-debugger:show-channel": => open_cha_wizard_panel()
@@ -120,6 +142,7 @@ module.exports =
       "emp-debugger:create_xhtml": => create_xhtml()
       "emp-debugger:create_html": => create_html()
       "emp-debugger:create_channel": => create_cha()
+      "emp-debugger:open_config": => open_config_view()
     })
       # "emp-debugger:temp-management", -> open_temp_wizard_panel()
 
@@ -135,3 +158,4 @@ module.exports.open_cha_wizard = open_cha_wizard_panel
 module.exports.open_app_wizard = open_app_wizard_panel
 module.exports.open_temp_wizard = open_temp_wizard_panel
 module.exports.open_front_page_wizard_panel = open_front_page_wizard_panel
+module.exports.open_config_view = open_config_view

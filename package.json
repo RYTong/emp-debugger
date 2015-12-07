@@ -28,7 +28,8 @@
     "emp-debugger:create_erl",
     "emp-debugger:create_html",
     "emp-debugger:create_xhtml",
-    "emp-debugger:create_cha"
+    "emp-debugger:create_cha",
+    "emp-debugger:open_config"
   ],
   "repository": "https://github.com/RYTong/emp-debugger",
   "license": "MIT",

@@ -8,6 +8,7 @@ dialog = remote.require 'dialog'
 module.exports =
   parser_beam_file_mod : 'atom_pl_parse_json'
 
+  # ----------------------------- Atom Config --------------------------------
   EMP_APP_EXPORT_UI_PATH :'emp-template-management.Store-UI-Snippet-Export-Path'
   EMP_APP_IMPORT_UI_PATH :'emp-template-management.Store-UI-Snippet-Import-Path'
   EMP_APP_STORE_UI_PATH :'emp-template-management.Store-UI-Snippet-Path'
@@ -21,11 +22,18 @@ module.exports =
   EMP_LINK_UNIGNORE_CONF :'emp-debugger.EMP-Link-Unignore'
   EMP_LOG_LINE_LIMIT :'emp-debugger.defLimitOfLogLine'
   EMP_LOG_LINE_LIMIT_SELECTED :'emp-debugger.defLimitOfLogLineSelected'
+  EMP_ERL_SOURCE_PATH: 'emp-debugger.erl_source_path'
+  EMP_EWP_SOURE_PATH: 'emp-debugger.ewp_source_path'
+  EMP_YAWS_SOURCE_PATH: 'emp-debugger.yaws_source_path'
+
+
+
+
   EMP_DEF_LINE_LIMIT_SELECTED : 1000
 
   EMP_DEF_LOG_LINE_LIMIT:[500, 1000, 2000, 5000, 10000]
 
-  EMP_DEF_LOG_TYPE:"lua"
+  EMP_DEF_LOG_TYPE:"i"
 
   EMP_NODE_NAME :'emp-debugger.Default-EMP-NODE-NAME'
   EMP_NODE_COOKIE :'emp-debugger.Default-EMP-NODE-COOKIE'
@@ -78,11 +86,13 @@ module.exports =
   EMP_APP_URI : 'emp://app_wizard'
   EMP_TEMP_URI : 'emp://template_wizard'
   EMP_FRONT_PAGE_URI : 'emp://front_page_wizard'
+  EMP_CONFIG_URI : 'emp://emp_config'
 
   CHA_WIZARD_VIEW: 'EmpView'
   APP_WIZARD_VIEW: 'EmpAppView'
   TEMP_WIZARD_VIEW: 'EmpTemplateView'
   FRONT_PAGE_WIZARD_VIEW: 'EmpFrontPageView'
+  EMP_CONFIG_VIEW : 'EmpConfigView'
 
   CHA_CODE_DIR:'src'
   CHA_PUBLIC_DIR:'public'

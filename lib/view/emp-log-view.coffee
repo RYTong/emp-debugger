@@ -103,7 +103,7 @@ class EmpDebuggerLogView extends View
   @content: ->
     @div class: 'emp-log-pane tool-panel pannel panel-bottom padding', =>
       # @div class: 'log-console-resize-handle', mousedown: 'resizeStarted', dblclick: 'resizeToMin'
-      @div class: 'emp_bar panel-heading padded', mousedown: 'resizeStarted', dblclick: 'resizeToMin',=>
+      @div outlet:'emp_head', class: 'emp_bar panel-heading padded', mousedown: 'resizeStarted', dblclick: 'resizeToMin',=>
         @span 'Log From The Script Of Views: '
 
 
@@ -262,11 +262,15 @@ class EmpDebuggerLogView extends View
     for row in [1..@line_number+1]
       rowValue = " "+ row
       classes = "line-number line-number-#{row}"
-      html += """<div class="#{classes}" > #{rowValue}<div class="icon-right"></div></div>"""
+      # classes = "line-number line-number-#{row}"
+      # <div class="icon-right"></div>
+      html += """<div class="#{classes}" > #{rowValue}</div>"""
 
     # html += @update_else_ln() unless @line_number+1 >@default_ln
     # console.log @emp_lineNumber
     @emp_lineNumber[0].innerHTML = html
+
+
 
   update: ->
     tmp_log_map = @log_map
@@ -318,10 +322,12 @@ class EmpDebuggerLogView extends View
     # console.log @get_int(@log_detail.css('height'))
     # console.log @get_line_number_count()
     end_ln = @get_line_number_count()
+    # console.log end_ln
     start_ln = @line_number+1
     # console.log "update_gutter: s: #{start_ln} ,e: #{end_ln}"
     # console.log "ln: #{@line_number}, s: #{start_color_ln}"
-    @do_update_gutter_css(start_color_ln, show_color) unless @line_number < start_color_ln
+    # 现在不改变行数的背景色
+    # @do_update_gutter_css(start_color_ln, show_color) unless @line_number < start_color_ln
     @do_update_gutter(start_ln, end_ln, show_color, client_id) unless start_ln > end_ln
 
 
@@ -332,7 +338,9 @@ class EmpDebuggerLogView extends View
     for row in [start+1..end+1]
       rowValue = " "+ row
       classes = "line-number line-number-#{row}"
-      html += """<div class="#{classes}" style="background-color:#{show_color};" > #{rowValue}<div class="icon-right"></div></div>"""
+      # style="background-color:#{show_color};"
+      # <div class="icon-right"></div>
+      html += """<div class="#{classes}" > #{rowValue}</div>"""
     @emp_lineNumber.append(html)
 
   do_update_gutter_css: (start_color_ln, show_color) ->
@@ -370,9 +378,7 @@ class EmpDebuggerLogView extends View
   store_new_log: (client_id, log_obj)->
     # console.log log_obj
     log_lv = log_obj.level.toLowerCase()
-
     log_msg = emp.base64_decode log_obj.message
-    # console.log log_msg
     @store_log(client_id, log_msg, log_lv)
 
 
@@ -390,6 +396,7 @@ class EmpDebuggerLogView extends View
   get_line_number_count: ->
     pane_height = @get_int(@log_detail.css('height'))
     # console.log "pane height:"+pane_height
+    # console.log "pane height: #{pane_height} ,lh: #{@line_height}"
     Math.floor(pane_height/ @line_height)
 
   initial_height: ->
@@ -397,12 +404,18 @@ class EmpDebuggerLogView extends View
     @get_default_ln() unless @default_ln
 
   get_line_height: ->
-    tmp_height = @emp_log_panel.css('line-height')
-    # console.log tmp_height
-    if tmp_height isnt undefined
-      @line_height = @get_int(tmp_height)
+    iTmpHeight = undefined
+    oChildNode = @emp_lineNumber.context.children
+    # console.log oChildNode
+    if oChildNode?.length > 0
+      iTmpHeight = oChildNode[0].clientHeight
+
+    # console.log iTmpHeight
+    if iTmpHeight isnt undefined
+      # @get_int(sTmpHeight)
+      @line_height = iTmpHeight
     else
-      @line_height = 16
+      @line_height = 17
 
   get_default_ln: ->
     tmp_height = @emp_log_panel.css('height')
@@ -474,6 +487,9 @@ class EmpDebuggerLogView extends View
     @initial_height()
     @update()
     @update_ln()
+    # 刷新 line-height
+    @get_line_height()
+    # @initial_height()
 
   # -------------------------------------------------------------------------
   # call by config vieww
@@ -602,7 +618,8 @@ class EmpDebuggerLogView extends View
         # console.log "|#{log}|"
         if log isnt "" and log isnt " "
           log = "Console Input: "+log
-          @pre class: "emp-log-con",style:"color:#{show_color};padding:0px;", "#{log}"
+          # color:#{show_color};
+          @pre class: "emp-log-con",style:"font-weight:bold;font-style:italic;padding:0px;", "#{log}"
     @emp_log_view.scrollToBottom()
 
   refresh_clients: ->

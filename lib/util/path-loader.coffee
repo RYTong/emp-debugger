@@ -84,5 +84,29 @@ module.exports.load_all_path_unignore = (dir, callback) ->
     projectPaths.push(paths...)
   task
 
+module.exports.load_file_path_unignore = (dir, ignore_name, callback) ->
+  # console.log "this is load all path"
+  dir ?= "./"
+  ignore_name ?= ["*.erl", "*.hrl"]
+  projectPaths = []
+  # ignoredNames = atom.config.get('fuzzy-finder.ignoredNames') ? []
+  # ignoredNames = ignoredNames.concat(atom.config.get('core.ignoredNames') ? [])
+  # ignoredNames = ignoredNames.concat(tmp_ignore_name)
+  if dir is "./"
+    pro_dir = atom.project.getPaths()[0]
+    dir = path.join pro_dir,dir
+
+  task = Task.once unignore_taskPath, dir, false, true, ignore_name, ->
+    new_path = []
+    for tmp_pa in projectPaths
+      tmp_pa_name = path.basename(tmp_pa)
+      new_path.push({name:tmp_pa_name, dir:tmp_pa})
+    callback(new_path)
+
+  task.on 'load-paths:paths-found', (paths) ->
+    projectPaths.push(paths...)
+  task
+
+
 module.exports.filter_path = (path_arr, file_name) ->
   fuzzyFilter(path_arr, file_name, key:'name')

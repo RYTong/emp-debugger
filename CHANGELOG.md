@@ -4,7 +4,10 @@
 
 ## Version 0.9.6
 1. 优化open link, 现在 link 可以跳到对应的行数
-2. 优化日志分级
+2. 优化 open link, 现在 link 可以在 Erlang 文件中跳转
+3. 优化日志分级
+4. 优化日志界面及部分显示效果
+
 
 ## Version 0.9.5
 1. 离线资源包中去除调 Json 文件.

@@ -53,6 +53,8 @@
         { 'label': 'View Logs', 'command': 'emp-debugger:view-log' }
         {type: 'separator'}
         { 'label': 'EMP Refresh Link', 'command': 'emp-debugger:refresh_link' }
+        {type: 'separator'}
+        { 'label': 'Config', 'command': 'emp-debugger:open_config' }
     ]
   }
 ]

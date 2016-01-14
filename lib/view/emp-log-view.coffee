@@ -12,6 +12,12 @@ lv_lua = "lua"
 lv_info = "i"
 lv_warn = "w"
 lv_error = "e"
+lv_color = {lv_lua:"text-highlight",
+lv_info:"text-info",
+lv_warn:"text-warn",
+lv_error:"text-error",
+def:"text-highlight"
+}
 # - Lua：用“lua”表示。
 # - 普通：用“i”表示。
 # - 警告：用“w”表示。
@@ -172,6 +178,8 @@ class EmpDebuggerLogView extends View
 
 
     @disposable.add atom.commands.add "atom-workspace","emp-debugger:view-log", => @toggle()
+
+    # console 发送 lua 日志
     @disposable.add atom.commands.add @lua_console.element, 'core:confirm', =>
       @do_send_lua()
 
@@ -277,13 +285,13 @@ class EmpDebuggerLogView extends View
     for name, view_logs of tmp_log_map
       @log_detail.append $$ ->
         tmp_color = view_logs.get_color()
-        @pre class: "emp-log-con", style:"color:#{tmp_color}; padding:0px;", "########################## CLIENT:#{view_logs.get_id()} ##########################"
+        @pre class: "emp-log-con text-highlight", style:"color:#{tmp_color}; padding:0px;", "########################## CLIENT:#{view_logs.get_id()} ##########################"
         # @p class: "emp-log-con", style:"color:#{tmp_color};padding:0px;", "########################## CLIENT:#{view_logs.get_id()} ##########################"
 
         for tmp_log in view_logs.get_log()
           for log in tmp_log.split("\n")
             if log isnt "" and log isnt " "
-              @pre class: "emp-log-con",style:"color:#{tmp_color};padding:0px;", "#{log}"
+              @pre class: "emp-log-con text-highlight",style:"color:#{tmp_color};padding:0px;", "#{log}"
     @emp_log_view.scrollToBottom()
     # $('#emp_log_view').stop().animate({scrollTop:@log_detail.context.scrollHeight}, 1000)
 
@@ -306,15 +314,17 @@ class EmpDebuggerLogView extends View
 
     # TODO: 判断日志类型,根据筛选规则输出
     # console.log @lv_selected
+    log_con_color = lv_color[log_lv]
+    log_con_color ?= lv_color.def
     if lv_list.indexOf(log_lv) >0
       # console.log log_lv
       lv_map_val = lv_unmap[@lv_selected]
       if lv_map_val.indexOf(log_lv) >0
         # if @lv_selected is lv_val_l
-        @update_log(client_id, log, show_color, log_lv)
+        @update_log(client_id, log, show_color, log_con_color)
         @update_gutter(show_color, start_color_ln, client_id)
     else
-      @update_log(client_id, log, show_color)
+      @update_log(client_id, log, show_color, log_con_color)
       @update_gutter(show_color, start_color_ln, client_id)
 
   update_gutter: (show_color, start_color_ln, client_id)->
@@ -351,13 +361,13 @@ class EmpDebuggerLogView extends View
       chile_nodes[row].style.backgroundColor=show_color
 
 
-  update_log: (client_id, log_ga, show_color, log_lv)->
+  update_log: (client_id, log_ga, show_color, log_con_color)->
     @log_detail.append $$ ->
       # @pre id:"log_#{client_id}", class: "emp-log-con", style:"color:#{show_color};padding:0px;", "######################### CLIENT:#{client_id} ##########################"
       for log in log_ga.split("\n")
         # console.log "|#{log}|"
         if log isnt "" and log isnt " "
-          @pre id:"log_#{client_id}",class: "emp-log-con",style:"color:#{show_color};padding:0px;", "#{log}"
+          @pre id:"log_#{client_id}",class: "emp-log-con "+log_con_color,style:"color:#{show_color};padding:0px;", "#{log}"
     @emp_log_view.scrollToBottom()
     # $('#emp_log_view').stop().animate({scrollTop:@log_detail.context.scrollHeight}, 1000)
 
@@ -415,7 +425,7 @@ class EmpDebuggerLogView extends View
       # @get_int(sTmpHeight)
       @line_height = iTmpHeight
     else
-      @line_height = 17
+      @line_height = 18
 
   get_default_ln: ->
     tmp_height = @emp_log_panel.css('height')
@@ -617,9 +627,9 @@ class EmpDebuggerLogView extends View
       for log in log_ga.split("\n")
         # console.log "|#{log}|"
         if log isnt "" and log isnt " "
-          log = "Console Input: "+log
+          log = "> Console Input: "+log
           # color:#{show_color};
-          @pre class: "emp-log-con",style:"font-weight:bold;font-style:italic;padding:0px;", "#{log}"
+          @pre class: "emp-log-con text-highlight",style:"font-weight:bold;font-style:italic;padding:0px;", "#{log}"
     @emp_log_view.scrollToBottom()
 
   refresh_clients: ->

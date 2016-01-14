@@ -42,10 +42,8 @@ module.exports =
     @empEnableLuaView = new EmpEnableLuaView(n_state.empEnableLuaViewState, @emp_socket_server)
     @empDebuggerSettingView = new EmpDebuggerSettingView(n_state.empDebuggerSettingViewState,
                                   @emp_socket_server, @empDebuggerLogView, this)
-
     @ertUiGuide = new ErtUiGuide(n_state.ertUiGuideState, this)
     @emp_open_link = new EMPOpenLink()
-
     atom.commands.add "atom-workspace","emp-debugger:live-preview", => @live_preview()
     # atom.commands.add "atom-workspace","emp-debugger:setting-view", => @set_conf()
 

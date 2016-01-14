@@ -1,16 +1,35 @@
-"atom-workspace":
-	"ctrl-alt-d": "emp-debugger:live-preview"
-	"ctrl-alt-e": "emp-debugger:enable-view"
-	"ctrl-alt-l": "emp-debugger:view-log"
-	"ctrl-alt-s": "emp-debugger:setting-view"
-	"ctrl-alt-p": "emp-debugger:enable-lua"
-	"ctrl-alt-q": "emp-debugger:show-channel"
-	"ctrl-alt-w": "emp-debugger:create-app"
-	"ctrl-alt-r": "emp-debugger:create-temp"
-".platform-win32 atom-text-editor:not(.mini), .platform-linux atom-text-editor:not(.mini) ":
-	"ctrl-}": "emp-debugger:open_link"
-	"ctrl-{": "emp-debugger:open_link"
-".platform-darwin atom-text-editor:not(.mini)":
-	"ctrl-o": "emp-debugger:open_link"
-	"ctrl-}": "emp-debugger:open_link"
-	"ctrl-{": "emp-debugger:open_link"
+# Keybindings require three things to be fully defined: A selector that is
+# matched against the focused element, the keystroke and the command to
+# execute.
+#
+# Below is a basic keybinding which registers on all platforms by applying to
+# the root workspace element.
+
+# For more detailed documentation see
+# https://atom.io/docs/latest/advanced/keymaps
+'atom-workspace':
+  # 'ctrl-alt-o': 'emp-debugger:toggle'
+  # 'ctrl-alt-p': 'emp-debugger:convert'
+  # 'ctrl-alt-i': 'emp-debugger:debug-server'
+  'ctrl-alt-d': 'emp-debugger:live-preview'
+  'ctrl-alt-e': 'emp-debugger:enable-view'
+  # 'ctrl-alt-c': 'emp-debugger:close-server'
+  'ctrl-alt-l': 'emp-debugger:view-log'
+  'ctrl-alt-s': 'emp-debugger:setting-view'
+  'ctrl-alt-p': 'emp-debugger:enable-lua'
+  'ctrl-alt-q': 'emp-debugger:show-channel'
+  'ctrl-alt-w': 'emp-debugger:create-app'
+  'ctrl-alt-r': 'emp-debugger:create-temp'
+
+  # 'ctrl-i': 'emp-debugger:erl_indent'
+
+
+'.platform-win32 atom-text-editor:not(.mini), .platform-linux atom-text-editor:not(.mini) ':
+  'ctrl-}': 'emp-debugger:open_link'
+  'ctrl-{': 'emp-debugger:open_link'
+
+
+'.platform-darwin atom-text-editor:not(.mini)':
+  'ctrl-o': 'emp-debugger:open_link'
+  'ctrl-}': 'emp-debugger:open_link'
+  'ctrl-{': 'emp-debugger:open_link'

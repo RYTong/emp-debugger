@@ -50,6 +50,7 @@ module.exports =
   EMP_IMPORT_MENU_KEY : 'emp-debugger.emp-import-menu'
   EMP_TMPORARY_APP_NAME:'emp-debugger.emp-tmp-app-name'
   EMP_CMAKE_KEY : 'emp-debugger.emp-c_app'
+  EMP_LESS_IMPORT_FILES:'emp-debugger.emp-less-import-files'
 
   EMP_OFFLINE_DIR: 'emp-debugger.emp-offline-dev-path'
   EMP_OFFLINE_RELATE_DIR: 'emp-debugger.emp-offline-relate-path'
@@ -161,8 +162,12 @@ module.exports =
   CHANNEL_CALLBACK_DIR: 'callback'
   # STATIC_UI_CSS_TEMPLATE_PATH:"/templates/css/"
   STATIC_UI_CSS_TEMPLATE:"/templates/css/eui.css"
+  STATIC_UI_LESS_TEMPLATE: "/templates/less/ui-variables.less"
   STATIC_UI_CSS_TEMPLATE_DEST_PATH:"public/www/resource_dev/common/css/eui.css"
+
   STATIC_UI_CSS_TEMPLATE_DEST_DIR:"public/www/resource_dev/common/css/"
+  STATIC_UI_LESS_TEMPLATE_DEST_PATH:"public/www/resource_dev/common/less/ui-variables.less"
+  STATIC_UI_LESS_TEMPLATE_DEST_DIR:"public/www/resource_dev/common/less/"
   STATIC_UI_CSS_DEF_FILE:"eui.css"
   STATIC_UI_LUA_TEMPLATE:"/templates/lua/ert.lua"
   STATIC_UI_LUA_TEMPLATE_DEST_PATH:"public/www/resource_dev/common/lua/ert.lua"
@@ -171,6 +176,8 @@ module.exports =
   STATIC_MOB_HTML_PATH:"/templates/mobile/"
   STATIC_MOB_HTML_TEMPLATE:"/templates/mobile/html/default.html"
 
+  NATIVE_CHANNEL_DEFAULT_STYLE:"/templates/css/atom_default_style.css"
+  DESTINATION_CHANNEL_DEFAULT_STYLE:"public/www/resource_dev/common/css/atom_default_style.css"
 
   STATIC_ERL_TEMPLATE : "/channel_adapter_erl_template.tmp"
   STATIC_ERL_FUN_TEMPLATE : "/channel_adapter_erl_function.tmp"
@@ -178,13 +185,14 @@ module.exports =
   STATIC_OFF_TEMPLATE : "/channel_adapter_xHtml_template.tmp"
   STATIC_CSS_TEMPLATE : "/channel_adapter_css_template.tmp"
   STATIC_LUA_TEMPLATE : "/channel_adapter_lua_template.tmp"
+  STATIC_LESS_TEMPLATE : "/channel_less_template.tmp"
 
   STATIC_WEBVIEW_TEMPLATE : "/channel_webview_template.tmp"
 
   STATIC_APP_FRONT_TEMP:"/templates/temp_app/"
 
   COMMON_DIR_LIST :["images", "css", "lua", "xhtml","channels"]
-  OFF_CHA_DIR_LIST : ["xhtml", "css", "lua", "images", "json"]
+  OFF_CHA_DIR_LIST : ["xhtml", "css", "lua", "images", "json", "less"]
   OFF_CHA_PLT_LIST:["wp", "iphone", "android", "common"]
   OFF_BASE_DIR_LIST:["default"]
   OFF_DEFAULT_BASE:"channels"
@@ -203,6 +211,7 @@ module.exports =
   OFF_EXTENSION_CSS: "css"
   OFF_EXTENSION_JS: "js"
   OFF_EXTENSION_HTML:"html"
+  OFF_EXTENSION_LESS: "less"
 
   # the type of emp step
   EMP_ADD_CHA_VIEW_TYPE_EMP: 'emp'
@@ -229,11 +238,16 @@ module.exports =
   DEFAULT_EXT_JS :'.js'
   DEFAULT_EXT_JSON :'.json'
 
+  # emp debugger 实体文件路径
   DEFAULT_TEMP_HEADER:'<!--<atom_emp_related_file_info>${atom_related_info}</atom_emp_related_file_info>-->\n'
   DEFAULT_LUATEMP_HEADER:'--<atom_emp_related_file_info>${atom_related_info}</atom_emp_related_file_info>--\n'
   DEFAULT_CSSTEMP_HEADER:'/*<atom_emp_related_file_info>${atom_related_info}</atom_emp_related_file_info>*/\n'
   DEFAULT_HEADER:'<atom_emp_related_file_info>${atom_related_info}</atom_emp_related_file_info>\n'
   DEFAULT_HEADER_CON:'<atom_emp_related_file_info>${atom_related_info}</atom_emp_related_file_info>'
+
+  # Less import 文件格式
+  EMP_LESS_IMPORT_HEADER:'@import \"${file_path}\";\n'
+  EMP_CSS_IMPORT_HEADER:'@import (inline) \"${file_path}\";\n'
 
   # 提示信息
   EMP_PACKAGE_UNION_PKG_SUCCESS:"普通资源整合包，打包成功~"
@@ -420,8 +434,8 @@ mk_dirs_sync = (p, made) ->
   made
 
 # 选择路径
-module.exports.chose_path_f = (callback)->
-  @chose_path(['openFile'], '', callback)
+module.exports.chose_path_f = (def_path='', callback)->
+  @chose_path(['openFile'], def_path, callback)
 
 module.exports.chose_path_d = (callback)->
   @chose_path(['openFile', 'openDirectory'], '', callback)

@@ -20,12 +20,14 @@ class emp_channel
   off_detail:{}
   adapters:{}
   params:{}
+  lLessImportFiles:[]
 
 
   constructor: ->
     # console.log "this is a channel"
     @adapters = {}
     @params = {'method':'post', 'encrypt':'0'}
+    @project_path = atom.project.getPaths()[0]
 
   set_id: (@id) ->
 
@@ -49,12 +51,13 @@ class emp_channel
     @off_detail.plat = off_plat
     @off_detail.res = off_res
 
-  set_off_detailf: (oimg_flag, ocss_flag, olua_flag, oxhtml_flag, ojson_flag) ->
-    @off_detail.img = oimg_flag
-    @off_detail.css = ocss_flag
-    @off_detail.lua = olua_flag
-    @off_detail.xhtml = oxhtml_flag
-    @off_detail.json = ojson_flag
+  set_off_detailf: (bImgFlag, bCssFlag, bLuaFlag, bXhtmlFlag, bJsonFlag, bLessFlag) ->
+    @off_detail.images = bImgFlag
+    @off_detail.css = bCssFlag
+    @off_detail.lua = bLuaFlag
+    @off_detail.xhtml = bXhtmlFlag
+    @off_detail.json = bJsonFlag
+    @off_detail.less = bLessFlag
 
   initial_adapter: ->
     @adapters={}
@@ -67,6 +70,11 @@ class emp_channel
     if tmp_tran
       if tmp_tran.trim()
         @adapters[tmp_tran] = a_obj
+
+  # @doc 保存 less 引用文件的路径.
+  store_less_import: (sLessImportPath) ->
+    @lLessImportFiles.push sLessImportPath
+
 
   initial_param: ->
     @params = {}
@@ -235,15 +243,15 @@ class emp_channel
   # 为实例类型为adapter 的channel 进行处理
   create_adapter_detail: ->
     try
-      project_path = atom.project.getPaths()[0]
+      # project_path = atom.project.getPaths()[0]
       if @use_code
-        @create_code(project_path)
+        @create_code(@project_path)
       # console.log '111'
       if @use_off
-        @create_off(project_path)
+        @create_off(@project_path)
       # console.log '2222'
       if @use_cs
-        @create_cs(project_path)
+        @create_cs(@project_path)
 
       # if @use_front
       #   @create_front(project_path)
@@ -378,6 +386,7 @@ class emp_channel
     cha_dir = cha_dir_arr[0]
     relate_dir = cha_dir_arr[1]
     pro_dir = path.join __dirname, '../../../', emp.STATIC_CHANNEL_TEMPLATE, @entry_dir
+
     tmp_xhtml_dir = path.join pro_dir,emp.STATIC_OFF_TEMPLATE
     tmp_json_dir = path.join pro_dir,emp.STATIC_CS_TEMPLATE
     tmp_css_dir = path.join pro_dir,emp.STATIC_CSS_TEMPLATE
@@ -389,6 +398,9 @@ class emp_channel
     xhtml_template = xhtml_template.replace(/\$\{app\}/ig, @app).replace(/\$\{channel\}/ig, @id)
     css_template = fs.readFileSync tmp_css_dir, 'utf8'
     lua_template = fs.readFileSync tmp_lua_dir, 'utf8'
+
+    sLessTempPath = path.join pro_dir, emp.STATIC_LESS_TEMPLATE
+    sLessTempCon = fs.readFileSync sLessTempPath, 'utf8'
 
     tmp_arr = []
     for key,obj of @adapters
@@ -404,9 +416,15 @@ class emp_channel
       tmp_xhtml_name = tmp_tran+'.'+ext_xhtml
       tmp_xhtml_file = path.join cha_dir, ext_xhtml, tmp_xhtml_name
       #doc:文件的相对地址
+    # @off_detail.img = bImgFlag
+    # @off_detail.css = bCssFlag
+    # @off_detail.lua = bLuaFlag
+    # @off_detail.xhtml = bXhtmlFlag
+    # @off_detail.json = bJsonFlag
+    # @off_detail.less = bLessFlag
+    # OFF_CHA_DIR_LIST : ["xhtml", "css", "lua", "images", "json", "less"]
 
-
-      if !fs.existsSync tmp_xhtml_file
+      if @off_detail.xhtml and !fs.existsSync tmp_xhtml_file
         tmp_xhtml_template = xhtml_template.replace(/\$\{trancode\}/ig, tmp_tran)
         tmp_relate_file = path.join relate_dir, ext_xhtml, tmp_xhtml_name
         tmp_xhtml_template = tmp_xhtml_template.replace(/\$\{atom_related_info\}/ig, emp.DEFAULT_TEMP_HEADER.replace(/\$\{atom_related_info\}/ig,tmp_relate_file))
@@ -416,43 +434,71 @@ class emp_channel
             console.error(err)
             emp.show_error("创建离线资源代码失败~:#{tmp_xhtml_file}")
 
-      ext_json = emp.OFF_EXTENSION_JSON
-      tmp_json_file = path.join cha_dir, ext_json, (tmp_tran+'.'+ext_json)
-      if !fs.existsSync tmp_json_file
-        tmp_json_con = json_template.replace(/\$trancode/ig, tmp_tran)
-        fs.writeFile tmp_json_file, tmp_json_con, 'utf8', (err) =>
+      if @off_detail.json
+        ext_json = emp.OFF_EXTENSION_JSON
+        tmp_json_file = path.join cha_dir, ext_json, (tmp_tran+'.'+ext_json)
+        if !fs.existsSync tmp_json_file
+          tmp_json_con = json_template.replace(/\$trancode/ig, tmp_tran)
+          fs.writeFile tmp_json_file, tmp_json_con, 'utf8', (err) =>
+            if err
+              console.error(err)
+              emp.show_error("创建离线资源代码失败~:#{tmp_json_file}")
+
+      if @off_detail.lua
+        ext_lua = emp.OFF_EXTENSION_LUA
+        tmp_lua_file = path.join cha_dir, ext_lua, (tmp_tran+'.'+ext_lua)
+        tmp_relate_lua = path.join relate_dir, ext_lua, (tmp_tran+'.'+ext_lua)
+        re_lua_template = lua_template.replace(/\${channel}/ig, @id).replace(/\$\{trancode\}/ig, tmp_tran)
+        re_lua_template = re_lua_template.replace(/\$\{atom_related_info\}/ig, emp.DEFAULT_LUATEMP_HEADER.replace(/\$\{atom_related_info\}/ig, tmp_relate_lua))
+
+        if next_obj = tmp_arr.pop()
+          re_lua_template = re_lua_template.replace(emp.EMP_ENTRANCE_NEXT_TRANCODE, next_obj.trancode)
+        else
+          re_lua_template = re_lua_template.replace(emp.EMP_ENTRANCE_NEXT_TRANCODE, "")
+
+        if !fs.existsSync tmp_lua_file
+          fs.writeFile tmp_lua_file, re_lua_template, 'utf8', (err) =>
+            if err
+              console.error(err)
+              emp.show_error("创建离线资源代码失败~:#{tmp_lua_file}")
+
+    sExtCss = emp.OFF_EXTENSION_CSS
+    sCSSDestPath = path.join cha_dir, sExtCss, (@id+'.'+sExtCss)
+    sRelateCss = path.join relate_dir, sExtCss, (@id+'.'+sExtCss)
+    sCSSHeader = emp.DEFAULT_CSSTEMP_HEADER.replace(/\$\{atom_related_info\}/ig, sRelateCss)
+    if @off_detail.css
+      sCssResult = css_template.replace(/\$\{atom_related_info\}/ig, sCSSHeader)
+
+      if !fs.existsSync sCSSDestPath
+        fs.writeFile sCSSDestPath, sCssResult, 'utf8', (err) =>
           if err
             console.error(err)
-            emp.show_error("创建离线资源代码失败~:#{tmp_json_file}")
+            emp.show_error("创建离线资源代码失败~:#{sCSSDestPath}")
 
-      ext_lua = emp.OFF_EXTENSION_LUA
-      tmp_lua_file = path.join cha_dir, ext_lua, (tmp_tran+'.'+ext_lua)
-      tmp_relate_lua = path.join relate_dir, ext_lua, (tmp_tran+'.'+ext_lua)
-      re_lua_template = lua_template.replace(/\${channel}/ig, @id).replace(/\$\{trancode\}/ig, tmp_tran)
-      re_lua_template = re_lua_template.replace(/\$\{atom_related_info\}/ig, emp.DEFAULT_LUATEMP_HEADER.replace(/\$\{atom_related_info\}/ig, tmp_relate_lua))
+    if @off_detail.less
+      sExtLess = emp.OFF_EXTENSION_LESS
+      sLessFilePath = path.join cha_dir, sExtLess
+      sLessFileDir = path.join sLessFilePath, (@id+'.'+sExtLess)
+      sRelateCss = path.join '..', sExtCss, (@id+'.'+sExtCss)
 
-      if next_obj = tmp_arr.pop()
-        re_lua_template = re_lua_template.replace(emp.EMP_ENTRANCE_NEXT_TRANCODE, next_obj.trancode)
-      else
-        re_lua_template = re_lua_template.replace(emp.EMP_ENTRANCE_NEXT_TRANCODE, "")
+      # lLessImportFiles
+      sLessImportCon = ''
+      for sLessImportFile in @lLessImportFiles
+        sLessRelateDir = path.relative sLessFilePath,sLessImportFile
+        sExtName = path.extname(sLessImportFile).toLocaleLowerCase()
+        # @doc css 采用 inline 方式引入
+        if sExtName is '.css'
+          sLessImportCon += emp.EMP_CSS_IMPORT_HEADER.replace(/\$\{file_path\}/ig, sLessRelateDir)
+        else
+          sLessImportCon += emp.EMP_LESS_IMPORT_HEADER.replace(/\$\{file_path\}/ig, sLessRelateDir)
 
-      if !fs.existsSync tmp_lua_file
-        fs.writeFile tmp_lua_file, re_lua_template, 'utf8', (err) =>
+      sLessResult = sLessTempCon.replace(/\$\{output\}/ig, sRelateCss).replace(/\$\{import\}/ig, sLessImportCon)
+      sLessResult = sLessResult.replace(/\$\{atom_related_info\}/ig, sCSSHeader)
+      if !fs.existsSync sLessFileDir
+        fs.writeFile sLessFileDir, sLessResult, 'utf8', (err) =>
           if err
             console.error(err)
-            emp.show_error("创建离线资源代码失败~:#{tmp_lua_file}")
-
-      ext_css = emp.OFF_EXTENSION_CSS
-      tmp_css_file = path.join cha_dir, ext_css, (@id+'.'+ext_css)
-      tmp_relate_css = path.join relate_dir, ext_css, (@id+'.'+ext_css)
-      re_css_template = css_template.replace(/\$\{atom_related_info\}/ig, emp.DEFAULT_CSSTEMP_HEADER.replace(/\$\{atom_related_info\}/ig, tmp_relate_css))
-
-      if !fs.existsSync tmp_css_file
-        fs.writeFile tmp_css_file, re_css_template, 'utf8', (err) =>
-          if err
-            console.error(err)
-            emp.show_error("创建离线资源代码失败~:#{tmp_css_file}")
-
+            emp.show_error("创建离线资源代码失败~:#{sLessFileDir}")
 
   do_create_html_off:(project_path) ->
     cha_dir_arr = @initial_dir(project_path)
@@ -669,9 +715,10 @@ class emp_channel
   # @doc 构建指定 channel 的资源存放路径
   initial_cha_temp_dir:(cha_dir) ->
     for dir in emp.OFF_CHA_DIR_LIST
-      tmp_dir = path.join cha_dir,dir
-      if !fs.existsSync(tmp_dir)
-        fs.mkdirSync(tmp_dir)
+      if @off_detail[dir]
+        tmp_dir = path.join cha_dir,dir
+        if !fs.existsSync(tmp_dir)
+          fs.mkdirSync(tmp_dir)
 
   # @doc 构建指定 html 的资源存放路径
   initial_html_temp_dir:(cha_dir) ->

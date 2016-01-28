@@ -122,18 +122,20 @@ class AddGenPanel extends View
       @cha_obj.set_entry(tmp_entry)
       @cha_obj.set_state(tmp_state)
 
-      @active_view.submit_detail()
-      @params_view.submit_detail()
+      if @active_view.submit_detail()
+        @params_view.submit_detail()
 
-      if !@is_edit
-        @do_add()
-        @fa_view.after_add_channel(@cha_obj)
-        @check_if_the_first_page()
-      else
-        @do_edit()
-        @fa_view.after_edit_channel(@cha_obj)
-      @cha_obj.refresh_channel_menu()
-      @destroy()
+        if !@is_edit
+          @do_add()
+          @fa_view.after_add_channel(@cha_obj)
+          @check_if_the_first_page()
+        else
+          @do_edit()
+          @fa_view.after_edit_channel(@cha_obj)
+        @cha_obj.refresh_channel_menu()
+        emp.show_info "添加 Channel 成功!"
+        @destroy()
+      
 
     catch e
       console.error e

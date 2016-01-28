@@ -118,6 +118,8 @@ atom.deserializers.add(config_deserializer)
 
 module.exports =
   activate: (state)->
+    # console.log '--------------------------'
+    # console.log state
     @disposables = new CompositeDisposable
     # console.log "emp active~:#{state}"
     @disposables.add atom.workspace.addOpener (uri) ->
@@ -143,6 +145,10 @@ module.exports =
       "emp-debugger:create_html": => create_html()
       "emp-debugger:create_channel": => create_cha()
       "emp-debugger:open_config": => open_config_view()
+      "emp-debugger:create_less": => create_less()
+      "emp-debugger:compile_all_less": =>
+        oLessCompile = state.oLessCompile
+        oLessCompile.compileAllLess()
     })
       # "emp-debugger:temp-management", -> open_temp_wizard_panel()
 

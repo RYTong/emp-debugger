@@ -265,26 +265,41 @@ class EmpAppWizardView extends ScrollView
     # console.log "  ------ ----- "
 
     temp_path = emp.get_temp_emp_path()
-    if temp_path
-      dest_dir = path.join to_path, emp.STATIC_UI_CSS_TEMPLATE_DEST_DIR
-      tmp_emp = require emp.get_temp_emp_path()
-      temp_ui_path = atom.config.get(tmp_emp.EMP_APP_STORE_UI_PATH)
-      temp_ui_css_path = path.join temp_ui_path, emp.OFF_EXTENSION_CSS
-      if !fs.existsSync dest_dir
-        emp.mkdir_sync_safe dest_dir
 
-      if fs.existsSync temp_ui_css_path
-        fs_plus.copySync  temp_ui_css_path, dest_dir
+    sCssDestPath = path.join to_path, emp.STATIC_UI_CSS_TEMPLATE_DEST_DIR
+    if !fs.existsSync sCssDestPath
+      emp.mkdir_sync_safe sCssDestPath
+
+    if temp_path
+      tmp_emp = require emp.get_temp_emp_path()
+      sTempUIPath = atom.config.get(tmp_emp.EMP_APP_STORE_UI_PATH)
+      sTempUIFile = path.join sTempUIPath, emp.OFF_EXTENSION_CSS
+
+      if fs.existsSync sTempUIFile
+        fs_plus.copySync  sTempUIFile, sCssDestPath
     else
       dest_path = path.join to_path, emp.STATIC_UI_CSS_TEMPLATE_DEST_PATH
       basic_dir = path.join __dirname, '../../', emp.STATIC_UI_CSS_TEMPLATE
-
       css_con = fs.readFileSync basic_dir, 'utf8'
-      tmp_dest_path = path.dirname dest_path
-      if !fs.existsSync tmp_dest_path
-        emp.mkdir_sync_safe tmp_dest_path
+
       fs.writeFileSync(dest_path, css_con, 'utf8')
 
+    sLessDir = path.join to_path, emp.STATIC_UI_LESS_TEMPLATE_DEST_DIR
+    sLessFileDir = path.join to_path, emp.STATIC_UI_LESS_TEMPLATE_DEST_PATH
+    sLessTempPath = path.join __dirname, '../../', emp.STATIC_UI_LESS_TEMPLATE
+    sLessCon = fs.readFileSync sLessTempPath, 'utf8'
+
+    if !fs.existsSync sLessDir
+      emp.mkdir_sync_safe sLessDir
+      fs.writeFileSync(sLessFileDir, sLessCon, 'utf8')
+    else if !fs.existsSync sLessFileDir
+      fs.writeFileSync(sLessFileDir, sLessCon, 'utf8')
+
+    sTempChannelStyle = path.join __dirname, '../../', emp.NATIVE_CHANNEL_DEFAULT_STYLE
+    sTempStyleCon = fs.readFileSync sTempChannelStyle, 'utf8'
+    sDefaultChannelStyle = path.join to_path, emp.DESTINATION_CHANNEL_DEFAULT_STYLE
+    if !fs.existsSync sDefaultChannelStyle
+      fs.writeFileSync sDefaultChannelStyle,sTempStyleCon, 'utf8'
 
   copy_lua_ui: (to_path) ->
     # console.log "  ------ ----- "

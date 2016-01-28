@@ -8,6 +8,7 @@ EmpViewManage = require './view/emp-views-entrance'
 conf_parser = require './emp_app/conf_parser'
 ErtUiGuide = require './guide/emp-debugger-ui-guide'
 EMPOpenLink = require './link/emp-open-link'
+LessCompileView = require './less_compile/less-compile-view'
 
 emp = require './exports/emp'
 n_state = null
@@ -32,10 +33,12 @@ module.exports =
   empDebuggerLogView: null
   emp_socket_server: null
   empDebuggerSettingView: null
+  empLessAutocompile:null
 
   activate:(state) ->
     n_state = state
     # console.log "active"
+    @empLessAutocompile = new LessCompileView(state.lessCompileViewState)
     @empDebuggerLogView = new EmpDebuggerLogView(n_state.empDebuggerLogViewState)
     @emp_socket_server = new EmpSocketServer(@empDebuggerLogView)
     @empEnableView = new EmpEnableView(n_state.empEnableViewState, @emp_socket_server)
@@ -47,7 +50,7 @@ module.exports =
     atom.commands.add "atom-workspace","emp-debugger:live-preview", => @live_preview()
     # atom.commands.add "atom-workspace","emp-debugger:setting-view", => @set_conf()
 
-    EmpViewManage.activate()
+    EmpViewManage.activate(oLessCompile:@empLessAutocompile)
     conf_parser.initial_parser()
 
   # convert: ->
@@ -87,6 +90,7 @@ module.exports =
     @empDebuggerSettingView.destroy()
     @ertUiGuide.destroy()
     @emp_open_link.destroy()
+    @empLessAutocompile.destroy()
 
   serialize: ->
     # empDebuggerStateViewState: @empDebuggerStateView.serialize()
@@ -96,6 +100,7 @@ module.exports =
     empDebuggerLogViewState: @empDebuggerLogView.serialize()
     empDebuggerSettingViewState: @empDebuggerSettingView.serialize()
     ertUiGuideState:@ertUiGuide.serialize()
+    lessCompileViewState: @empLessAutocompile.serialize()
 
   live_preview: ->
     editor = atom.workspace.getActiveTextEditor()

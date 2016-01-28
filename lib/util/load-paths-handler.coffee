@@ -1,7 +1,6 @@
 fs = require 'fs'
 path = require 'path'
 _ = require 'underscore-plus'
-{Git} = require 'atom'
 {Minimatch} = require 'minimatch'
 
 asyncCallsInProgress = 0
@@ -59,7 +58,7 @@ loadFolder = (folderPath) ->
     loadPath(path.join(folderPath, childName)) for childName in children
     asyncCallDone()
 
-module.exports = (rootPath, traverseIntoSymlinkDirectories, ignoreVcsIgnores, ignores=[]) ->
+module.exports = (rootPath, traverseIntoSymlinkDirectories, ignoreVcsIgnores, sAtomVersion, ignores=[]) ->
   traverseSymlinkDirectories = traverseIntoSymlinkDirectories
   ignoredNames = []
   for ignore in ignores when ignore
@@ -69,5 +68,11 @@ module.exports = (rootPath, traverseIntoSymlinkDirectories, ignoreVcsIgnores, ig
       console.warn "Error parsing ignore pattern (#{ignore}): #{error.message}"
 
   callback = @async()
-  repo = Git.open(rootPath, refreshOnWindowFocus: false) if ignoreVcsIgnores
+  if sAtomVersion > "1.1.0"
+    {GitRepository} = require 'atom'
+    repo = GitRepository.open(rootPath, refreshOnWindowFocus: false) if ignoreVcsIgnores
+  else
+    {Git} = require 'atom'
+    repo = Git.open(rootPath, refreshOnWindowFocus: false) if ignoreVcsIgnores
+
   loadFolder(rootPath)

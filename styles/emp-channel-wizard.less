@@ -747,6 +747,14 @@
                     margin-left:@component-padding/4;
                     margin-right:@component-padding/4;
 
+                    .editor.mini.invalid{
+                      border: 1px solid fade(@background-color-warning, 40%);
+                    }
+
+                    .editor.mini.valid {
+                      border: 1px solid fade(@background-color-success, 40%);
+                    }
+
                     .form-control {
                       height: @tab-height; //@component-line-height
                     }
@@ -772,7 +780,10 @@
 
                   }
                   .off_ul_btn{
-                    margin:1.5em 0.5em 0.5em 0.5em;
+                    margin:1.5em 0.2em 0.2em 0.5em;
+                    min-width:6em;
+                  }
+                  .off_le_btn{
                     min-width:6em;
                   }
                 }

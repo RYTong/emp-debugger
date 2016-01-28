@@ -1,10 +1,22 @@
 # See https://atom.io/docs/latest/creating-a-package#menus for more details
 'context-menu':
+
   'atom-text-editor': [
+    {'type': 'separator'}
     {
-      'label': 'Toggle emp-debugger'
-      'command': 'emp-debugger:setting-view'
+      'label': 'Emp '
+      'submenu': [
+        {'label': 'Setting View', 'command': 'emp-debugger:setting-view'}
+        {'label': 'Compile All Less', 'command': 'emp-debugger:compile_all_less'}
+        # {'label': 'Add a Emp Erl', 'command': 'emp-debugger:create_erl'}
+        # {'label': 'Add a Emp Page', 'command': 'emp-debugger:create_xhtml'}
+        # {'label': 'Add a Emp Html ', 'command': 'emp-debugger:create_html'}
+        # {'label': 'Add a Emp Html Page', 'command': 'emp-debugger:create_html'}
+        # {'label': 'Add a Emp Channel', 'command': 'emp-debugger:create_channel'}
+       ]
+
     }
+    {'type': 'separator'}
   ]
 
   '.tree-view.full-menu': [
@@ -12,11 +24,12 @@
     {
       'label': 'Emp '
       'submenu': [
-        {'label': 'Add a Emp Erl', 'command': 'emp-debugger:create_erl'}
-        {'label': 'Add a Emp Page', 'command': 'emp-debugger:create_xhtml'}
-        {'label': 'Add a Emp Html ', 'command': 'emp-debugger:create_html'}
-        {'label': 'Add a Emp Html Page', 'command': 'emp-debugger:create_html'}
-        {'label': 'Add a Emp Channel', 'command': 'emp-debugger:create_channel'}
+        {'label': 'New Less File ', 'command': 'emp-debugger:create_less'}
+        # {'label': 'Add a Emp Erl', 'command': 'emp-debugger:create_erl'}
+        # {'label': 'Add a Emp Page', 'command': 'emp-debugger:create_xhtml'}
+        # {'label': 'Add a Emp Html ', 'command': 'emp-debugger:create_html'}
+        # {'label': 'Add a Emp Html Page', 'command': 'emp-debugger:create_html'}
+        # {'label': 'Add a Emp Channel', 'command': 'emp-debugger:create_channel'}
        ]
     }
     {'type': 'separator'}

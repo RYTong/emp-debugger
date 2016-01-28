@@ -13,7 +13,7 @@ callback = null
 
 isUnIgnored = (loadedPath) ->
   if repo?.isPathIgnored(loadedPath)
-    true
+    false
   else
     for unignoredName in unignoredNames
       return true if unignoredName.match(loadedPath)

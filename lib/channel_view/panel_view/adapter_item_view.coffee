@@ -34,7 +34,7 @@ class AdapterItemPanel extends View
           @span "View:"
           @subview "view_name", new TextEditorView(mini: true, attributes: {id: 'view_name', type: 'string'},  placeholderText: 'View Name')
         @button outlet:'add_arg_btn', class: 'off_ul_btn btn btn-info inline-block-tight', click:'add_arg',' Add Arg'
-        @button class: 'off_ul_btn btn btn-info inline-block-tight', click:'destroy',' Delete '
+        @button class: 'off_ul_btn btn btn-primary inline-block-tight', click:'destroy',' Delete '
 
 
   initialize: (@cha_obj, key, val)->

@@ -29,7 +29,9 @@
     "emp-debugger:create_html",
     "emp-debugger:create_xhtml",
     "emp-debugger:create_cha",
-    "emp-debugger:open_config"
+    "emp-debugger:open_config",
+    "emp-debugger:create_less",
+    "emp-debugger:compile_all_less"
   ],
   "repository": "https://github.com/RYTong/emp-debugger",
   "license": "MIT",
@@ -43,7 +45,10 @@
     "moxie-zip": "*",
     "atom-space-pen-views": "^2.0.2",
     "fs-plus": "*",
-    "resolve": "~1.1.0"
+    "resolve": "~1.1.0",
+    "async": "^0.9.0",
+    "less": "^2.3.1",
+    "mkdirp": "^0.5.0"
   },
   "packageDependencies": {
     "language-lua": "*",

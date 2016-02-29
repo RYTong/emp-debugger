@@ -155,13 +155,18 @@ class EmpDebuggerLogView extends View
       lv_val = tmp_lv.val
       if lv_val is default_lv
         @lv_selected = lv_val
+        @lv_map_val = lv_unmap[@lv_selected]
         @lv_control.append @new_select_option lv_key,lv_val
       else
         @lv_control.append @new_option lv_key,lv_val
 
     # 记住日志类型
     @disposable.add @lv_control.change =>
+
       @lv_selected = @lv_control.val()
+      @lv_map_val = lv_unmap[@lv_selected]
+      # console.log @lv_selected
+      # console.log @lv_map_val
 
     # 设置默认行数
     for log_line in @log_line_limit
@@ -316,10 +321,10 @@ class EmpDebuggerLogView extends View
     # console.log @lv_selected
     log_con_color = lv_color[log_lv]
     log_con_color ?= lv_color.def
-    if lv_list.indexOf(log_lv) >0
-      # console.log log_lv
-      lv_map_val = lv_unmap[@lv_selected]
-      if lv_map_val.indexOf(log_lv) >0
+    if lv_list.indexOf(log_lv) >=0
+      # lv_map_val = lv_unmap[@lv_selected]
+      # console.log log_lv, @lv_map_val, @lv_selected
+      if @lv_map_val?.indexOf(log_lv) >=0
         # if @lv_selected is lv_val_l
         @update_log(client_id, log, show_color, log_con_color)
         @update_gutter(show_color, start_color_ln, client_id)
@@ -372,7 +377,7 @@ class EmpDebuggerLogView extends View
     # $('#emp_log_view').stop().animate({scrollTop:@log_detail.context.scrollHeight}, 1000)
 
   store_log: (client_id, log, log_lv=emp.EMP_DEF_LOG_TYPE) ->
-    # console.log @log_map
+    # console.log client_id, log, log_lv
     if !@log_map[client_id]
       tmp_color = @get_color()
       @log_map[client_id] = new emp_log(client_id, tmp_color)
@@ -656,6 +661,9 @@ class EmpDebuggerLogView extends View
 
   add_clients: (client_id)->
     @client_select.append @new_option(client_id, client_id)
+    console.log '------------------'
+    sShowInput = "########################## New Client:#{client_id} ##########################"
+    @store_log(client_id, sShowInput)
 
   new_option: (name, value=name)->
     $$ ->

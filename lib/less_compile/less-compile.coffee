@@ -10,9 +10,9 @@ module.exports =
 class EmpLessCompile
 
   constructor: (@sLessFile) ->
-    console.log @sLessFile
+    # console.log @sLessFile
     @getParams @sLessFile, (params) =>
-      console.log params
+      # console.log params
       @compileLess params
 
   compileLess: (params) ->
@@ -82,7 +82,7 @@ class EmpLessCompile
         callback @params
 
   parseFirstLine: (line) ->
-    console.log "---------------------:#{line}"
+    # console.log "---------------------:#{line}"
     return if !@firstLine
 
     @firstLine = false

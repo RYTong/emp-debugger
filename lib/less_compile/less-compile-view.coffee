@@ -133,7 +133,7 @@ class LessCompileView
         callback @params
 
   parseFirstLine: (line) ->
-    console.log "---------------------:#{line}"
+    # console.log "---------------------:#{line}"
     return if !@firstLine
 
     @firstLine = false

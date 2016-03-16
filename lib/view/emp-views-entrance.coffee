@@ -1,4 +1,5 @@
 {Disposable, CompositeDisposable} = require 'atom'
+{$, $$} = require 'atom-space-pen-views'
 EmpChannelWizardView = require '../channel_view/emp-channel-wizard-view'
 EmpCreateAppWizardView = require '../app_wizard/emp-app-wizard-view'
 EmpCreateTempWizardView = require '../temp_wizard/emp-temp-wizard-view'
@@ -12,6 +13,7 @@ empTempWizardView = null
 empConfigView = null
 
 emp = require '../exports/emp'
+AddLessMod = require '../dialog/add-less-file'
 
 # -------------------use for front page -------------------------
 create_front_page_wizard_view = (params) ->
@@ -84,6 +86,18 @@ cha_deserializer =
 
 atom.deserializers.add(cha_deserializer)
 
+
+# -------------------use for Setting View -------------------------
+emp_config_view = (params) ->
+  console.log "-------emp_config_view"
+  empConfigView = new EMPConfigView(params)
+
+open_config_view = ->
+  # console.log "open_app_wizard_panel"
+  atom.workspace.open(emp.EMP_CONFIG_URI)
+  # empAppWizardView.add_new_panel()
+
+# -------------------use for Setting View -------------------------
 create_xhtml = ->
   console.log "create_xhtml "
 
@@ -96,15 +110,10 @@ create_erl = ->
 create_cha = ->
   console.log "create_cha "
 
-# -------------------use for Setting View -------------------------
-emp_config_view = (params) ->
-  console.log "-------emp_config_view"
-  empConfigView = new EMPConfigView(params)
-
-open_config_view = ->
-  # console.log "open_app_wizard_panel"
-  atom.workspace.open(emp.EMP_CONFIG_URI)
-  # empAppWizardView.add_new_panel()
+create_less = (tmp_event)->
+  # console.log tmp_event
+  # console.log "create_less"
+  AddLessMod.new_less_file(tmp_event)
 
 config_deserializer =
   name: emp.EMP_CONFIG_VIEW
@@ -134,6 +143,12 @@ module.exports =
         create_temp_wizard_view({uri})
       else if uri is emp.EMP_CONFIG_URI
         emp_config_view({uri})
+    #
+    # @on 'tree-view:directory-modified', =>
+    #   if @hasFocus()
+    #     @selectEntryForPath(@selectedPath) if @selectedPath
+    #   else
+    #     @selectActiveFile()
 
     @disposables.add atom.commands.add("atom-workspace", {
       "emp-debugger:show-channel": => open_cha_wizard_panel()
@@ -145,7 +160,7 @@ module.exports =
       "emp-debugger:create_html": => create_html()
       "emp-debugger:create_channel": => create_cha()
       "emp-debugger:open_config": => open_config_view()
-      "emp-debugger:create_less": => create_less()
+      "emp-debugger:create_less": (event)=> create_less(event)
       "emp-debugger:compile_all_less": =>
         oLessCompile = state.oLessCompile
         oLessCompile.compileAllLess()

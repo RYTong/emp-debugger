@@ -6,6 +6,7 @@ EmpAppMan = require '../emp_app/emp_app_manage'
 EmpBarView = require './emp-setting-bar'
 EmpAppManaView = require './emp-app-manage-view'
 EmpSnippetsView = require '../debugger/emp_debugger_snippets_view'
+EmpAnalyzeView = require '../analyze/emp-project-ana-view'
 
 PANE_DENUG = 'debug'
 PANE_APP = 'emp'
@@ -117,8 +118,12 @@ class EmpDebuggerSettingView extends View
     @user_set_color = "#000033"
     @emp_setting_panel.before(bar_view)
 
+    analyze_view = new EmpAnalyzeView(this)
+    @log_detail.after analyze_view
+
     snippet_view = new EmpSnippetsView(this)
     @log_detail.after snippet_view
+
 
     @disposable = new CompositeDisposable
     @disposable.add atom.commands.add "atom-workspace","emp-debugger:setting-view", => @set_conf()

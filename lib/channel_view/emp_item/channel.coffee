@@ -169,7 +169,7 @@ class emp_channel
     else
       @create_adapter_detail()
 
-    # @refresh_channel_menu()
+  # @refresh_channel_menu()
 
   # @doc 编译erl 模块
   # recompile_channel_mod: ->
@@ -244,6 +244,12 @@ class emp_channel
   create_adapter_detail: ->
     try
       # project_path = atom.project.getPaths()[0]
+      sTempChannelStyle = path.join __dirname, '../../../', emp.NATIVE_CHANNEL_DEFAULT_STYLE
+      sTempStyleCon = fs.readFileSync sTempChannelStyle, 'utf8'
+      sDefaultChannelStyle = path.join @project_path, emp.DESTINATION_CHANNEL_DEFAULT_STYLE
+      if !fs.existsSync sDefaultChannelStyle
+        fs.writeFileSync sDefaultChannelStyle,sTempStyleCon, 'utf8'
+
       if @use_code
         @create_code(@project_path)
       # console.log '111'

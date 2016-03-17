@@ -1,0 +1,73 @@
+// The ui-variables file is provided by base themes provided by Atom.
+//
+// See https://github.com/atom/atom-dark-ui/blob/master/stylesheets/ui-variables.less
+// for a full listing of what's available.
+@import "ui-variables";
+@font-family: 'sans regular','方正黑体_GBK','思源黑体 CN',sans-serif ;
+
+
+.tree-view-dialog .btn-right{
+  right:0px;
+}
+
+.tree-view-dialog .off_ul {
+  left:0px;
+  right:0px;
+  margin:0;
+  display: -webkit-flex;
+  border-bottom: 1px solid #858585;
+  padding: 0 0 @component-padding/2 0;
+
+  .off_li {
+    -webkit-flex-direction: column;
+    display: -webkit-flex;
+    -webkit-flex: 0.4;
+    margin:@component-padding/4;
+    atom-text-editor[mini],
+    atom-text-editor[mini].is-focused::shadow {
+      // color: @text-color;
+      color: #333333;
+      background-color: #FAFFFF;
+      margin: 0;
+
+      .cursor {
+        border-color: #000;
+      }
+
+      .selection .region {
+        background-color: rgba(0, 0, 0, .2)
+      }
+
+      .placeholder-text {
+        color: #888;
+      }
+
+      .editor.mini.invalid{
+        border: 1px solid fade(@background-color-warning, 40%);
+      }
+
+      .editor.mini.valid {
+        border: 1px solid fade(@background-color-success, 40%);
+      }
+
+    }
+  }
+  .off_ul_btn{
+    margin: 0 0.5em 0 0.5em;
+    min-width:6em;
+  }
+}
+.tree-view-dialog .off_param_div {
+  padding: @component-padding/2;
+  left:0;
+  right:0;
+  min-width: 0;
+
+  .off_param_item_div {
+    left:0;
+    right:0;
+    min-width: 0;
+    // border-bottom: 1px solid #858585;
+    // padding:@component-padding/2 0 @component-padding/4 0;
+  }
+}

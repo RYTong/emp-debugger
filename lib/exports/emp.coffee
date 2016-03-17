@@ -27,7 +27,8 @@ module.exports =
   EMP_YAWS_SOURCE_PATH: 'emp-debugger.yaws_source_path'
 
 
-
+  DEFAULT_LESS_NAME:'untitled.less'
+  DEFAULT_OUT_LESS_PATH:'../css/untitled.css'
 
   EMP_DEF_LINE_LIMIT_SELECTED : 1000
 

@@ -7,7 +7,8 @@ emp = require '../exports/emp'
 bash_path_key = 'emp-channel-wizard.path'
 
 rel_erl_dir = '../../erl_util/atom_pl_parse_json.erl'
-rel_ebin_dir = '../../erl_util/'
+rel_erl_path = '../../erl_util/'
+# rel_ebin_dir = '../../erl_util/'
 emp = require '../exports/emp'
 os_platform = emp.get_emp_os()
 
@@ -55,8 +56,8 @@ compile_paser = (callback)->
           console.warn error.message
           throw "No erl environment~"
 
-        erl_dir = path.join(__dirname, rel_erl_dir)
-        ebin_dir = path.join(__dirname, rel_ebin_dir)
+        erl_dir = path.join(__dirname, rel_erl_path, "*")
+        ebin_dir = path.join(__dirname, rel_erl_path)
         atom.project.parse_beam_dir = ebin_dir
         erlc_str = 'erlc -o '+ebin_dir+' '+erl_dir
     #
@@ -74,8 +75,8 @@ compile_paser = (callback)->
       catch err
         emp.show_error(err)
   else
-    erl_dir = path.join(__dirname, rel_erl_dir)
-    ebin_dir = path.join(__dirname, rel_ebin_dir)
+    erl_dir = path.join(__dirname, rel_erl_path, "*")
+    ebin_dir = path.join(__dirname, rel_erl_path)
     erlc_str = 'erlc -o '+ebin_dir+' '+erl_dir+' -noshell -s erlang halt'
     # console.log erlc_str
     c_process.exec erlc_str, (error, stdout, stderr) ->

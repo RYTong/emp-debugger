@@ -4,6 +4,7 @@
 // for a full listing of what's available.
 @import "ui-variables";
 @font-family: 'sans regular','方正黑体_GBK','思源黑体 CN',sans-serif ;
+@emp-background-color: #F5FFFF;
 
 .emp-setting {
   position: relative;
@@ -18,6 +19,11 @@
   line-height: 1.3;
   font-family:@font-family;
 
+  display: -webkit-flex;
+  -webkit-flex: 1;
+  -webkit-flex-direction: column;
+  overflow: visible;
+
   // padding: 10px;
   // top: 0;
   // bottom: 0;
@@ -28,7 +34,7 @@
   // -webkit-flex: 1;
   // position: absolute;
 
-  background-color:#F5FFFF;
+  background-color:@emp-background-color;
 
   .emp-setting-bar {
 
@@ -58,10 +64,10 @@
       // width:50%;
       // height:21px;
       // line-height:21px;
-      margin:0 1px;
+      // margin:0 1px;
       position:relative;
       border-bottom: 4px solid @app-background-color;
-      top:1px;
+      top:0px;
       z-index:9; }
     .eli:hover {
       text-decoration:underline;
@@ -127,7 +133,7 @@
       }
   }
   .emp-setting-panel{
-    background-color:#F5FFFF;
+    background-color:@emp-background-color;
     // bottom:20px;
     height: 91%;
     position: relative;
@@ -135,9 +141,15 @@
     -webkit-user-select: none;
     width: 100%;
     overflow: auto;
+    display: -webkit-flex;
+
+    -webkit-flex: 1;
+    display: -webkit-flex;
+    min-height: 0;
+    min-width: 0;
 
     .emp-setting-server {
-      background-color:#F5FFFF;
+      background-color:@emp-background-color;
       position: absolute;
       top: 0;
       right : 0;
@@ -146,7 +158,7 @@
       width: 100%;
       overflow: auto;
       cursor: text;
-      display: -webkit-flex;
+      display: flex;
       -webkit-flex-direction: column;
 
       .emp-setting-row-server {
@@ -204,7 +216,7 @@
       }
 
       .emp-setting-btn-head{
-        color:#FFFFFF;
+        color:@emp-background-color;
         vertical-align: top;
         margin: @component-padding/4 @component-padding @component-padding/4 @component-padding;
 
@@ -222,7 +234,7 @@
       }
       .emp-setting-btn-else,
       .setting_local_view > .emp-setting-btn-else{
-        color:#FFFFFF;
+        color:@emp-background-color;
         vertical-align: top;
         margin: @component-padding/4 @component-padding @component-padding/4 @component-padding;
         right:0;
@@ -236,7 +248,7 @@
 
       .emp-setting-con,
       .setting_local_view > .emp-setting-con{
-        color:#FFFFFF;
+        color:@emp-background-color;
 
         vertical-align: top;
         padding:@component-padding/4 @component-padding @component-padding/2 @component-padding;
@@ -246,7 +258,7 @@
         width: 100%;
         .btn-default,
         .btn-group > .btn-default {
-          background: #FAFFFF;
+          background: @emp-background-color;
           color:#000014;
           border: 1px solid #ccc;
 

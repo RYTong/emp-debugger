@@ -6,6 +6,7 @@ EmpCreateTempWizardView = require '../temp_wizard/emp-temp-wizard-view'
 EmpCreateFrontPageWizardView = require '../temp_wizard/emp-front-page-wizard-view'
 EmpCreateAppWizardView = require '../app_wizard/emp-app-wizard-view'
 EMPConfigView = require '../config/emp-config-view'
+# EmpErlIndent = require '../indent/emp-erl-indent'
 
 empChannelWizardView = null
 empAppWizardView = null
@@ -97,6 +98,14 @@ open_config_view = ->
   atom.workspace.open(emp.EMP_CONFIG_URI)
   # empAppWizardView.add_new_panel()
 
+config_deserializer =
+  name: emp.EMP_CONFIG_VIEW
+  version: 1
+  deserialize: (state) ->
+    # console.log "emp deserialize"
+    emp_config_view(state) if state.constructor is Object
+
+atom.deserializers.add(config_deserializer)
 # -------------------use for Setting View -------------------------
 create_xhtml = ->
   console.log "create_xhtml "
@@ -115,15 +124,10 @@ create_less = (tmp_event)->
   # console.log "create_less"
   AddLessMod.new_less_file(tmp_event)
 
-config_deserializer =
-  name: emp.EMP_CONFIG_VIEW
-  version: 1
-  deserialize: (state) ->
-    # console.log "emp deserialize"
-    emp_config_view(state) if state.constructor is Object
-
-atom.deserializers.add(config_deserializer)
-
+# -------------------Do erlang indent -------------------------
+# erl_indent = ->
+#   oTextEditor = new EmpErlIndent()
+#   oTextEditor.once_indent()
 
 module.exports =
   activate: (state)->
@@ -161,6 +165,7 @@ module.exports =
       "emp-debugger:create_channel": => create_cha()
       "emp-debugger:open_config": => open_config_view()
       "emp-debugger:create_less": (event)=> create_less(event)
+      # "emp-debugger:erl_indent": (event) => erl_indent()
       "emp-debugger:compile_all_less": =>
         oLessCompile = state.oLessCompile
         oLessCompile.compileAllLess()

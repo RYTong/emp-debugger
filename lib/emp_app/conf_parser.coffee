@@ -56,7 +56,7 @@ compile_paser = (callback)->
           console.warn error.message
           throw "No erl environment~"
 
-        erl_dir = path.join(__dirname, rel_erl_path, "*")
+        erl_dir = path.join(__dirname, rel_erl_path, "*.erl")
         ebin_dir = path.join(__dirname, rel_erl_path)
         atom.project.parse_beam_dir = ebin_dir
         erlc_str = 'erlc -o '+ebin_dir+' '+erl_dir
@@ -75,7 +75,7 @@ compile_paser = (callback)->
       catch err
         emp.show_error(err)
   else
-    erl_dir = path.join(__dirname, rel_erl_path, "*")
+    erl_dir = path.join(__dirname, rel_erl_path, "*.erl")
     ebin_dir = path.join(__dirname, rel_erl_path)
     erlc_str = 'erlc -o '+ebin_dir+' '+erl_dir+' -noshell -s erlang halt'
     # console.log erlc_str

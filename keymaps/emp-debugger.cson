@@ -20,8 +20,9 @@
   'ctrl-alt-q': 'emp-debugger:show-channel'
   'ctrl-alt-w': 'emp-debugger:create-app'
   'ctrl-alt-r': 'emp-debugger:create-temp'
+  # 'ctrl-alt-a': 'emp-debugger:test-panel'
 
-  # 'ctrl-i': 'emp-debugger:erl_indent'
+  'ctrl-i': 'emp-debugger:erl_indent'
 
 
 '.platform-win32 atom-text-editor:not(.mini), .platform-linux atom-text-editor:not(.mini) ':
@@ -33,3 +34,4 @@
   'ctrl-o': 'emp-debugger:open_link'
   'ctrl-}': 'emp-debugger:open_link'
   'ctrl-{': 'emp-debugger:open_link'
+  # 'ctrl-i': 'emp-debugger:erl_indent'

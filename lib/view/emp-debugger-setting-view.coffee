@@ -120,7 +120,7 @@ class EmpDebuggerSettingView extends View
 
     # analyze_view = new EmpAnalyzeView(this)
     # @log_detail.after analyze_view
-
+    #
     snippet_view = new EmpSnippetsView(this)
     @log_detail.after snippet_view
 

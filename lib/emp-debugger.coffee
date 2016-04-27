@@ -9,6 +9,8 @@ conf_parser = require './emp_app/conf_parser'
 ErtUiGuide = require './guide/emp-debugger-ui-guide'
 EMPOpenLink = require './link/emp-open-link'
 LessCompileView = require './less_compile/less-compile-view'
+EMPTestPanel = require './view/emp-test-panel'
+EmpErlIndent = require './indent/emp-erl-indent'
 
 emp = require './exports/emp'
 n_state = null
@@ -25,6 +27,14 @@ module.exports =
       type: 'integer'
       default: 1000
 
+    defErlangIndentTabLength:
+      type: 'integer'
+      default: 4
+
+    defErlangIndentUseTab:
+      type: 'boolean'
+      default: false
+
   empDebuggerInitView: null
   empDebuggerStateView: null
   empDebuggerErrView: null
@@ -34,6 +44,8 @@ module.exports =
   emp_socket_server: null
   empDebuggerSettingView: null
   empLessAutocompile:null
+  empTestPanel:null
+  empErlIndent:null
 
   activate:(state) ->
     n_state = state
@@ -45,11 +57,18 @@ module.exports =
     @empEnableLuaView = new EmpEnableLuaView(n_state.empEnableLuaViewState, @emp_socket_server)
     @empDebuggerSettingView = new EmpDebuggerSettingView(n_state.empDebuggerSettingViewState,
                                   @emp_socket_server, @empDebuggerLogView, this)
-    @ertUiGuide = new ErtUiGuide(n_state.ertUiGuideState, this)
+    # @ertUiGuide = new ErtUiGuide(n_state.ertUiGuideState, this)
     @emp_open_link = new EMPOpenLink()
-    atom.commands.add "atom-workspace","emp-debugger:live-preview", => @live_preview()
+    @empErlIndent = new EmpErlIndent()
+    atom.commands.add "atom-workspace", {
+      "emp-debugger:live-preview":(event) => @live_preview()
+      "emp-debugger:erl_indent": (event) => @do_erl_indent()
+
+    }
     # atom.commands.add "atom-workspace","emp-debugger:setting-view", => @set_conf()
 
+    @empTestPanel = new EMPTestPanel(n_state.empDebuggerSettingViewState,
+                                  @emp_socket_server, @empDebuggerLogView, this)
     EmpViewManage.activate(oLessCompile:@empLessAutocompile)
     conf_parser.initial_parser()
 
@@ -88,9 +107,11 @@ module.exports =
     @empDebuggerLogView.destroy()
     @emp_socket_server.destroy()
     @empDebuggerSettingView.destroy()
-    @ertUiGuide.destroy()
+    # @ertUiGuide.destroy()
     @emp_open_link.destroy()
     @empLessAutocompile.destroy()
+    @empTestPanel.destroy()
+    @empErlIndent.destroy()
 
   serialize: ->
     # empDebuggerStateViewState: @empDebuggerStateView.serialize()
@@ -99,7 +120,7 @@ module.exports =
     # empDebuggerInitViewState: @empDebuggerInitView.serialize()
     empDebuggerLogViewState: @empDebuggerLogView.serialize()
     empDebuggerSettingViewState: @empDebuggerSettingView.serialize()
-    ertUiGuideState:@ertUiGuide.serialize()
+    # ertUiGuideState:@ertUiGuide.serialize()
     lessCompileViewState: @empLessAutocompile.serialize()
 
   live_preview: ->
@@ -147,3 +168,6 @@ module.exports =
 
   show_enable_lua: ->
     @empEnableLuaView.enable_lua()
+
+  do_erl_indent: ->
+    @empErlIndent.send_indent_msg()

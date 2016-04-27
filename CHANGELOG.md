@@ -2,6 +2,10 @@
 
 # Emp Debugger Package Change Log
 
+## Version 0.10.6
+1. erlang 缩进 ctrl-i (没启动以个 Atom window ,会启动一个 ErlangVM, 所以, 当 Atom Window 过多的时候,可能会导致系统卡顿)
+
+
 ## Version 0.9.6
 1. 优化open link, 现在 link 可以跳到对应的行数
 2. 优化 open link, 现在 link 可以在 Erlang 文件中跳转

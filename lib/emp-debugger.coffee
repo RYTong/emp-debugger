@@ -170,4 +170,4 @@ module.exports =
     @empEnableLuaView.enable_lua()
 
   do_erl_indent: ->
-    @empErlIndent.send_indent_msg()
+    @empErlIndent.once_indent()

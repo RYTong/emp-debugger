@@ -10,7 +10,7 @@ iFlagLen = 8
 module.exports =
 class EmpErlIndent
   node_pid:null
-  indent_editor:[]
+  indent_editor:{}
 
   constructor: (serializeState) ->
     @iTabLen = atom.config.get(emp.EMP_ERL_INDENT_TAB_LEN)
@@ -47,7 +47,7 @@ class EmpErlIndent
     sIndentText64 = emp.base64_encode(sIndentText)
     # @iTabLen = atom.config.get(emp.EMP_ERL_INDENT_TAB_LEN)
     # @bUseTab = atom.config.get(emp.EMP_ERL_INDENT_USE_TAB)
-    console.log @iTabLen, @bUseTab
+    # console.log @iTabLen, @bUseTab
 
     sErlCom = 'erl -pa ' + eEbinDir + ' -select_text '+ "\"#{sIndentText64}\""
     sErlCom = sErlCom + ' -tab_length' + " #{@iTabLen}"
@@ -56,7 +56,7 @@ class EmpErlIndent
 
     oNodeObj = emp.mk_node_name()
     sErlCom = sErlCom+oNodeObj.node_name+' -run erl_indent erl_indent -noshell -s erlang halt'
-    console.log sErlCom
+    # console.log sErlCom
     c_process.exec sErlCom, (error, stdout, stderr) =>
       # console.log "compile:#{stdout}"
       if stdout
@@ -105,40 +105,46 @@ class EmpErlIndent
 
       @node_pid.stdout.on 'data', (data) =>
         aResult = data.binarySlice()
-        console.log aResult.length
-        # console.log aResult
+        # console.log aResult.length
+        console.log aResult
         # console.log typeof(aResult)
         # console.log @indent_editor
+        console.log @indent_editor
         if bIndentFlag
-
+          console.log "true--------------------------------------------------"
           iEndFlag = aResult.substr aResult.length-iFlagLen
           # console.log iStartFlag
           console.log iEndFlag
-
           # console.log iStartFlag
-
           # console.log sText
           # console.log @indent_editor[iStartFlag]
 
           if oTextEditor = @indent_editor[iEndFlag]
             bIndentFlag = false
-            sText = aResult.slice iFlagLen, aResult.length-iFlagLen
+            sText = aResult.slice 0, aResult.length-iFlagLen
+            # console.log "wwww+++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+            # console.log sText
+            # console.log "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+
             sIndentText = sIndentText+sText
             oTextEditor.setText sIndentText
           else
             sIndentText = sIndentText+aResult
         else
+          console.log "false--------------------------------------------------"
           iRLen = aResult.length
           iStartFlag = aResult.substr 0,iFlagLen
           iEndFlag = aResult.substr iRLen-iFlagLen
           console.log iStartFlag, iEndFlag
-          sText = aResult.slice iFlagLen, iRLen-iFlagLen
           unless !oTextEditor = @indent_editor[iStartFlag]
             bIndentFlag = true
             if iStartFlag is iEndFlag
+              sText = aResult.slice iFlagLen, iRLen-iFlagLen
               oTextEditor.setText sText
             else
+              sText = aResult.slice iFlagLen
               sIndentText = sText
+
         # console.info data.binarySlice()
       # pid.stdout.pipe process.stdout
 
@@ -198,8 +204,9 @@ class EmpErlIndent
       # console.log "do ----------"
       # console.log "\"#{sSelectText}\""
       iRandFlag = @do_store_editor(oTextEditor)
-
-      @do_send( "erl_indent:erl_indent(#{@iTabLen}, #{@bUseTab}, 0, \"#{iRandFlag}\", \"#{sIndentText64}\").\n")
+      sSendStr = "\nerl_indent:erl_indent(#{@iTabLen}, #{@bUseTab}, 0, \"#{iRandFlag}\", \"#{sIndentText64}\").\n"
+      console.log sSendStr
+      @do_send(sSendStr )
     #
     # sErlCom = 'erl -pa ' + eEbinDir + ' -select_text '+ "\"#{sIndentText64}\""
     # sErlCom = sErlCom + ' -tab_length' + " #{iTabLen}"

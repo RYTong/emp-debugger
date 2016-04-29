@@ -26,6 +26,9 @@ module.exports =
   EMP_EWP_SOURE_PATH: 'emp-debugger.ewp_source_path'
   EMP_YAWS_SOURCE_PATH: 'emp-debugger.yaws_source_path'
 
+  EMP_ERL_INDENT_TAB_LEN: 'emp-debugger.defErlangIndentTabLength'
+  EMP_ERL_INDENT_USE_TAB: 'emp-debugger.defErlangIndentUseTab'
+
 
   DEFAULT_LESS_NAME:'untitled.less'
   DEFAULT_OUT_LESS_PATH:'../css/untitled.css'
@@ -238,6 +241,7 @@ module.exports =
   DEFAULT_EXT_XHTML :'.xhtml'
   DEFAULT_EXT_JS :'.js'
   DEFAULT_EXT_JSON :'.json'
+  DEFAULT_EXT_ERL: '.erl'
 
   # emp debugger 实体文件路径
   DEFAULT_TEMP_HEADER:'<!--<atom_emp_related_file_info>${atom_related_info}</atom_emp_related_file_info>-->\n'
@@ -328,6 +332,22 @@ module.exports.mk_node_name = (node_name="") ->
   # console.log def_host
   re_name = default_name + def_node_name
   {name:def_node_name, node_name: re_name}
+
+module.exports.mk_rand = (iLen=6)->
+  unless iLen <= 0
+    iAtomP = Math.pow 10, iLen
+    iRand = Math.round(Math.random()*iAtomP)
+    if iRand > (iAtomP/10)
+      return iRand
+    else
+      fix_rand(iRand, iAtomP)
+
+fix_rand = (iRand, iAtomP) ->
+  if iRand > (iAtomP/10)
+    return iRand
+  else
+    fix_rand(iRand*10, iAtomP)
+
 
 get_def_host = ->
   add_list = os.networkInterfaces()

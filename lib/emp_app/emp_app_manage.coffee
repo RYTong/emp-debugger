@@ -181,6 +181,7 @@ class emp_app
         # pid.stdin.write('q().\r\n')
         # set_app_stat(false)
         pid.stdin.end()
+        pid = null
         emp_app_view.refresh_app_st(app_state)
         console.warn "close over:#{code}"
     else
@@ -222,6 +223,7 @@ class emp_app
         # pid.stdin.write('q().\r\n')
         # set_app_stat(false)
         pid.stdin.end()
+        pid = null
         emp_app_view.refresh_app_st(app_state)
         console.warn "close over:#{code}"
     else
@@ -331,6 +333,7 @@ class emp_app
       console.log "close -------"
       # npid.stdin.write('q().\r\n')
       npid.stdin.end()
+      npid = null
       # emp_app_view.refresh_app_st(app_state)
       console.warn "close over:#{code}"
 
@@ -433,6 +436,7 @@ class emp_app
     pid.on 'close', (code) ->
       console.log "close: #{code}"
       pid.stdin.end()
+      pid = null
 
     console.log pid
 

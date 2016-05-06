@@ -15,7 +15,8 @@
         <script type="text/x-lua" src="RYTL.lua"></script>
         <script type="text/x-lua" src="ert.lua"></script>
         <script type="text/x-lua" src="ert_init.lua"></script>
-
+        <script type="text/x-lua" src="slt2.lua"></script>
+        <script type="text/x-lua" src="cmm.lua"></script>
         <script type="text/x-lua">
             <![CDATA[
                 ryt = RYTL:new{};
@@ -26,9 +27,15 @@
                 local input_id = document:getElementsByProperty{name="cha_id"};
                 local input_code = document:getElementsByProperty{name="tran_code"};
 
+                function update1()
+                  window:alert("asdasdasd")
+                end
+
                 function update()
-                  tmp_cha_id = input_id[1]:getPropertyByName("value");
-                  tmp_trancode = input_code[1]:getPropertyByName("value");
+                  tmp_cha_id = ert(".inputid"):val();
+                  tmp_trancode = ert(".inputcode"):val();
+                  -- tmp_cha_id = input_id[1]:getPropertyByName("value");
+                  -- tmp_trancode = input_code[1]:getPropertyByName("value");
                   ert.channel:first_page(tmp_cha_id, tmp_trancode, {id=tmp_cha_id,tranCode=tmp_trancode});
                 end
 

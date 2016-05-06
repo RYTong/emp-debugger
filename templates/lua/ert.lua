@@ -23,8 +23,10 @@ ert = {};
             ui_debug = false,
             debug_ert = false,
             debug_message = false,
-            error_handler = function(err,level)
-              ert.channel:hide_all();
+            error_handler = function(err,no_hide,level)
+              if not no_hide then
+                ert.channel:hide_all();
+              end
               if not ert.config.ui_debug then
                 window:alert(err)
               end;
@@ -63,8 +65,8 @@ ert = {};
                         local new_key = name .. "." .. key
                         cache[v] = new_key
                         tinsert(temp,"+" .. key .. _dump(v,space .. (next(t,k) and "|" or " " ).. srep(" ",#key),new_key))
-                    elseif type(v)=="string" and string.len(v)>50 then
-                        tinsert(temp,"+" .. key .. " [" .. string.sub(v,1,50).."...]")
+                    elseif type(v)=="string" and cmm_unit_fun.format_lib:stringLength(v)>50 then
+                        tinsert(temp,"+" .. key .. " [" .. cmm_unit_fun.format_lib:subString(v,1,50).."...]")
                     else
                         tinsert(temp,"+" .. key .. " [" .. tostring(v).."]")
                     end
@@ -482,6 +484,16 @@ end)();
             end
         end;
 
+        --------
+        -- 获取由选择器指定的DOM元素
+        -- index：可选参数，规定获取哪个index元素（通过index编号），默认返回第一个DOM元素
+        function Query:get_userdata(index)
+            if index then
+                return self._ctrls[index];
+            else
+                return self._ctrls[1];
+            end;
+        end;
         ------
         -- 封装Query实例并返回，ert()=Query.get(),返回的Query实例包含一个或多个DOM Element
         -- 当对Query实例进行读操作时，通常返回第一个DOM Element的对应属性；
@@ -1030,7 +1042,7 @@ end)();
         -- 当前Page是否有缓存的用户输出
         -- @return boolean
         function Page:has_cache()
-            return  next(self._user_input)~=nil;
+            return next(self._user_input)~=nil;
         end
 
         ---------------------
@@ -1052,9 +1064,10 @@ end)();
             channel.response_table[self._trancode] = response;
         end
 
+        function Page.showContent_callback(page)
+            ert.channel:hide_loading(1);        end
 
         function Page.replace_callback(page)
-            ert:debug(page);
             local channel = ert.channel:get_channel(page._id);
             channel:push_page(page);
             ert.channel.current_page = page;
@@ -1087,30 +1100,42 @@ end)();
                 local tag = ctrl:getPropertyByName("tagName");
                 local id = ctrl:getPropertyByName("id");
                 local type = ctrl:getPropertyByName("type");
-                ert:debug_ert({tagName,type,id});
                 if tag == "input" and type=="text" and id ~=nil then
                     local value = ctrl:getPropertyByName("value");
-                    ert:debug_ert(value);
                     self._user_input[id] = value;
+                elseif tag == "label" and id ~=nil then
+                    local value = ctrl:getPropertyByName("value");
+                    self._user_input[id] = value;
+                elseif tag == "input" and type == "checkbox" and id ~= nil then
+                    local checked = ctrl:getPropertyByName("checked");
+                    self._user_input[id] = checked;
+                elseif tag == "input" and type == "radio" and id ~= nil then
+                    local checked = ctrl:getPropertyByName("checked");
+                    self._user_input[id] = checked;
+                elseif tag == "input" and type == "hidden" and id ~= nil  then
+                    local value = ctrl:getPropertyByName("value");
+                    self._user_input[id] = value;
+                elseif tag == "input" and type == "switch" and id ~= nil  then
+                    local checked = ctrl:getPropertyByName("checked");
+                    self._user_input[id] = checked;
                 end
             end
         end
         function Page:replace(transiton_type,nopush)
-            if self._last_page~=nil then
+            if self._last_page ~= nil then
                 self._last_page:cache_user_input();
             end
             if nopush then
-                location:replace(self._content, transiton_type, self.replace_callback_nopush,self);
+                location:replace(self._content,self.replace_callback_nopush,self);
             else
-                location:replace(self._content, transiton_type, self.replace_callback,self);
+                location:replace(self._content,self.replace_callback,self);
             end
         end
 
         function Page:show_content()
-            ert.channel:hide_loading();
+            --ert.channel:hide_loading();
             local tag = self:select_tag();
-            ert:debug_ert("showContent tag: ".. tag);
-            window:showContent(self._content, tag);
+            window:showContent(self._content, tag,{callback=self.showContent_callback});
             self._tags[tag] = true;
             self._tag = tag;
         end
@@ -1154,7 +1179,7 @@ end)();
             loadingtag = 999;
             is_loading = 0;
             wap_entran = "common";
-            wap_entran_page = "NCM0014";
+            wap_entran_page = "NCM0015";
             channel_stack = ert.stack:new(),
             channels = {}
         };
@@ -1288,19 +1313,20 @@ end)();
 
 
         function channel_factory.success(response)
-          --local id = channel_factory:get_id();
-          local channel = channel_factory:get_channel();
-          channel:insert_response(response["responseBody"]);
-          ert:debug_ert(channel:response());
-          local request_callback = channel.options["request_callback"];
-          if "function" == type(request_callback) then
-            --定制只请求不换页的方法
-            request_callback(response)
-            channel_factory:hide_loading()
-          else
-            --读取页面刷新页面
-            channel_factory:request_callback(response);
-          end
+            --local id = channel_factory:get_id();
+            local channel = channel_factory:get_channel();
+            channel:insert_response(response["responseBody"]);
+            local request_callback = channel.options["request_callback"];
+            if "function" == type(request_callback) then
+              --定制只请求不换页的方法
+              request_callback(response)
+              if channel.options.show_loading then
+                  channel_factory:hide_loading()
+              end
+            else
+              --读取页面刷新页面
+              channel_factory:request_callback(response);
+            end
         end
 
         function channel_factory:request_callback(response)
@@ -1343,9 +1369,18 @@ end)();
 
         -- 获取文件路径
         function channel_factory:get_file_path(id,trancode)
+            local channel = channel_factory:get_channel();
+            local option_path = channel.options.option_path;
             local next_page = id .. "/xhtml/" .. trancode .. ".xhtml";
+            if option_path ~= nil then
+                next_page = option_path..id .. "/xhtml/" .. trancode .. ".xhtml";
+            end;
             if string.find(trancode,"%.") ~= nil then
-                next_page = id .. "/xhtml/" .. trancode;
+                if option_path ~= nil then
+                    next_page = option_path .. id .. "/xhtml/" .. trancode;
+                else
+                    next_page = id .. "/xhtml/" .. trancode;
+                end;
             end;
             return next_page;
         end;
@@ -1358,15 +1393,27 @@ end)();
 
         function channel_factory.callback(response)
             -- 会话超时界面
-            ert:debug_ert(response["responseCode"]);
+            local success_flag = channel_factory.is_response_success(response);
             local id = channel_factory.current_id;
             local channel = channel_factory:get_channel(id);
             if  response["responseCode"] == 200 then
-              if channel_factory.is_response_success(response) then
-                channel.options.success(response);
-              else
-                channel_factory:hide_loading();
-              end
+                if success_flag == "xml" then
+                    -- 如果返回为xml文件则直接replace
+                    local last_page = channel:last_page();
+                    local page_content = response["responseBody"];
+                    local trancode = os.date("%H%M%S");
+                    trancode = channel.trancode .. "_" .. trancode;
+                    local page = ert.page:new(channel.id,trancode,page_content, last_page);
+                    page:replace(channel.options.transiton_type,response.nopush);
+                elseif success_flag then
+                    channel.options.success(response);
+                else
+                    if channel.options.replace == "show_content" then
+                        channel_factory:hide_loading(1);
+                    else
+                        channel_factory:hide_loading();
+                    end
+                end
             else
                 channel.options.fail(response);
             end
@@ -1434,14 +1481,11 @@ end)();
             channels_by_id:push(channel);
             self.channels[channel.id]=channels_by_id;
             self.current_id=channel.id;
-            ert:debug_ert(self.channel_stack);
         end
 
         function channel_factory:pop_channel()
             local id = self.channel_stack:pop();
-            --self.channels[id]=nil;
             self.current_id = self.channel_stack:top();
-
             local channels_by_id = self.channels[id];
             if channels_by_id ~= nil then
                 channels_by_id:pop();
@@ -1453,6 +1497,11 @@ end)();
             if channel ~= nil then
                 page_stack = channel.page_stack;
             end;
+
+            --出栈后，新栈顶页面栈为空时，继续出栈（为避免死循环，最后一层channel栈不会递归出栈）
+            -- if #page_stack == 0 and self.channel_stack:size() > 0  then
+            --   channel_factory:pop_channel()
+            -- end
         end
 
         ---------------------
@@ -1464,12 +1513,23 @@ end)();
             self:next_page(id, trancode, post_body, options);
         end
 
-        function channel_factory:wap_first_page(c_id,c_trancode,page_code)
+        -- post_body {id=channel_id,tranCode = tranCode}
+        function channel_factory:wap_first_page(c_id,c_trancode,post_body,options)
             local id = ert.channel.wap_entran;
             local trancode = ert.channel.wap_entran_page;
-            local post_body = {id=c_id,tranCode=c_trancode,page_code = page_code};
+            post_body.longitude = ert.static:get("longitude");
+            post_body.latitude = ert.static:get("latitude");
+            if options ~= nil then
+                local push = options["push"];
+                if push == false then
+                    ert.channel:pop_channel();
+                end;
+            end;
+            local current_channel = self:get_channel();
+            local current_page_code = current_channel.trancode;
             local channel = Channel:new{id = id, trancode = trancode};
             self:push_channel(channel);
+            post_body["pre_page_code"] = current_page_code;
             self:next_page(id, trancode, post_body, options);
         end;
         -----------------------------------
@@ -1490,9 +1550,15 @@ end)();
             end
             if channel.options.just_page == nil then
               if self.debug_json then
-                  -- get sample data for debug
-                  local path = "name="..utility:escapeURI("channels/"..id.."/json/"..trancode..".json");
-                  http:postAsyn({}, "/test_s/get_page", path, self.callback, options);
+                  if channel.options.option_path ~= nil then
+                      local option_path = channel.options.option_path;
+                      local path = "name="..utility:escapeURI("channels/"..option_path..id.."/json/"..trancode..".json");
+                      http:postAsyn({}, "/test_s/get_page", path, self.callback, options);
+                  else
+                      -- get sample data for debug
+                      local path = "name="..utility:escapeURI("channels/"..id.."/json/"..trancode..".json");
+                      http:postAsyn({}, "/test_s/get_page", path, self.callback, options);
+                  end;
               else
                   -- http:postAsyn接口的params格式{header, url, data, callback, parameters}
                   local client_post = self.to_post_body(post_body);
@@ -1500,7 +1566,7 @@ end)();
                   http:postAsyn({}, "channel_s/run", client_post, self.callback, options);
               end;
             else
-              channel:insert_response(channel.options);
+              channel:insert_response(channel.options["responseBody"]);
               channel_factory:request_callback(channel.options);
             end;
         end;
@@ -1525,7 +1591,7 @@ end)();
                   http:postAsyn({}, "channel_s/run", client_post, self.callback, options);
               end;
             else
-              channel:insert_response(channel.options);
+              channel:insert_response(channel.options["responseBody"]);
               channel_factory:request_callback(channel.options);
             end;
         end;
@@ -1583,7 +1649,6 @@ end)();
         -- @param trancode 交易步骤码
         function channel_factory:get_response(id, trancode)
             local channel = self:get_channel(id);
-            ert:debug_ert(channel:response(trancode));
             if channel == nil then
                 return nil;
             end
@@ -1660,11 +1725,11 @@ end)();
         --@return 返回page对象
         function channel_factory:back(channelId,trancode,re_request)
             local channel = self:get_channel();
-
             if channel~= nil then
                 local pop_page = channel:pop_page();
                 if pop_page ~= nil then
                   local page = channel:get_page();
+
                   if page ~= nil then
                       --如果指定channelId和trancode，则需要判断是否是指定的页面，不是就继续执行返回；如果没有指定，就直接返回
                       if channelId == page._id and trancode == page._trancode then
@@ -1698,7 +1763,6 @@ end)();
         function channel_factory:finish(channelId,trancode,re_request)
             if self.channel_stack:size() > 1 then
                 self:pop_channel();
-                ert:debug_ert(self.channel_stack);
                 local id=self.channel_stack:top();
                 self.current_id =id;
                 local channel = self:get_channel(id);
@@ -1766,24 +1830,30 @@ end)();
             end);
         end;
 
-        function Exception:alert(error_msg)
-            window:alert(error_msg);
+        function Exception:alert(error_msg,error_code)
+            window:alert(error_code.."\n"..error_msg);
         end;
 
-        function Exception:catch_handler(error_code,error_msg)
+        function Exception:catch_handler(error_code,error_msg,error_codes)
+            local server_num = ert.static:get("server_num");
             local error_code = error_code or "";
+            local error_codes = error_codes or "";
+            local error_code_num = "";
+            if error_codes == "" then
+                error_code_num = error_code .. "_" .. server_num;
+            else
+                error_code_num = error_codes .. "_" .. server_num;
+            end
             local channel = ert.channel:get_channel();
             local id = channel.id;
             local tranCode = channel.trancode;
-            ert:debug(channel);
             local page_name = channel.request_table[tranCode].page_name;
-            ert:debug(page_name);
             if "function" == type(self[error_code]) then
                 self[error_code](self,error_msg);
-            elseif string.find(tranCode,"^T.*[D]+") ~= nil then
-                cmm_unit_fun.skip_lib:show_fail(page_name,error_code,error_msg);
+            elseif string.find(tranCode,"^T...[D]+") ~= nil then
+                cmm_unit_fun.skip_lib:show_fail(page_name,error_code_num,error_msg);
             else
-                self:alert(error_msg);
+                self:alert(error_msg,error_code_num);
             end;
         end
 

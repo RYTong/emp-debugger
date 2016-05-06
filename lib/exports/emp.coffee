@@ -175,6 +175,10 @@ module.exports =
   STATIC_UI_CSS_DEF_FILE:"eui.css"
   STATIC_UI_LUA_TEMPLATE:"/templates/lua/ert.lua"
   STATIC_UI_LUA_TEMPLATE_DEST_PATH:"public/www/resource_dev/common/lua/ert.lua"
+
+  STATIC_UI_LUA_PATH:"/templates/lua/"
+  STATIC_UI_LUA_DEST_PATH:"public/www/resource_dev/common/lua/"
+
   STATIC_UI_JS_TEMPLATE:"/templates/js/"
   STATIC_UI_JS_TEMPLATE_DEST_PATH:"public/www/resource_dev/common/js/"
   STATIC_MOB_HTML_PATH:"/templates/mobile/"

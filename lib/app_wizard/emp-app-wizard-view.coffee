@@ -303,13 +303,14 @@ class EmpAppWizardView extends ScrollView
 
   copy_lua_ui: (to_path) ->
     # console.log "  ------ ----- "
-    basic_dir = path.join __dirname, '../../', emp.STATIC_UI_LUA_TEMPLATE
-    dest_path = path.join to_path, emp.STATIC_UI_LUA_TEMPLATE_DEST_PATH
-    lua_con = fs.readFileSync basic_dir, 'utf8'
-    tmp_dest_path = path.dirname dest_path
-    if !fs.existsSync tmp_dest_path
-      emp.mkdir_sync_safe tmp_dest_path
-    fs.writeFileSync(dest_path, lua_con, 'utf8')
+    basic_dir = path.join __dirname, '../../', emp.STATIC_UI_LUA_PATH
+    dest_path = path.join to_path, emp.STATIC_UI_LUA_DEST_PATH
+    # lua_con = fs.readFileSync basic_dir, 'utf8'
+    # tmp_dest_path = path.dirname dest_path
+    # fs_plus
+    if !fs.existsSync dest_path
+      emp.mkdir_sync_safe dest_path
+    fs_plus.copySync(basic_dir, dest_path, 'utf8')
 
   copy_js_ui: (to_path) ->
     # console.log "  ------ ----- "

@@ -5,4 +5,4 @@
 -- @param debug_message ert:debug() 是否输出日志
 -- @param debug_ert     ert:debug_ert() 是否输出日志
 
-ert:set_debug(true, true, false, true, true);
+ert:set_debug(true, true, true, true, true);

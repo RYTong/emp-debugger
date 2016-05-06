@@ -9,7 +9,9 @@
     <script type="text/x-lua" src="ert.lua"></script>
     <script type="text/x-lua">
       <![CDATA[
-
+      ert.channel:hide_all();
+      ert.page:hide_all();
+      history:clear(history:length());
       local path = "name="..utility:escapeURI("page_test.xhtml");
       --XXX winodws phone 不支持同步请求
       local page = http:postSyn({}, "test_s/get_page", path);

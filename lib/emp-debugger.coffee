@@ -9,7 +9,6 @@ conf_parser = require './emp_app/conf_parser'
 ErtUiGuide = require './guide/emp-debugger-ui-guide'
 EMPOpenLink = require './link/emp-open-link'
 LessCompileView = require './less_compile/less-compile-view'
-EMPTestPanel = require './view/emp-test-panel'
 EmpErlIndent = require './indent/emp-erl-indent'
 
 emp = require './exports/emp'
@@ -44,7 +43,6 @@ module.exports =
   emp_socket_server: null
   empDebuggerSettingView: null
   empLessAutocompile:null
-  empTestPanel:null
   empErlIndent:null
 
   activate:(state) ->
@@ -65,10 +63,7 @@ module.exports =
       "emp-debugger:erl_indent": (event) => @do_erl_indent()
 
     }
-    # atom.commands.add "atom-workspace","emp-debugger:setting-view", => @set_conf()
 
-    @empTestPanel = new EMPTestPanel(n_state.empDebuggerSettingViewState,
-                                  @emp_socket_server, @empDebuggerLogView, this)
     EmpViewManage.activate(oLessCompile:@empLessAutocompile)
     conf_parser.initial_parser()
 
@@ -110,7 +105,7 @@ module.exports =
     # @ertUiGuide.destroy()
     @emp_open_link.destroy()
     @empLessAutocompile.destroy()
-    @empTestPanel.destroy()
+    # @empTestPanel.destroy()
     @empErlIndent.destroy()
 
   serialize: ->

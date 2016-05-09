@@ -2,6 +2,9 @@
 
 # Emp Debugger Package Change Log
 
+## Version 0.10.8
+1. 修复 BUG #121.
+
 ## Version 0.10.6
 1. erlang 缩进 ctrl-i (没启动以个 Atom window ,会启动一个 ErlangVM, 所以, 当 Atom Window 过多的时候,可能会导致系统卡顿)
 

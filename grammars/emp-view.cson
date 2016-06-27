@@ -390,6 +390,9 @@
       {
         'include': '#lua'
       }
+      {
+        'include': '#slt2'
+      }
     ]
   'entities':
     'patterns': [
@@ -411,6 +414,15 @@
     'begin': '(?:^\\s*)<\\?lua(?!.*\\?>)'
     'end': '\\?>(?:\\s*$\\n)?'
     'name': 'source.lua.embedded.html'
+    'patterns': [
+      {
+        'include': 'source.lua'
+      }
+    ]
+  'slt2':
+    'begin': '#\{'
+    'end': '\}#'
+    'name': 'source.slt2.embedded.html'
     'patterns': [
       {
         'include': 'source.lua'

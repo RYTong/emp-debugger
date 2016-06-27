@@ -86,7 +86,7 @@ class AdapterPanel extends View
             @text "less"
         @div class: 'off_params_div',  =>
           @div class:'off_pb_div', =>
-            @button outlet:'add_less', class: 'off_btn_w btn btn-info inline-block-tight', click:'add_less_import',' Add an Less Import... '
+            @button outlet:'add_less', class: 'off_btn_w btn btn-info inline-block-tight', click:'add_less_import',' Add a Less Import... '
           @ul class:'off_ul', =>
             @li class:'off_li',=>
               @text "注意:"

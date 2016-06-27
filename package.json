@@ -21,7 +21,6 @@
     "emp-debugger:enable-lua",
     "emp-debugger:show-channel",
     "emp-debugger:create-app",
-    "emp-debugger:create-temp",
     "emp-debugger:show-guide",
     "emp-debugger:open_link",
     "emp-debugger:refresh_link",

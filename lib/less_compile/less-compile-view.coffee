@@ -29,6 +29,7 @@ class LessCompileView
 
       if @fileExt == '.less'
         @getParams @filePath, (params) =>
+          # console.log params
           @compileLess params
 
   writeFiles: (output, newPath, newFile) ->
@@ -128,6 +129,7 @@ class LessCompileView
 
     rl.on 'close', =>
       if @params.main
+        # console.log path.resolve(path.dirname(filePath), @params.main)
         @getParams path.resolve(path.dirname(filePath), @params.main), callback
       else
         callback @params

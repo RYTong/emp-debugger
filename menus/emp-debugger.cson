@@ -60,6 +60,8 @@
         { 'label': 'Show Channel', 'command': 'emp-debugger:show-channel' }
         # { 'label': 'Create A Channel Page', 'command': 'emp-debugger:create-front-page' }
         {type: 'separator'}
+        { 'label': 'Show API Debugg', 'command': 'emp-debugger:show-api' }
+        {type: 'separator'}
         { 'label': 'Live Preview', 'command': 'emp-debugger:live-preview' }
         { 'label': 'Enabel View', 'command': 'emp-debugger:enable-view' }
         { 'label': 'Enabel Lua', 'command': 'emp-debugger:enable-lua' }

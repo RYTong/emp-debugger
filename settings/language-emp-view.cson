@@ -1,4 +1,4 @@
-'.source.xhtml':
+'.source.emp':
   'editor':
     'commentStart': '<!-- '
     'commentEnd': ' -->'
@@ -23,7 +23,7 @@
     'increaseIndentPattern': '\\b(else|elseif|(local\\s+)?function|then|do|repeat)\\b((?!end).)*$|\\{\\s*$'
     'decreaseIndentPattern': '^\\s*(elseif|else|end|\\})\\s*$'
 
-'.source.xhtml .meta.tag:not(.entity.other.attribute-name, .punctuation.definition.tag.begin, .source, .entity.name.tag, .string, .invalid.illegal.incomplete.html)':
+'.source.emp .meta.tag:not(.entity.other.attribute-name, .punctuation.definition.tag.begin, .source, .entity.name.tag, .string, .invalid.illegal.incomplete.html)':
   'editor':
     'completions': [
       'ABBR'

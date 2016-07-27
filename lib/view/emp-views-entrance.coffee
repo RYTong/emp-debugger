@@ -4,14 +4,15 @@ EmpChannelWizardView = require '../channel_view/emp-channel-wizard-view'
 EmpCreateAppWizardView = require '../app_wizard/emp-app-wizard-view'
 EmpCreateTempWizardView = require '../temp_wizard/emp-temp-wizard-view'
 EmpCreateFrontPageWizardView = require '../temp_wizard/emp-front-page-wizard-view'
-EmpCreateAppWizardView = require '../app_wizard/emp-app-wizard-view'
 EMPConfigView = require '../config/emp-config-view'
+EMPAPIDebuggView = require '../api_debug/emp-api-debug-view'
 # EmpErlIndent = require '../indent/emp-erl-indent'
 
 empChannelWizardView = null
 empAppWizardView = null
 empTempWizardView = null
 empConfigView = null
+empAPIView = null
 
 emp = require '../exports/emp'
 AddLessMod = require '../dialog/add-less-file'
@@ -50,6 +51,8 @@ atom.deserializers.add(temp_deserializer)
 
 # -------------------use for app -------------------------
 create_app_wizard_view = (params) ->
+  console.log "create app wizard"
+  console.log params
   empAppWizardView = new EmpCreateAppWizardView(params)
 
 open_app_wizard_panel = ->
@@ -129,6 +132,26 @@ create_less = (tmp_event)->
 #   oTextEditor = new EmpErlIndent()
 #   oTextEditor.once_indent()
 
+# -------------------use for API Debug -------------------------
+
+create_api_view =  (params)->
+  console.log "api view "
+  console.log "params:#{params}"
+  empAPIView = new EMPAPIDebuggView(params)
+
+open_api_panel = ->
+  atom.workspace.open(emp.EMP_API_DEBUG_URI)
+
+api_deserializer =
+  name: emp.EMP_API_VIEW
+  version: 1
+  deserialize: (state) ->
+    # console.log "emp deserialize"
+    create_api_view(state) if state.constructor is Object
+
+atom.deserializers.add(api_deserializer)
+
+
 module.exports =
   activate: (state)->
     # console.log '--------------------------'
@@ -139,14 +162,18 @@ module.exports =
       # console.log "emp registerOpener: #{uri}"
       # console.log atom.workspace.activePane
       # console.log atom.workspace.activePane.itemForUri(configUri)
+      console.log uri
       if uri is emp.EMP_CHANNEL_URI
         create_cha_wizard_view({uri})
+      else if uri is emp.EMP_API_DEBUG_URI
+        create_api_view({uri})
       else if uri is emp.EMP_APP_URI
         create_app_wizard_view({uri})
       else if uri is emp.EMP_TEMP_URI
         create_temp_wizard_view({uri})
       else if uri is emp.EMP_CONFIG_URI
         emp_config_view({uri})
+
     #
     # @on 'tree-view:directory-modified', =>
     #   if @hasFocus()
@@ -156,6 +183,7 @@ module.exports =
 
     @disposables.add atom.commands.add("atom-workspace", {
       "emp-debugger:show-channel": => open_cha_wizard_panel()
+      "emp-debugger:show-api": =>open_api_panel()
       "emp-debugger:create-app": => open_app_wizard_panel()
       "emp-debugger:create-temp": => open_temp_wizard_panel()
       "emp-debugger:create-front-page": => open_front_page_wizard_panel()
@@ -169,6 +197,7 @@ module.exports =
       "emp-debugger:compile_all_less": =>
         oLessCompile = state.oLessCompile
         oLessCompile.compileAllLess()
+
     })
       # "emp-debugger:temp-management", -> open_temp_wizard_panel()
 
@@ -185,3 +214,4 @@ module.exports.open_app_wizard = open_app_wizard_panel
 module.exports.open_temp_wizard = open_temp_wizard_panel
 module.exports.open_front_page_wizard_panel = open_front_page_wizard_panel
 module.exports.open_config_view = open_config_view
+module.exports.open_api_panel = open_api_panel

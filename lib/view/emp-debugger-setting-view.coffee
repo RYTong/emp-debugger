@@ -97,20 +97,14 @@ class EmpDebuggerSettingView extends View
                 @label class: "emp-setting-label", "LogColor: "
                 @select outlet: "emp_log_color_list", class: "form-control", =>
                   @option outlet:'emp_default_color', value: "default", selected:"selected", "default"
-                  @option value: "#FFFFFF", "白"
-                  @option value: "#FF0000", "红"
-                  @option value: "#FFFF33", "黄"
-                  @option value: "#0000FF", "蓝"
-                  @option value: "#00FF00", "绿"
-                  @option value: "#00FFFF", "青"
-                  @option value: "#FF6600", "橙"
-                  @option value: "#990099", "紫"
-                  @option value: "#000033", "黑"
+
       @div class: 'emp-setting-footor', =>
         # @ul class:'eul' ,=>
         # @button outlet:"emp_footor_btn", class:'btn btn-info inline-block-tight', click: 'hide_setting_view', "Hide"
         @ul class:'eul' ,=>
           @li outlet:"emp_footor_btn", class:'eli curr',click: 'hide_setting_view', "Hide"
+
+
 
   initialize: (serializeState, @emp_socket_server, @empDebuggerLogView, @fa_view) ->
     # console.log 'server state view initial'
@@ -325,7 +319,17 @@ class EmpDebuggerSettingView extends View
       tmp_color = view_logs.get_color()
       tmp_id = view_logs.get_id()
       @emp_client_list.append(@create_option("client:#{tmp_id}", tmp_id))
-      # @emp_log_color_list.append(@create_else_option(tmp_color))
+    # 设置 log color 为全局记忆的颜色
+    aDefaultColor = @get_log_default_color()
+    sGolColor = atom.config.get(emp.EMP_LOG_GLOBAL_COLOR)
+    for oCol in aDefaultColor
+      if oCol.value is sGolColor
+        sOption = @new_select_option(oCol.name, oCol.value)
+        @emp_log_color_list.css('background-color', oCol.value)
+      else
+        sOption = @new_option(oCol.name, oCol.value)
+
+      @emp_log_color_list.append(sOption)
 
   init_log_conf_listen: ->
     client_id = null
@@ -339,13 +343,13 @@ class EmpDebuggerSettingView extends View
         # console.log @emp_default_color
         # @emp_default_color.context.selected = true
         @emp_default_color.attr('selected', true)
-        # attr
         tmp_color = @log_map[client_id].get_color()
         @emp_log_color_list.css('background-color', tmp_color)
         @emp_default_color.val(tmp_color)
       else
-        if glo_color = atom.project.glo_color
-          console.log "option[val=#{glo_color}]"
+
+        if glo_color = atom.config.get(emp.EMP_LOG_GLOBAL_COLOR)
+          # console.log "option[val=#{glo_color}]"
           @emp_log_color_list.find("option[value=#{glo_color}]").attr('selected', true)
         else
           @emp_default_color.attr('selected', true)
@@ -363,26 +367,27 @@ class EmpDebuggerSettingView extends View
 
         # console.log tmp_color
         if tmp_color isnt @default_name
+          atom.config.set(emp.EMP_LOG_GLOBAL_COLOR, tmp_color)
           @emp_log_color_list.css('background-color', tmp_color)
+          # atom.project.glo_color = tmp_color
           for cli_id, cli_view of @log_map
-            atom.project.glo_color = tmp_color
             cli_view.set_glo_color tmp_color
         else
+          atom.config.set(emp.EMP_LOG_GLOBAL_COLOR, null)
           @emp_default_color.val("#{@default_name}")
           @emp_log_color_list.css('background-color', '')
+          # atom.project.glo_color = null
           for cli_id, cli_view of @log_map
             cli_view.set_glo_color null
-            atom.project.glo_color = null
+
       else
         # console.log tmp_color
         if tmp_color isnt @default_name
           @emp_log_color_list.css('background-color', tmp_color)
           client_id = @emp_client_list.val()
           @log_map[client_id].set_color(tmp_color)
-          # atom.project.glo_color = tmp_color
           @log_map[client_id].set_glo_color null
         else
-          # glo_color = atom.project.glo_color
           @log_map[client_id].set_glo_color null
           @emp_log_color_list.css('background-color', @log_map[client_id].set_color())
 
@@ -541,3 +546,24 @@ class EmpDebuggerSettingView extends View
       arrayValue = (value or '').split(',')
       value = (val.trim() for val in arrayValue when val)
     value
+
+
+  new_option: (name, value=name)->
+    $$ ->
+      @option value: value, name
+
+  new_select_option: (name, value=name) ->
+    $$ ->
+      @option selected:'select', value: value, name
+
+
+  get_log_default_color: ->
+    return [{value: "#000033", name: "黑"},
+            {value: "#FFFFFF", name: "白"},
+            {value: "#FF0000", name: "红"},
+            {value: "#FFFF33", name: "黄"},
+            {value: "#0000FF", name: "蓝"},
+            {value: "#00FF00", name: "绿"},
+            {value: "#00FFFF", name: "青"},
+            {value: "#FF6600", name: "橙"},
+            {value: "#990099", name: "紫"}]

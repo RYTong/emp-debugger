@@ -28,7 +28,7 @@ module.exports =
 
   EMP_ERL_INDENT_TAB_LEN: 'emp-debugger.defErlangIndentTabLength'
   EMP_ERL_INDENT_USE_TAB: 'emp-debugger.defErlangIndentUseTab'
-
+  EMP_FILTER_FLAG:"emp-debugger.defLogFilterFlag"
 
   DEFAULT_LESS_NAME:'untitled.less'
   DEFAULT_OUT_LESS_PATH:'../css/untitled.css'
@@ -55,6 +55,7 @@ module.exports =
   EMP_TMPORARY_APP_NAME:'emp-debugger.emp-tmp-app-name'
   EMP_CMAKE_KEY : 'emp-debugger.emp-c_app'
   EMP_LESS_IMPORT_FILES:'emp-debugger.emp-less-import-files'
+  EMP_LOG_GLOBAL_COLOR:'emp-debugger.emp-log-global-color'
 
   EMP_OFFLINE_DIR: 'emp-debugger.emp-offline-dev-path'
   EMP_OFFLINE_RELATE_DIR: 'emp-debugger.emp-offline-relate-path'
@@ -92,12 +93,14 @@ module.exports =
   EMP_TEMP_URI : 'emp://template_wizard'
   EMP_FRONT_PAGE_URI : 'emp://front_page_wizard'
   EMP_CONFIG_URI : 'emp://emp_config'
+  EMP_API_DEBUG_URI : 'emp://emp_api_debug'
 
   CHA_WIZARD_VIEW: 'EmpView'
   APP_WIZARD_VIEW: 'EmpAppView'
   TEMP_WIZARD_VIEW: 'EmpTemplateView'
   FRONT_PAGE_WIZARD_VIEW: 'EmpFrontPageView'
   EMP_CONFIG_VIEW : 'EmpConfigView'
+  EMP_API_VIEW: 'EMPAPIView'
 
   CHA_CODE_DIR:'src'
   CHA_PUBLIC_DIR:'public'
@@ -158,6 +161,7 @@ module.exports =
 
   # adapter template
   STATIC_TEMPLATE_DIR:"/templates/"
+  STATIC_API_DIR:"/templates/api/api_desc.json"
   STATIC_APP_TEMPLATE:"/templates/app/"
   STATIC_DEF_APP_TEMPLATE:"/templates/app/5.3"
   STATIC_CHANNEL_TEMPLATE:"/templates/channel/"

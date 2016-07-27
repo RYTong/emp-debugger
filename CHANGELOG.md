@@ -2,6 +2,10 @@
 
 # Emp Debugger Package Change Log
 
+## Version 0.10.9
+1. lua console 颜色管理修改, 使用和 log 的统一配色
+2. 优化 log 配色, 设置之后,一直记忆
+
 ## Version 0.10.8
 1. 修复 BUG #121.
 

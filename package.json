@@ -30,7 +30,8 @@
     "emp-debugger:create_cha",
     "emp-debugger:open_config",
     "emp-debugger:create_less",
-    "emp-debugger:compile_all_less"
+    "emp-debugger:compile_all_less",
+    "emp-debugger:show-api"
   ],
   "repository": "https://github.com/RYTong/emp-debugger",
   "license": "MIT",

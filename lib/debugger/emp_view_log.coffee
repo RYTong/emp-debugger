@@ -1,3 +1,4 @@
+emp = require '../exports/emp'
 module.exports =
 class emp_view_log
   id: null
@@ -7,7 +8,7 @@ class emp_view_log
 
   constructor: (@id, @color)->
     @log_arr = []
-    @glo_color = atom.project.glo_color
+    @glo_color = atom.config.get(emp.EMP_LOG_GLOBAL_COLOR)
 
 
   put_log: (log)->

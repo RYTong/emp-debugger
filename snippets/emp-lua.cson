@@ -1,4 +1,4 @@
-'.source.xhtml':
+'.source.emp':
   'multiline comment':
     'prefix': '-['
     'body': '--[[ ${0:comment...}]'

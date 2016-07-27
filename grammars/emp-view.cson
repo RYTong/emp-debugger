@@ -1,4 +1,4 @@
-'scopeName': 'source.xhtml'
+'scopeName': 'source.emp'
 'fileTypes': [
   'xhtml'
   'htm'
@@ -168,7 +168,7 @@
         'end': '(</)((?i:script))'
         'patterns': [
           {
-            'include': 'source.xhtml'
+            'include': 'source.emp'
           }
         ]
       }

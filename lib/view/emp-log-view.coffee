@@ -56,6 +56,8 @@ lv_unmap = {1:[lv_lua],
 10:[lv_lua, lv_info, lv_error]
            }
 
+sDefFlag = ","
+
 module.exports =
 class EmpDebuggerLogView extends View
   emp_conf_view: null
@@ -67,6 +69,9 @@ class EmpDebuggerLogView extends View
   show_state: false # 当前 log pane 是否为显示状态
   stop_state: false
   selected_client: default_client_id
+  reFilterReg:new RegExp("#[^#]*#", "i")
+  aFilterList:[]
+  aFlagsList:["#", "#"]
 
   color_arr: ["#000033", "#000066", "#000099", "#0000CC", "#0000FF",
               "#003300", "#003333", "#003366", "#003399", "#0033CC", "#0033FF",
@@ -114,10 +119,22 @@ class EmpDebuggerLogView extends View
 
 
         @div class:'bar_div', =>
+          @button outlet:'showFilterBtn', class: 'btn btn_right2', click: 'show_filter', 'Show Filter'
           @select outlet: "lv_control", class: "select_bar"
           @select outlet: "line_control", class: "select_bar"
           @button class: 'btn btn_right2', click: 'clear_log', 'Clear'
           @button class: 'btn-warning btn  inline-block-tight btn_right', click: 'hide_log_view', 'Hide'
+
+      @div class: 'emp_footer panel-heading padded',outlet:'filter_div',style:"display:none;", =>
+        @ul class:'foot_ul', =>
+          @li class:'foot_li', =>
+            @subview 'log_filter', new TextEditorView(mini: true, attributes: {id: 'log_filter', type: 'string'},  placeholderText: 'Input Log Filter Flag')
+          # @li class:'foot_rf_li', =>
+          #   @div class:'btn-group', =>
+          #     @button outlet:'doFilterBtn', class: 'btn btn_top', click: 'do_filter', 'DoFilter'
+          #     @button outlet:'unFilterBtn', class: 'btn btn_top', click: 'un_filter', 'UnFilter'
+
+
       # @ul class: 'log-console list-group', outlet:'listView'
       @div outlet:"emp_log_panel", class:'emp-log-panel',  =>
         @div outlet:"emp_log_view", id:'emp_log_view', class:'emp-log-view', =>
@@ -139,12 +156,17 @@ class EmpDebuggerLogView extends View
     @history = new Array()
     @history_index = 0
     @current_input = ""
+    @aFilterList=[]
     @disposable = new CompositeDisposable
     @log_line_limit = atom.config.get(emp.EMP_LOG_LINE_LIMIT)
     @def_line_limit_sel = atom.config.get(emp.EMP_LOG_LINE_LIMIT_SELECTED)
     if !@def_line_limit_sel
       @def_line_limit_sel = emp.EMP_DEF_LINE_LIMIT_SELECTED
       atom.config.set(emp.EMP_LOG_LINE_LIMIT_SELECTED, emp.EMP_DEF_LINE_LIMIT_SELECTED)
+
+    @sDefFilterFlag = atom.config.get(emp.EMP_FILTER_FLAG)
+    unless @sDefFilterFlag
+      @sDefFilterFlag = sDefFlag
 
     if !@log_line_limit
       @log_line_limit = emp.EMP_DEF_LOG_LINE_LIMIT
@@ -192,21 +214,7 @@ class EmpDebuggerLogView extends View
       # console.log "move-up"
       # console.log @history_index
       his_len = @history.length
-      # if !@history_index or @history_index is his_len
-      #   @history_index = his_len
-      #   history_input = @history.slice @history_index-1, @history_index
-      #   if history_input?[0]
-      #     @lua_console.setText history_input[0]
-      #     @history_index = @history_index-1
-      # else if @history_index > 1
-      #   history_input = @history.slice @history_index-1, @history_index
-      #   if history_input?[0]
-      #     @lua_console.setText history_input[0]
-      #     @history_index = @history_index-1
-      # else
-      #   history_input = @history.slice @history_index-1, @history_index
-      #   if history_input?[0]
-      #     @lua_console.setText history_input[0]
+
       if !@history_index
         @current_input = @lua_console.getText()
         @history_index = his_len
@@ -236,17 +244,25 @@ class EmpDebuggerLogView extends View
           @lua_console.setText @current_input
 
 
+
     @disposable.add @client_select.change =>
       @selected_client = @client_select.val()
-    # @emp_log_view.scrollUp (e) =>
-      # console.log "up up up up up up "
-    # @emp_log_view.scroll (e)=>
-      # console.log e
-      # console.log b
-      # console.log c
-      # console.log @emp_log_view
-      # console.log @emp_log_view.scrollTop
-      # console.log "---emp_log_view scroll"
+
+
+    @log_filter.getModel().onDidStopChanging =>
+      sFilterStr = @log_filter.getText().trim()
+      if sFilterStr
+        @aFilterList = sFilterStr.split @sDefFilterFlag
+        @aFilterList = @aFilterList.filter (tmpFilter) => tmpFilter isnt ''
+        @aFilterList = @aFilterList.map (tmpFilter) => @aFlagsList.join tmpFilter
+      else
+        @aFilterList = []
+      console.log @aFilterList
+
+        # if @trancode_detail
+        #   @view_detail = @cha_obj.id + '_' + @trancode_detail
+        #   @view_name.setText(@view_detail)
+
 
     # @test()
   dispose: ->
@@ -262,6 +278,44 @@ class EmpDebuggerLogView extends View
     @disposable?.dispose()
 
   set_conf_view: (@emp_conf_view)->
+
+
+  show_filter: ()->
+    console.log "show log filter"
+    if @filter_div.isVisible()
+      @filter_div.hide()
+      @showFilterBtn.removeClass("selected")
+    else
+      @filter_div.show()
+      @showFilterBtn.addClass("selected")
+
+  do_filter: ()->
+    console.log "show filter"
+    # console.log @dofilter_btn
+    # console.log  @unfilter_btn
+    @doFilterBtn.addClass("selected")
+    @unFilterBtn.removeClass("selected")
+
+    sFilterStr = @log_filter.getText().trim()
+    if sFilterStr
+      console.log "filter true"
+      @aFilterList = sFilterStr.split @sDefFilterFlag
+      console.log @aFilterList
+      @aFilterList = @aFilterList.filter (tmpFilter) => tmpFilter isnt ''
+      console.log @aFilterList
+      @aFilterList = @aFilterList.map (tmpFilter) => @aFlagsList.join tmpFilter
+    else
+      console.log "filter false"
+      @aFilterList = []
+    console.log @aFilterList
+    # @aFilterList = []
+
+  un_filter: ()->
+    console.log "un filter"
+    @unFilterBtn.addClass("selected")
+    @doFilterBtn.removeClass("selected")
+    @log_filter.setText ""
+    @aFilterList=[]
 
 
   update_ln: ->
@@ -385,8 +439,25 @@ class EmpDebuggerLogView extends View
       # @show_live_log(client_id, log, tmp_color)
     if !@stop_state and !@first_show and @show_state
       # @log_map[client_id].put_log(log)
-      # console.log "print"
-      @show_live_log(client_id, log_lv, log, @log_map[client_id].get_color())
+      if aLogMatch = log.match @reFilterReg
+        if aLogMatch.index isnt 0
+          # console.log "log filter:no match"
+          @show_live_log(client_id, log_lv, log, @log_map[client_id].get_color())
+        else
+          # console.log "log filter:match true #{@aFilterList}"
+          sNewLog = log.replace @reFilterReg, ""
+
+          if  @aFilterList.length > 0
+            # console.log "log filter:match true do filter"
+            sTmpFlag = aLogMatch[0]
+            unless (@aFilterList.indexOf(sTmpFlag) < 0)
+              @show_live_log(client_id, log_lv, sNewLog, @log_map[client_id].get_color())
+          else
+            # console.log "log filter:match true len no filter"
+            @show_live_log(client_id, log_lv, sNewLog, @log_map[client_id].get_color())
+
+      else
+        @show_live_log(client_id, log_lv, log, @log_map[client_id].get_color())
     # else
       # console.log "store_log"
 
@@ -612,6 +683,7 @@ class EmpDebuggerLogView extends View
     # console.log lua_code
     @do_show_in_console(lua_code)
     # console.log @selected_client
+    # lua_code = @format_code(lua_code)
     @emp_socket_server.send_lua_console(lua_code, @selected_client)
     if @history.length >= default_history_length
       @history.shift()
@@ -620,8 +692,13 @@ class EmpDebuggerLogView extends View
     @current_input = ""
     @lua_console.setText("")
 
+
   do_show_in_console: (lua_code) ->
-    show_color = "#000033"
+
+    #  优先使用全局配色, 如果没有,则使用默认色
+    unless show_color = atom.config.get(emp.EMP_LOG_GLOBAL_COLOR)
+      show_color = @get_color()
+    console.log show_color
     # a="#{@text-color}"
     start_color_ln = @get_line_number_count()
     @update_console_log(lua_code, show_color)
@@ -631,10 +708,11 @@ class EmpDebuggerLogView extends View
     @log_detail.append $$ ->
       for log in log_ga.split("\n")
         # console.log "|#{log}|"
+        # Console Input:
         if log isnt "" and log isnt " "
-          log = "> Console Input: "+log
+          log = "> "+log
           # color:#{show_color};
-          @pre class: "emp-log-con text-highlight",style:"font-weight:bold;font-style:italic;padding:0px;", "#{log}"
+          @pre class: "emp-log-con text-highlight",style:"color:#{show_color};font-weight:bold;font-style:italic;padding:0px;", "#{log}"
     @emp_log_view.scrollToBottom()
 
   refresh_clients: ->

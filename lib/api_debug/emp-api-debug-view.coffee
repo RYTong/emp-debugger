@@ -5,6 +5,7 @@ fs = require 'fs'
 fs_plus = require 'fs-plus'
 path = require 'path'
 http = require 'http'
+querystring = require 'querystring'
 # EmpEditView = require '../channel_view/item-editor-view'
 emp = require '../exports/emp'
 
@@ -72,8 +73,13 @@ class EMPAPIDebuggView extends ScrollView
                   @subview "api_path", new TextEditorView(mini: true,attributes: {id: 'api_path', type: 'string'},  placeholderText: 'API Path')
 
                 @div class:'info-div', =>
+                  @label class: 'info-label', 'Default Data*:'
+                  @label class: 'detail-label', 'Default Data.(默认请求接口带的参数)'
+                  @subview "def_api_data", new TextEditorView(mini: true,attributes: {id: 'def_api_data', type: 'string'},  placeholderText: 'Default API Data')
+
+                @div class:'info-div', =>
                   @label class: 'info-label', 'API Data*:'
-                  @label class: 'detail-label', 'API Data.'
+                  @label class: 'detail-label', 'API Data.(请求接口的 data)'
                   @subview "api_data", new TextEditorView(mini: true,attributes: {id: 'api_data', type: 'string'},  placeholderText: 'API Data')
 
                 @div class:'info-div', =>
@@ -84,12 +90,13 @@ class EMPAPIDebuggView extends ScrollView
             @div class: 'footer-div', =>
               @div class: 'footer-detail', =>
                 @button class: 'footer-btn btn btn-info inline-block-tight', click:'do_cancel','  Cancel  '
-                @button class: 'footer-btn btn btn-info inline-block-tight', click:'do_submit',' Save '
-                @button class: 'footer-btn btn btn-info inline-block-tight', click:'do_test','Test '
+                @button class: 'footer-btn btn btn-info inline-block-tight', click:'do_save',' Save '
+                @button class: 'footer-btn btn btn-info inline-block-tight', click:'do_save_result',' Save Result'
+                @button class: 'footer-btn btn btn-info inline-block-tight', click:'do_test','Do Request '
 
   initialize: ({@uri}={}) ->
     super
-
+    sDefAPIData = atom.config.get(emp.EMP_DEF_API_DATA)
     @sAPIJsonPath = path.join __dirname, '../../', emp.STATIC_API_DIR
     console.log @sAPIJsonPath
     if fs.existsSync @sAPIJsonPath
@@ -97,7 +104,6 @@ class EMPAPIDebuggView extends ScrollView
       @oAPIObject = JSON.parse json_data
       # @initial_()
     else
-      # @initialize_default()
       @oAPIObject = {packs:[@sDefaultPack]}
 
       @oAPIObject[@sDefaultPack]={name:@sDefaultPack, apis:[]}
@@ -105,8 +111,8 @@ class EMPAPIDebuggView extends ScrollView
     @exist_pack.change (event) =>
       sTmpPack = @exist_pack.val()
       console.log @exist_pack.val()
-      console.log @oAPIObject[sTmpPack]
-      # 
+      # console.log @oAPIObject[sTmpPack]
+      #
       # aCopyMethods = @aDefaultMethods.slice()
       # sFirstMethod = aCopyMethods.shift()
       # @api_method.append @new_selected_option(sFirstMethod)
@@ -117,8 +123,8 @@ class EMPAPIDebuggView extends ScrollView
       sTmpPack = @exist_pack.val()
       sTmpAPI = @exist_api.val()
       oAPI = @oAPIObject[sTmpPack][sTmpAPI]
-      console.log oAPI
-      console.log @exist_api.val()
+      # console.log oAPI
+      # console.log @exist_api.val()
 
       @pack_name_editor.setText oAPI.pack
       @api_name_editor.setText oAPI.name
@@ -131,7 +137,14 @@ class EMPAPIDebuggView extends ScrollView
         @api_port.setText oAPI.port
       unless !oAPI.data
         @api_data.setText oAPI.data
-    console.log @api_method
+
+      unless !oAPI.def_data
+        @def_api_data.setText oAPI.def_data
+
+      unless !oAPI.result
+        @api_result.val oAPI.result
+
+    # console.log @api_method
 
     # initial request method
     # aDefaultMethods
@@ -169,13 +182,20 @@ class EMPAPIDebuggView extends ScrollView
           @api_port.setText oTmpPack.port
         unless !oTmpPack.data
           @api_data.setText oTmpPack.data
+
+        unless !oTmpPack.def_data
+          @def_api_data.setText oTmpPack.def_data
+
+        unless !oTmpPack.result
+          @api_result.val oTmpPack.result
       else
-        console.log @oAPIObject
+        # console.log @oAPIObject
         @pack_name_editor.setText sFirstPack
         @change_method_select(default_api_method)
         # @api_method.val(default_api_method)
         @api_port.setText "4002"
         @api_data.setText "data"
+        @def_api_data.setText sDefAPIData
 
       for sTmpPack in aTmpPacks
         sTmpPackOption = @new_option sTmpPack
@@ -185,12 +205,13 @@ class EMPAPIDebuggView extends ScrollView
             sTmpAPIOption = @new_option sTmpAPI
             @exist_api.append sTmpAPIOption
     else
-      console.log @oAPIObject
+      # console.log @oAPIObject
       @pack_name_editor.setText @sDefaultPack
       @change_method_select(default_api_method)
       # @api_method.val(default_api_method)
       @api_port.setText "4002"
       @api_data.setText "data"
+      @def_api_data.setText sDefAPIData
     # console.log "app wizard view"
     # if @default_api_host = atom.config.get(emp.EMP_APP_WIZARD_APP_P)
     #   # console.log "exist"
@@ -222,17 +243,6 @@ class EMPAPIDebuggView extends ScrollView
         # console.log @api_method.context[iTmpIndex]
         # console.log $(@api_method.context[iTmpIndex])
         $(@api_method.context[iTmpIndex]).attr('selected', true)
-
-
-
-
-  initialize_default: ->
-    @exist_pack.change (event) =>
-      console.log @exist_pack.val()
-    @exist_api.change (event) =>
-      console.log @exist_api.val()
-      # @exist_pack.attr("src", @logo_select.val())
-    ""
 
 
   select_epath: (e, element)->
@@ -302,80 +312,111 @@ class EMPAPIDebuggView extends ScrollView
     # atom.workspaceView.trigger 'core:close'
     atom.workspace.getActivePane().destroyActiveItem()
 
-  do_submit: ->
-    # console.log "do do_submit"
-    # try
-    unless @sPackName = @pack_name_editor.getText().trim()
-      throw("Pack名称不能为空！")
-    unless @sAPIName = @api_name_editor.getText().trim()
-      throw("API名称不能为空！")
-    unless @sAPIHost = @api_host.getText().trim()
-      throw("API Host不能为空！")
-    unless @sAPIMethod = @api_method.val()
-      @sAPIMethod = "get"
-
-    unless @sAPIPath = @api_path.getText().trim()
-      throw("API Path不能为空！")
-    console.log  @sAPIName
-
-    unless @sAPIPort = @api_port.getText().trim()
-      @sAPIPort = @sDefaultPort
-    unless @sAPIData = @api_data.getText().trim()
-      @sAPIData = "test msg!"
-
-    # atom.workspace.destroyActivePaneItem()
-    oNewApi = @new_api_to_store()
-    console.log @oAPIObject
-    console.log @sPackName
-    oPackApis = @oAPIObject[@sPackName]
-    # delete @sAPIJsonPath @sAPIJsonPath[@sPackName]
-    console.log oPackApis
-    delete oPackApis[@sAPIName]
-    # oPackApis.packs = oPackApis.packs.filter (tmp_api_name) -> tmp_api_name isnt oNewApi.name
-    unless (oPackApis.apis.indexOf(@sAPIName) >= 0)
-      oPackApis.apis.push @sAPIName
-    oPackApis[@sAPIName] = oNewApi
-    @store_api(oPackApis)
-
-
-    # catch e
-    #   console.error e
-    #   emp.show_error("保存 API 参数失败!")
-
-  do_test: ()=>
+  do_save: ->
+    # console.log "do do_save"
     try
-      # unless @sPackName = @pack_name_editor.getText().trim()
-      #   throw("Pack名称不能为空！")
+      unless @sPackName = @pack_name_editor.getText().trim()
+        throw("Pack名称不能为空！")
       unless @sAPIName = @api_name_editor.getText().trim()
         throw("API名称不能为空！")
       unless @sAPIHost = @api_host.getText().trim()
         throw("API Host不能为空！")
-      # atom.config.set(emp.EMP_APP_WIZARD_APP_P, @app_dir)
       unless @sAPIMethod = @api_method.val()
-        # atom.config.set(emp.EMP_APP_WIZARD_EWP_P, @ewp_dir)
-        # else
         @sAPIMethod = "get"
-      console.log  @sAPIName
-      # atom.config.set(emp.EMP_TMPORARY_APP_NAME, @sAPIName)
+
       unless @sAPIPath = @api_path.getText().trim()
         throw("API Path不能为空！")
+      console.log  @sAPIName
+
       unless @sAPIPort = @api_port.getText().trim()
-        # atom.config.set emp.EMP_TEMP_WIZARD_PORT, @app_port_text
-        # else
+        @sAPIPort = @sDefaultPort
+      unless @sAPIData = @api_data.getText().trim()
+        @sAPIData = ""
+
+      unless @sDefAPIData = @def_api_data.getText().trim()
+        @sDefAPIData = ""
+
+      # atom.workspace.destroyActivePaneItem()
+      oNewApi = @new_api_to_store()
+      console.log @oAPIObject
+      console.log @sPackName
+      oPackApis = @oAPIObject[@sPackName]
+
+      # delete @sAPIJsonPath @sAPIJsonPath[@sPackName]
+      console.log oPackApis
+      oNewApi.result = oPackApis[@sAPIName].result
+      delete oPackApis[@sAPIName]
+      # oPackApis.packs = oPackApis.packs.filter (tmp_api_name) -> tmp_api_name isnt oNewApi.name
+      unless (oPackApis.apis.indexOf(@sAPIName) >= 0)
+        oPackApis.apis.push @sAPIName
+      oPackApis[@sAPIName] = oNewApi
+      @store_api(oPackApis)
+      emp.show_info "API 保存成功"
+
+
+    catch e
+      console.error e
+      emp.show_error("保存 API 参数失败, 请查看日志!")
+
+  do_save_result:()=>
+    try
+      unless @sPackName = @pack_name_editor.getText().trim()
+        throw("Pack名称为空,无法保存！")
+      unless @sAPIName = @api_name_editor.getText().trim()
+        throw("API名称为空, 无法保存！")
+
+
+      unless @sAPIResult = @api_result.val().trim()
+        @sAPIResult = ""
+
+      # atom.workspace.destroyActivePaneItem()
+      console.log @oAPIObject
+      console.log @sPackName
+      oPackApis = @oAPIObject[@sPackName]
+      # delete @sAPIJsonPath @sAPIJsonPath[@sPackName]
+      console.log oPackApis
+      oThisAPI = oPackApis[@sAPIName]
+
+      oPackApis[@sAPIName].result = @sAPIResult
+      @store_api(oPackApis)
+      emp.show_info "API Result 保存成功"
+    catch e
+      console.error e
+      emp.show_error("保存 API Result失败, 请查看日志!")
+
+  do_test: ()=>
+    try
+      unless @sAPIName = @api_name_editor.getText().trim()
+        throw("API名称不能为空！")
+      unless @sAPIHost = @api_host.getText().trim()
+        throw("API Host不能为空！")
+
+      unless @sAPIMethod = @api_method.val()
+        @sAPIMethod = "get"
+
+      unless @sAPIPath = @api_path.getText().trim()
+        throw("API Path不能为空！")
+
+      unless @sAPIPort = @api_port.getText().trim()
         @sAPIPort = @sDefaultPort
 
 
       unless @sAPIData = @api_data.getText().trim()
         # atom.config.set emp.EMP_TEMP_WIZARD_APORT, @app_aport_text
         # else
-        @sAPIData = "test msg!"
+        @sAPIData = ""
 
+      unless @sDefAPIData = @def_api_data.getText().trim()
+        @sDefAPIData = ""
 
-      # http.get @sAPIHost, (res) =>
-      #   res.on "data", (chunk) =>
-      #     console.log "BODY: #{chunk}"
+      sNewPath = @sAPIPath
+      if !(@sAPIPath.indexOf "?" >= 0)
+        sNewPath = sNewPath+'&'+@sDefAPIData
+      else
+        sNewPath = sNewPath+'?'+@sDefAPIData
 
-      oTmpOption = @new_http_option()
+      oTmpOption = @new_http_option(sNewPath)
+      console.log  @sAPIName
       console.log oTmpOption
 
       req = http.request oTmpOption,(res) =>
@@ -391,6 +432,7 @@ class EMPAPIDebuggView extends ScrollView
         console.log('problem with request: ' + e.message)
 
       # // write data to request body
+      console.log @sAPIData
       req.write(@sAPIData+'\n')
       req.end()
 
@@ -402,12 +444,12 @@ class EMPAPIDebuggView extends ScrollView
       console.error e
       emp.show_error("保存 API 参数失败!")
 
-  new_http_option:() =>
-    return {host:@sAPIHost,port:@sAPIPort,path:@sAPIPath, method:@sAPIMethod}
+  new_http_option:(sNewPath) =>
+    return {host:@sAPIHost,port:@sAPIPort,path:sNewPath, method:@sAPIMethod,headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8','Content-Length': @sAPIData.length}}
 
 
   new_api_to_store:() =>
-    return {name:@sAPIName, method:@sAPIMethod,host:@sAPIHost,  port:@sAPIPort, path:@sAPIPath, data:@sAPIData,pack:@sPackName}
+    return {name:@sAPIName, method:@sAPIMethod,host:@sAPIHost,  port:@sAPIPort, path:@sAPIPath, def_data:@sDefAPIData, data:@sAPIData,pack:@sPackName, result:""}
 
   store_api:(oNewApi) =>
     sApiName = oNewApi.name

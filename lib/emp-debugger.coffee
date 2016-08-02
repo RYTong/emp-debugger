@@ -38,6 +38,10 @@ module.exports =
       type: 'string'
       default:','
 
+    defAPIData:
+      type: 'string'
+      default:'app=ebank&o=i'
+
   empDebuggerInitView: null
   empDebuggerStateView: null
   empDebuggerErrView: null

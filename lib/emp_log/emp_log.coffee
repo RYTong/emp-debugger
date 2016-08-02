@@ -1,6 +1,6 @@
 emp = require '../exports/emp'
 module.exports =
-class emp_view_log
+class EMPLog
   id: null
   glo_color:null
   color: null
@@ -30,6 +30,7 @@ class emp_view_log
       @color
 
   set_color: (@color)->
+    @glo_color = null
 
   set_glo_color: (@glo_color)->
 

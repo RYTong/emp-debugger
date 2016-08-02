@@ -312,9 +312,9 @@ class EmpDebuggerSettingView extends View
     # console.log 'My configuration changed:', atom.config.get('my-package.key')
 
   init_log_color_value: ->
-    @log_map = @empDebuggerLogView.get_log_store()
-    # console.log log_map
-    for name, view_logs of @log_map
+    @oLogMaps = @empDebuggerLogView.get_log_store()
+    aAllLogMaps = @oLogMaps.get_all_log()
+    for name, view_logs of aAllLogMaps
       # console.log name
       tmp_color = view_logs.get_color()
       tmp_id = view_logs.get_id()
@@ -333,19 +333,19 @@ class EmpDebuggerSettingView extends View
 
   init_log_conf_listen: ->
     client_id = null
-    @log_map = @empDebuggerLogView.get_log_store()
+    @oLogMaps = @empDebuggerLogView.get_log_store()
     @emp_client_list.change =>
       console.log "client channge"
       client_id = @emp_client_list.val()
       console.log client_id
       if client_id isnt @default_name
-        # console.log log_map[client_id]
+        # console.log oLogMaps[client_id]
         # console.log @emp_default_color
         # @emp_default_color.context.selected = true
         @emp_default_color.attr('selected', true)
-        tmp_color = @log_map[client_id].get_color()
-        @emp_log_color_list.css('background-color', tmp_color)
-        @emp_default_color.val(tmp_color)
+        unless !sTmpCol = @oLogMaps.get_log_col(client_id)
+          @emp_log_color_list.css('background-color', sTmpCol)
+          @emp_default_color.val(sTmpCol)
       else
 
         if glo_color = atom.config.get(emp.EMP_LOG_GLOBAL_COLOR)
@@ -359,41 +359,42 @@ class EmpDebuggerSettingView extends View
     @emp_log_color_list.change =>
       console.log "color channge"
       client_id = @emp_client_list.val()
-      tmp_color = @emp_log_color_list.val()
-      console.log tmp_color
+      sSelCol = @emp_log_color_list.val()
+      console.log sSelCol
 
       if client_id is @default_name
         console.log "default id"
 
-        # console.log tmp_color
-        if tmp_color isnt @default_name
-          atom.config.set(emp.EMP_LOG_GLOBAL_COLOR, tmp_color)
-          @emp_log_color_list.css('background-color', tmp_color)
-          # atom.project.glo_color = tmp_color
-          for cli_id, cli_view of @log_map
-            cli_view.set_glo_color tmp_color
+        # console.log sSelCol
+        aAllLogMaps = @oLogMaps.get_all_log()
+        if sSelCol isnt @default_name
+          atom.config.set(emp.EMP_LOG_GLOBAL_COLOR, sSelCol)
+          @emp_log_color_list.css('background-color', sSelCol)
+          # atom.project.glo_color = sSelCol
+          for cli_id, cli_view of aAllLogMaps
+            cli_view.set_glo_color sSelCol
         else
           atom.config.set(emp.EMP_LOG_GLOBAL_COLOR, null)
           @emp_default_color.val("#{@default_name}")
           @emp_log_color_list.css('background-color', '')
           # atom.project.glo_color = null
-          for cli_id, cli_view of @log_map
+          for cli_id, cli_view of aAllLogMaps
             cli_view.set_glo_color null
 
       else
-        # console.log tmp_color
-        if tmp_color isnt @default_name
-          @emp_log_color_list.css('background-color', tmp_color)
+        # console.log sSelCol
+        if sSelCol isnt @default_name
+          @emp_log_color_list.css('background-color', sSelCol)
           client_id = @emp_client_list.val()
-          @log_map[client_id].set_color(tmp_color)
-          @log_map[client_id].set_glo_color null
+          @oLogMaps.set_log_col(client_id, sSelCol)
+          # @log_map[client_id].set_glo_color null
         else
-          @log_map[client_id].set_glo_color null
-          @emp_log_color_list.css('background-color', @log_map[client_id].set_color())
+          @oLogMaps.set_log_gol_col client_id, null
+          @emp_log_color_list.css('background-color', @oLogMaps.get_log_col(client_id))
 
-  refresh_log_view: (@log_map, client_id, tmp_color)->
+  refresh_log_view: (@oLogMaps, client_id, sTmpColor)->
     @emp_client_list.append(@create_option("client:#{client_id}", client_id))
-    @emp_log_color_list.append(@create_else_option(tmp_color))
+    @emp_log_color_list.append(@create_else_option(sTmpColor))
 
   remove_client: (client_id) ->
     # console.log "remove: #{client_id}"

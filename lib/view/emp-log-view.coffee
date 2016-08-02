@@ -1,6 +1,8 @@
 {Disposable, CompositeDisposable} = require 'atom'
 {$, $$, View, TextEditorView} = require 'atom-space-pen-views'
-emp_log = require '../debugger/emp_view_log'
+EMPLog = require '../emp_log/emp_log'
+EMPLogMaps = require '../emp_log/emp_log_map'
+
 _ = require 'underscore-plus'
 default_client_id = 'All'
 emp = require '../exports/emp'
@@ -73,44 +75,6 @@ class EmpDebuggerLogView extends View
   aFilterList:[]
   aFlagsList:["#", "#"]
 
-  color_arr: ["#000033", "#000066", "#000099", "#0000CC", "#0000FF",
-              "#003300", "#003333", "#003366", "#003399", "#0033CC", "#0033FF",
-              "#006600", "#006633", "#006666", "#006699", "#0066CC", "#0066FF",
-              "#009900", "#009933", "#009966", "#009999", "#0099CC", "#0099FF",
-              "#00CC00", "#00CC33", "#00CC66", "#00CC99", "#00CCCC", "#00CCFF",
-              "#00FF00", "#00FF33", "#00FF66", "#00FF99", "#00FFCC", "#00FFFF",
-              "#330000", "#330033", "#330066", "#330099", "#3300CC", "#3300FF",
-              "#333300", "#333333", "#333366", "#333399", "#3333CC", "#3333FF",
-              "#336600", "#336633", "#336666", "#336699", "#3366CC", "#3366FF",
-              "#339900", "#339933", "#339966", "#339999", "#3399CC", "#3399FF",
-              "#33CC00", "#33CC33", "#33CC66", "#33CC99", "#33CCCC", "#33CCFF",
-              "#33FF00", "#33FF33", "#33FF66", "#33FF99", "#33FFCC", "#33FFFF",
-              "#660000", "#660033", "#660066", "#660099", "#6600CC", "#6600FF",
-              "#663300", "#663333", "#663366", "#663399", "#6633CC", "#6633FF",
-              "#666600", "#666633", "#666666", "#666699", "#6666CC", "#6666FF",
-              "#669900", "#669933", "#669966", "#669999", "#6699CC", "#6699FF",
-              "#66CC00", "#66CC33", "#66CC66", "#66CC99", "#66CCCC", "#66CCFF",
-              "#66FF00", "#66FF33", "#66FF66", "#66FF99", "#66FFCC", "#66FFFF",
-              "#990000", "#990033", "#990066", "#990099", "#9900CC", "#9900FF",
-              "#993300", "#993333", "#993366", "#993399", "#9933CC", "#9933FF",
-              "#996600", "#996633", "#996666", "#996699", "#9966CC", "#9966FF",
-              "#999900", "#999933", "#999966", "#999999", "#9999CC", "#9999FF",
-              "#99CC00", "#99CC33", "#99CC66", "#99CC99", "#99CCCC", "#99CCFF",
-              "#99FF00", "#99FF33", "#99FF66", "#99FF99", "#99FFCC", "#99FFFF",
-              "#CC0000", "#CC0033", "#CC0066", "#CC0099", "#CC00CC", "#CC00FF",
-              "#CC3300", "#CC3333", "#CC3366", "#CC3399", "#CC33CC", "#CC33FF",
-              "#CC6600", "#CC6633", "#CC6666", "#CC6699", "#CC66CC", "#CC66FF",
-              "#CC9900", "#CC9933", "#CC9966", "#CC9999", "#CC99CC", "#CC99FF",
-              "#CCCC00", "#CCCC33", "#CCCC66", "#CCCC99", "#CCCCCC", "#CCCCFF",
-              "#CCFF00", "#CCFF33", "#CCFF66", "#CCFF99", "#CCFFCC", "#CCFFFF",
-              "#FF0000", "#FF0033", "#FF0066", "#FF0099", "#FF00CC", "#FF00FF",
-              "#FF3300", "#FF3333", "#FF3366", "#FF3399", "#FF33CC", "#FF33FF",
-              "#FF6600", "#FF6633", "#FF6666", "#FF6699", "#FF66CC", "#FF66FF",
-              "#FF9900", "#FF9933", "#FF9966", "#FF9999", "#FF99CC", "#FF99FF",
-              "#FFCC00", "#FFCC33", "#FFCC66", "#FFCC99", "#FFCCCC", "#FFCCFF",
-              "#FFFF00", "#FFFF33", "#FFFF66", "#FFFF99", "#FFFFCC"]
-  log_map: {}
-
   @content: ->
     @div class: 'emp-log-pane tool-panel pannel panel-bottom padding', =>
       # @div class: 'log-console-resize-handle', mousedown: 'resizeStarted', dblclick: 'resizeToMin'
@@ -119,6 +83,7 @@ class EmpDebuggerLogView extends View
 
 
         @div class:'bar_div', =>
+          @button outlet:'showFindBtn', class: 'btn btn_right2 inline-block-tight', click: 'show_find', 'Find'
           @button outlet:'showFilterBtn', class: 'btn btn_right2', click: 'show_filter', 'Show Filter'
           @select outlet: "lv_control", class: "select_bar"
           @select outlet: "line_control", class: "select_bar"
@@ -129,6 +94,15 @@ class EmpDebuggerLogView extends View
         @ul class:'foot_ul', =>
           @li class:'foot_li', =>
             @subview 'log_filter', new TextEditorView(mini: true, attributes: {id: 'log_filter', type: 'string'},  placeholderText: 'Input Log Filter Flag')
+
+      @div class: 'emp_footer panel-heading padded',outlet:'find_div',style:"display:none;", =>
+        @ul class:'foot_ul', =>
+          @li class:'foot_li', =>
+            @subview 'log_find', new TextEditorView(mini: true, attributes: {id: 'log_find', type: 'string'},  placeholderText: 'Find in Logs')
+          @li class:'foot_rf_li', =>
+            # @button class: 'btn ', click: 'do_test', 'Test'
+            @button outlet:'doFilterBtn', class: 'btn btn_top inline-block-tight', click: 'do_find', 'Find'
+            # @button outlet:'doFilterBtn1', class: 'btn btn_top inline-block-tight', click: 'do_find1', 'Find1'
           # @li class:'foot_rf_li', =>
           #   @div class:'btn-group', =>
           #     @button outlet:'doFilterBtn', class: 'btn btn_top', click: 'do_filter', 'DoFilter'
@@ -149,9 +123,12 @@ class EmpDebuggerLogView extends View
               @option value: 'test', "test"
           @li class:'foot_li', =>
             @subview 'lua_console', new TextEditorView(mini: true, attributes: {id: 'lua_console', type: 'string'},  placeholderText: 'Lua Console')
+          @li class:'foot_lf_li', =>
+            @button class: 'btn ', click: 'do_test', 'Test'
 
 
   initialize: ()->
+    @oLogMaps = new EMPLogMaps()
     @line_number = 1
     @history = new Array()
     @history_index = 0
@@ -243,8 +220,6 @@ class EmpDebuggerLogView extends View
           @history_index = @history.length+1
           @lua_console.setText @current_input
 
-
-
     @disposable.add @client_select.change =>
       @selected_client = @client_select.val()
 
@@ -263,6 +238,8 @@ class EmpDebuggerLogView extends View
         #   @view_detail = @cha_obj.id + '_' + @trancode_detail
         #   @view_name.setText(@view_detail)
 
+    @disposable.add atom.commands.add @log_find.element, 'core:confirm', =>
+      @do_find()
 
     # @test()
   dispose: ->
@@ -278,6 +255,27 @@ class EmpDebuggerLogView extends View
     @disposable?.dispose()
 
   set_conf_view: (@emp_conf_view)->
+
+  show_find: ()=>
+    console.log "show log filter"
+    if @find_div.isVisible()
+      @find_div.hide()
+      @showFindBtn.removeClass("selected")
+    else
+      @find_div.show()
+      @showFindBtn.addClass("selected")
+
+  do_find:() =>
+    sFindText = @log_find.getText().trim()
+    # console.log sFindText
+    # console.log @log_detail
+    # console.log @log_detail.children()
+    aFindedArr = @oLogMaps.scan_in_buffer(sFindText)
+    # console.log aFindedArr
+
+  do_find1:()=>
+    console.log " find 1"
+    @oLogMaps.scan_in_buffer()
 
 
   show_filter: ()->
@@ -298,14 +296,14 @@ class EmpDebuggerLogView extends View
 
     sFilterStr = @log_filter.getText().trim()
     if sFilterStr
-      console.log "filter true"
+      # console.log "filter true"
       @aFilterList = sFilterStr.split @sDefFilterFlag
-      console.log @aFilterList
+      # console.log @aFilterList
       @aFilterList = @aFilterList.filter (tmpFilter) => tmpFilter isnt ''
-      console.log @aFilterList
+      # console.log @aFilterList
       @aFilterList = @aFilterList.map (tmpFilter) => @aFlagsList.join tmpFilter
     else
-      console.log "filter false"
+      # console.log "filter false"
       @aFilterList = []
     console.log @aFilterList
     # @aFilterList = []
@@ -340,17 +338,17 @@ class EmpDebuggerLogView extends View
 
 
   update: ->
-    tmp_log_map = @log_map
-    for name, view_logs of tmp_log_map
+    aAllLogMaps = @oLogMaps.get_all_log()
+    for sID, oLog of aAllLogMaps
       @log_detail.append $$ ->
-        tmp_color = view_logs.get_color()
-        @pre class: "emp-log-con text-highlight", style:"color:#{tmp_color}; padding:0px;", "########################## CLIENT:#{view_logs.get_id()} ##########################"
+        sLogCol = oLog.get_color()
+        @pre class: "emp-log-con text-highlight", style:"color:#{sLogCol}; padding:0px;", "########################## CLIENT:#{oLog.get_id()} ##########################"
         # @p class: "emp-log-con", style:"color:#{tmp_color};padding:0px;", "########################## CLIENT:#{view_logs.get_id()} ##########################"
 
-        for tmp_log in view_logs.get_log()
-          for log in tmp_log.split("\n")
-            if log isnt "" and log isnt " "
-              @pre class: "emp-log-con text-highlight",style:"color:#{tmp_color};padding:0px;", "#{log}"
+        for sLogStr in oLog.get_log()
+          for sLog in sLogStr.split("\n")
+            if sLog isnt "" and sLog isnt " "
+              @pre class: "emp-log-con text-highlight",style:"color:#{sLogCol};padding:0px;", "#{sLog}"
     @emp_log_view.scrollToBottom()
     # $('#emp_log_view').stop().animate({scrollTop:@log_detail.context.scrollHeight}, 1000)
 
@@ -358,11 +356,16 @@ class EmpDebuggerLogView extends View
     #   scrollTop: document.getElementById("log_content").scrollHeight
     # }, 1000);
 
-  show_live_log: (client_id, log_lv, log, show_color) ->
-    @do_show_live_log(client_id, log_lv, log, show_color) unless @first_show
+  show_live_log: (sClientID, log_lv, sLogMsg) ->
+    # console.log "show live log "
+    @do_show_live_log(sClientID, log_lv, sLogMsg) unless @first_show
 
-  do_show_live_log: (client_id, log_lv, log, show_color)->
+  do_show_live_log: (sClientID, log_lv, sLogMsg)->
     # console.log "do_show_live_log"
+    oLog = @oLogMaps.get_log(sClientID)
+    # oLogView = {}
+    # console.log oLog
+    sShowColor = oLog.get_color()
     limit_line = @line_control.val()
     start_color_ln = @get_line_number_count()
 
@@ -370,23 +373,30 @@ class EmpDebuggerLogView extends View
     if start_color_ln > limit_line
       @clear_log()
 
-
     # TODO: 判断日志类型,根据筛选规则输出
     # console.log @lv_selected
     log_con_color = lv_color[log_lv]
     log_con_color ?= lv_color.def
+
     if lv_list.indexOf(log_lv) >=0
       # lv_map_val = lv_unmap[@lv_selected]
       # console.log log_lv, @lv_map_val, @lv_selected
       if @lv_map_val?.indexOf(log_lv) >=0
         # if @lv_selected is lv_val_l
-        @update_log(client_id, log, show_color, log_con_color)
-        @update_gutter(show_color, start_color_ln, client_id)
-    else
-      @update_log(client_id, log, show_color, log_con_color)
-      @update_gutter(show_color, start_color_ln, client_id)
+        # oLogView = @oLogMaps.format_log_msg(sClientID, sLogMsg, sShowColor, log_con_color)
+        @update_log(sClientID, sLogMsg, sShowColor, log_con_color)
+        @update_gutter(sShowColor, start_color_ln, sClientID)
 
-  update_gutter: (show_color, start_color_ln, client_id)->
+        # @oLogMaps.store_find_log(sClientID, sLogMsg, oLogView)
+        # @store_find_log(oLog, sLogMsg, oLogView)
+    else
+      # oLogView = @oLogMaps.format_log_msg(sClientID, sLogMsg, sShowColor, log_con_color)
+      @update_log(sClientID, sLogMsg, sShowColor, log_con_color)
+      @update_gutter(sShowColor, start_color_ln, sClientID)
+      # @oLogMaps.store_find_log(sClientID, sLogMsg, oLogView)
+      # @store_find_log(oLog, sLogMsg, oLogView)
+
+  update_gutter: (sShowColor, start_color_ln, sClientID)->
     # console.log @log_detail.css('height')
     # console.log @get_int(@log_detail.css('height'))
     # console.log @get_line_number_count()
@@ -396,53 +406,73 @@ class EmpDebuggerLogView extends View
     # console.log "update_gutter: s: #{start_ln} ,e: #{end_ln}"
     # console.log "ln: #{@line_number}, s: #{start_color_ln}"
     # 现在不改变行数的背景色
-    # @do_update_gutter_css(start_color_ln, show_color) unless @line_number < start_color_ln
-    @do_update_gutter(start_ln, end_ln, show_color, client_id) unless start_ln > end_ln
+    # @do_update_gutter_css(start_color_ln, sShowColor) unless @line_number < start_color_ln
+    @do_update_gutter(start_ln, end_ln, sShowColor, sClientID) unless start_ln > end_ln
 
 
-  do_update_gutter: (start, end, show_color)->
+  do_update_gutter: (start, end, sShowColor)->
     # console.log "do_update_gutter:s: #{start} ,e: #{end}"
     @line_number = end
     html = ''
     for row in [start+1..end+1]
       rowValue = " "+ row
       classes = "line-number line-number-#{row}"
-      # style="background-color:#{show_color};"
+      # style="background-color:#{sShowColor};"
       # <div class="icon-right"></div>
       html += """<div class="#{classes}" > #{rowValue}</div>"""
     @emp_lineNumber.append(html)
 
-  do_update_gutter_css: (start_color_ln, show_color) ->
+  do_update_gutter_css: (start_color_ln, sShowColor) ->
     # console.log "do_update_gutter_css"
     # console.log @emp_lineNumber
     chile_nodes = @emp_lineNumber.context.children
     for row in [start_color_ln..@line_number]
-      chile_nodes[row].style.backgroundColor=show_color
+      chile_nodes[row].style.backgroundColor=sShowColor
 
 
-  update_log: (client_id, log_ga, show_color, log_con_color)->
-    @log_detail.append $$ ->
-      # @pre id:"log_#{client_id}", class: "emp-log-con", style:"color:#{show_color};padding:0px;", "######################### CLIENT:#{client_id} ##########################"
-      for log in log_ga.split("\n")
-        # console.log "|#{log}|"
-        if log isnt "" and log isnt " "
-          @pre id:"log_#{client_id}",class: "emp-log-con "+log_con_color,style:"color:#{show_color};padding:0px;", "#{log}"
-    @emp_log_view.scrollToBottom()
-    # $('#emp_log_view').stop().animate({scrollTop:@log_detail.context.scrollHeight}, 1000)
+  update_log: (sClientID, sLogMsg, sShowColor, sLogConColor)->
+    # console.log "update log "
+
+    for sTmpLog in sLogMsg.split("\n")
+      # console.log "|#{log}|"
+      if sTmpLog isnt "" and sTmpLog isnt " "
+        oTmpView =  $$ ->
+          @pre id:"log_#{sClientID}",class: "emp-log-con "+sLogConColor,style:"color:#{sShowColor};padding:0px;", "#{sTmpLog}"
+        @oLogMaps.store_buffer(sTmpLog, oTmpView)
+          # oTmpView
+        @log_detail.append oTmpView
+        @emp_log_view.scrollToBottom()
+    # oLovView
+
+
+
+    # oLogView =  $$ ->
+    #   # @pre id:"log_#{client_id}", class: "emp-log-con", style:"color:#{sShowColor};padding:0px;", "######################### CLIENT:#{client_id} ##########################"
+    #   for sTmpLog in sLogMsg.split("\n")
+    #     # console.log "|#{log}|"
+    #     if sTmpLog isnt "" and sTmpLog isnt " "
+    #
+    #       @pre id:"log_#{sClientID}",class: "emp-log-con "+sLogConColor,style:"color:#{sShowColor};padding:0px;", "#{sTmpLog}"
+    #       # oLogMaps.store_buffer(sTmpLog, oTmpView)
+    #       # oTmpView
+    # @log_detail.append oLogView
+    # @emp_log_view.scrollToBottom()
+    # oLovView
 
   store_log: (client_id, log, log_lv=emp.EMP_DEF_LOG_TYPE) ->
     # console.log client_id, log, log_lv
-    if !@log_map[client_id]
-      tmp_color = @get_color()
-      @log_map[client_id] = new emp_log(client_id, tmp_color)
-      @refresh_conf_view(client_id, tmp_color)
+    if !@oLogMaps.has_log(client_id)
+      oTmpLog = @oLogMaps.new_log(client_id)
+      @refresh_conf_view(client_id, oTmpLog.get_color())
       # @show_live_log(client_id, log, tmp_color)
+
+    # console.log !@stop_state, !@first_show, @show_state
     if !@stop_state and !@first_show and @show_state
       # @log_map[client_id].put_log(log)
       if aLogMatch = log.match @reFilterReg
         if aLogMatch.index isnt 0
           # console.log "log filter:no match"
-          @show_live_log(client_id, log_lv, log, @log_map[client_id].get_color())
+          @show_live_log(client_id, log_lv, log)
         else
           # console.log "log filter:match true #{@aFilterList}"
           sNewLog = log.replace @reFilterReg, ""
@@ -451,13 +481,12 @@ class EmpDebuggerLogView extends View
             # console.log "log filter:match true do filter"
             sTmpFlag = aLogMatch[0]
             unless (@aFilterList.indexOf(sTmpFlag) < 0)
-              @show_live_log(client_id, log_lv, sNewLog, @log_map[client_id].get_color())
+              @show_live_log(client_id, log_lv, sNewLog)
           else
             # console.log "log filter:match true len no filter"
-            @show_live_log(client_id, log_lv, sNewLog, @log_map[client_id].get_color())
-
+            @show_live_log(client_id, log_lv, sNewLog)
       else
-        @show_live_log(client_id, log_lv, log, @log_map[client_id].get_color())
+        @show_live_log(client_id, log_lv, log)
     # else
       # console.log "store_log"
 
@@ -467,16 +496,19 @@ class EmpDebuggerLogView extends View
     log_msg = emp.base64_decode log_obj.message
     @store_log(client_id, log_msg, log_lv)
 
+  store_find_log: (oLog, sLogMsg, oLogView)->
+
 
   refresh_conf_view: (client_id, color)->
     # unless !emp_conf_view
     # console.log @emp_conf_view
     # @add_clients(client_id)
-    @emp_conf_view.refresh_log_view(@log_map, client_id, color) unless !@emp_conf_view
+    @emp_conf_view.refresh_log_view(@oLogMaps, client_id, color) unless !@emp_conf_view
 
   remove_client_log: (client_id)->
     @refresh_clients()
-    delete @log_map[client_id]
+    @oLogMaps.remove_log(client_id)
+
     # @emp_conf_view.remove_log_view(client_id) unless !@emp_conf_view
 
   get_line_number_count: ->
@@ -501,7 +533,8 @@ class EmpDebuggerLogView extends View
       # @get_int(sTmpHeight)
       @line_height = iTmpHeight
     else
-      @line_height = 18
+      # @line_height = 18
+      @line_height = 17
 
   get_default_ln: ->
     tmp_height = @emp_log_panel.css('height')
@@ -513,9 +546,6 @@ class EmpDebuggerLogView extends View
 
   get_int: (css) ->
     parseInt(css.split("px")[0])
-
-  get_color: ->
-    @color_arr[Math.floor(Math.random()* @color_arr.length)]
 
   # use for state view
 
@@ -530,13 +560,11 @@ class EmpDebuggerLogView extends View
 
 
   clear_store_log: ->
-    for name, view_logs of  @log_map
-      # console.log name
-      view_logs.reset_log()
+    @oLogMaps.clear_store_log()
 
   #-------------------------------------------------------------------------
   get_log_store: ->
-    @log_map
+    @oLogMaps
 
   # -------------------------------------------------------------------------
   # call by command
@@ -696,23 +724,23 @@ class EmpDebuggerLogView extends View
   do_show_in_console: (lua_code) ->
 
     #  优先使用全局配色, 如果没有,则使用默认色
-    unless show_color = atom.config.get(emp.EMP_LOG_GLOBAL_COLOR)
-      show_color = @get_color()
-    console.log show_color
+    unless sShowColor = atom.config.get(emp.EMP_LOG_GLOBAL_COLOR)
+      sShowColor = emp.get_color()
+    console.log sShowColor
     # a="#{@text-color}"
     start_color_ln = @get_line_number_count()
-    @update_console_log(lua_code, show_color)
-    @update_gutter(show_color, start_color_ln)
+    @update_console_log(lua_code, sShowColor)
+    @update_gutter(sShowColor, start_color_ln)
 
-  update_console_log: (log_ga, show_color)->
+  update_console_log: (sLogMsg, sShowColor)->
     @log_detail.append $$ ->
-      for log in log_ga.split("\n")
+      for log in sLogMsg.split("\n")
         # console.log "|#{log}|"
         # Console Input:
         if log isnt "" and log isnt " "
           log = "> "+log
-          # color:#{show_color};
-          @pre class: "emp-log-con text-highlight",style:"color:#{show_color};font-weight:bold;font-style:italic;padding:0px;", "#{log}"
+          # color:#{sShowColor};
+          @pre class: "emp-log-con text-highlight",style:"color:#{sShowColor};font-weight:bold;font-style:italic;padding:0px;", "#{log}"
     @emp_log_view.scrollToBottom()
 
   refresh_clients: ->
@@ -753,10 +781,13 @@ class EmpDebuggerLogView extends View
 
   # -------------------------------------------------------------------------
 
+  do_test: ->
+    @test()
+
   test: ->
     @store_log("test", "\nasdasd `    asda;")
-    @store_log("test", "------\nasdasd\n\n test functione")
-    @store_log("test", "------\nasdasd\n\n test functione")
+    @store_log("test", "------\nasdasd\n\n test functione longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong msg")
+    @store_log("test", "------\nasdasd\n\n test longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong msg")
     @store_log("test", "------\nasdasd\n\n test functione")
     @store_log("test", "------\nasdasd\n\n test functione")
     @store_log("test", "------\nasdasd\n\n test functione")

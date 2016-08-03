@@ -100,8 +100,9 @@ class EmpDebuggerLogView extends View
           @li class:'foot_li', =>
             @subview 'log_find', new TextEditorView(mini: true, attributes: {id: 'log_find', type: 'string'},  placeholderText: 'Find in Logs')
           @li class:'foot_rf_li', =>
-            # @button class: 'btn ', click: 'do_test', 'Test'
-            @button outlet:'doFilterBtn', class: 'btn btn_top inline-block-tight', click: 'do_find', 'Find'
+            @button outlet:'doFindBtn', class: 'btn btn_top inline-block-tight', click: 'do_find', 'Find'
+          @li class:'foot_rf_li', =>
+            @button outlet:'doFindPreBtn', class: 'btn btn_top inline-block-tight', click: 'do_find_pre', 'Previous'
             # @button outlet:'doFilterBtn1', class: 'btn btn_top inline-block-tight', click: 'do_find1', 'Find1'
           # @li class:'foot_rf_li', =>
           #   @div class:'btn-group', =>
@@ -267,15 +268,16 @@ class EmpDebuggerLogView extends View
 
   do_find:() =>
     sFindText = @log_find.getText().trim()
-    # console.log sFindText
-    # console.log @log_detail
-    # console.log @log_detail.children()
-    aFindedArr = @oLogMaps.scan_in_buffer(sFindText)
-    # console.log aFindedArr
+    aFindedLog = @oLogMaps.scan_in_buffer(sFindText)
+    unless !aFindedLog
+      @emp_log_view.scrollTop(aFindedLog[0].offsetTop)
 
-  do_find1:()=>
-    console.log " find 1"
-    @oLogMaps.scan_in_buffer()
+  do_find_pre:()=>
+    sFindText = @log_find.getText().trim()
+    aFindedLog = @oLogMaps.scan_in_buffer_pre(sFindText)
+
+    unless !aFindedLog
+      @emp_log_view.scrollTop(aFindedLog[0].offsetTop)
 
 
   show_filter: ()->
@@ -786,7 +788,7 @@ class EmpDebuggerLogView extends View
 
   test: ->
     @store_log("test", "\nasdasd `    asda;")
-    @store_log("test", "------\nasdasd\n\n test functione longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong msg")
+    @store_log("test", "------\nasdasd\n\n test functione longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong---")
     @store_log("test", "------\nasdasd\n\n test longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong msg")
     @store_log("test", "------\nasdasd\n\n test functione")
     @store_log("test", "------\nasdasd\n\n test functione")

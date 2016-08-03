@@ -13,24 +13,26 @@ class EMPLogMaps
 
   log_storage: null
 
-  sAllLogMsg:""
+  # sAllLogMsg:""
   aAllLogArr:[]
   sPreFinedLog:""
   aFindedLogArr:[]
   iLogLen:0
+  # iPreFindedArrLen:0
+  # oNowFindedView:null
+  oFindedHeadInfo:{}
+  bFindIFPre:false
 
 
   constructor: ()->
     # console.log "emp_clients constructor"
     @iIndex = 0
     @iLogLen = 0
+    # @iPreFindedArrLen=0
     @views_map = new Array()
     @oLogMap = {}
-    @sAllLogMsg=""
-    @sPreFinedLog=""
-    @oFindReg = null
-    @oNowFindedView=null
-    @aFindedLogArr=[]
+    # @sAllLogMsg=""
+    @reset_find_params()
     # @log_storage.set_clients_map(this)
     # @css_map = {}
 
@@ -79,13 +81,28 @@ class EMPLogMaps
     for sID, oView of @oLogMap
       # console.log name
       oView.reset_log()
-    @sAllLogMsg = ""
+    # @sAllLogMsg = ""
     @aAllLogArr = []
     @iLogLen = 0
+    @reset_find_params()
+
+  reset_find_params:(@sPreFinedLog="", oFView=null, iFLen=0) ->
     @iIndex = 0
-    @oNowFindedView=null
+    # @iPreFindedArrLen=0
+    # @oNowFindedView=null
     @aFindedLogArr=[]
-    @sPreFinedLog=""
+    @bFindIFPre=false
+    @set_find_head_info(oFView, iFLen)
+
+  set_find_head_info:(oView, iLen) ->
+    @oFindedHeadInfo={view:oView, len:iLen}
+
+  get_find_head_len:() ->
+    return @oFindedHeadInfo.len
+
+  get_find_head_view:() ->
+    return @oFindedHeadInfo.view
+
 
   format_log_msg: (sClientID, sLogMsg, sShowColor, sLogConColor) ->
     oLovView =  $$ =>
@@ -104,16 +121,6 @@ class EMPLogMaps
     @aAllLogArr.push @new_log_msg(sStr, oTmpView, @iLogLen)
 
 
-    # oLovView =  $$ ->
-    #   # @pre id:"log_#{client_id}", class: "emp-log-con", style:"color:#{sShowColor};padding:0px;", "######################### CLIENT:#{client_id} ##########################"
-    #   for log in log_ga.split("\n")
-    #     # console.log "|#{log}|"
-    #     if log isnt "" and log isnt " "
-    #       @pre id:"log_#{client_id}",class: "emp-log-con "+sLogConColor,style:"color:#{sShowColor};padding:0px;", "#{log}"
-    # @log_detail.append oLovView
-    # @emp_log_view.scrollToBottom()
-    # oLovView
-
   # for find log
   store_find_log: (sID, sLogMsg, oView) ->
     oTmpLog = @oLogMap[sID]
@@ -121,37 +128,91 @@ class EMPLogMaps
   new_log_msg:(sMsg, oView, iIndex) ->
     {msg:sMsg, view:oView, index:iIndex}
 
+  scan_in_buffer_pre:(sFindText) ->
+    @bFindIFPre=true
+    @do_scan_in_buffer(sFindText)
+
   scan_in_buffer:(sFindText) ->
-    console.log "scan in buffer ------"
-    # console.log sFindText
-    # console.log @aAllLogArr
+    @bFindIFPre=false
+    @do_scan_in_buffer(sFindText)
+
+  do_scan_in_buffer:(sFindText) ->
+    # console.log "scan in buffer ------"
 
     if sFindText isnt ""
-    # @oFindReg = new RegExp()
-    # @emp_node_st.css('color', node_css_style)
-    # iLen = @aAllLogArr.length
-    # oTmp = @aAllLogArr[iLen-1]
-    # console.log oTmp
-    # oTmp.view.css('border','1px solid')
-    # oTmp.view.css('color','#ee1717')
-    # oTmp.view.addClass('emp_log_selected')
       if sFindText isnt @sPreFinedLog
         for oTmpView in @aFindedLogArr
-          oTmpView.removeClass('emp_log_selected')
+          @remove_find_flag(oTmpView)
 
-      @aFindedLogArr=[]
+        @reset_find_params(sFindText, @aAllLogArr[0]?.view, @aAllLogArr.length)
 
-      for oTmp in @aAllLogArr
-        sTmpMsg = oTmp.msg
-        if sTmpMsg.match sFindText
-          oTmpView = oTmp.view
-          # unless oTmpView isnt @oNowFindedView
-          @oNowFindedView = oTmpView
-          @aFindedLogArr.push oTmpView
-          oTmpView.addClass('emp_log_selected')
-
+        oNowFindedView = @do_find_process(sFindText, @aAllLogArr)
+        return oNowFindedView
+      else
+        iFLen = @get_find_head_len()
+        oFView = @get_find_head_view()
+        oTmpView = @aAllLogArr[0]?.view
+        iNLen = @aAllLogArr.length
+        if oFView isnt oTmpView
+          @reset_find_params(sFindText, @aAllLogArr[0]?.view, @aAllLogArr.length)
+          oNowFindedView = @do_find_process(sFindText, @aAllLogArr)
+          return oNowFindedView
+        else if iFLen != iNLen
+          aTmpArr = []
+          aLoopArr = [iFLen-1..iNLen-1]
+          for iTmpIndex in aLoopArr
+            unless !@aAllLogArr[iTmpIndex]
+              aTmpArr.push @aAllLogArr[iTmpIndex]
+          # @reset_find_params(sFindText, oFView, iNLen)
+          @set_find_head_info(oFView, iNLen)
+          oNowFindedView = @do_find_process(sFindText, aTmpArr)
+          # console.log oNowFindedView
+          return oNowFindedView
+        else
+          # console.log "else"
+          if @bFindIFPre
+            @iIndex=@iIndex-2
+            unless @iIndex >= 0
+              @iIndex=@aFindedLogArr.length-1
+            # if @iIndex >= @aFindedLogArr.length
+              # @iIndex=0
+            # console.log @iIndex
+            oNowFindedView = @aFindedLogArr[@iIndex]
+            @iIndex = @iIndex+1
+            return oNowFindedView
+          else
+            if @iIndex >= @aFindedLogArr.length
+              @iIndex=0
+            # console.log @iIndex
+            oNowFindedView = @aFindedLogArr[@iIndex]
+            @iIndex = @iIndex+1
+            return oNowFindedView
     else
       for oTmpView in @aFindedLogArr
-        oTmpView.removeClass('emp_log_selected')
-      @aFindedLogArr=[]
-    return @aFindedLogArr
+        @remove_find_flag(oTmpView)
+      @reset_find_params(sFindText)
+    return null
+
+  do_find_process:(sFindText, aDoFindArr) ->
+    for oTmp in aDoFindArr
+      sTmpMsg = oTmp.msg
+      oFindReg = new RegExp sFindText, 'ig'
+      if sTmpMsg.match oFindReg
+        # sTmpMsg.replace
+        sNewStr = sTmpMsg.replace oFindReg, "<span class=\"emp_log_selected\">$&</span>"
+        oTmpView = oTmp.view
+
+        # @oNowFindedView = oTmpView
+        @aFindedLogArr.push oTmpView
+        # console.log oTmpView
+        sNewStr = "<div>#{sNewStr}</div>"
+        oTmpView[0].innerHTML = sNewStr
+
+        # oTmpView.addClass('emp_log_selected')
+    oNowFindedView = @aFindedLogArr[@iIndex]
+
+    @iIndex = @iIndex+1
+    return oNowFindedView
+
+  remove_find_flag:(oTmpView) ->
+    oTmpView[0].innerHTML = oTmpView[0].innerText

@@ -16,7 +16,7 @@ class Dialog extends View
       @div outlet:'importLabelText', =>
         @label promptImport, class: 'icon', outlet: 'importLabelText'
       @div class:'off_param_div', outlet:'import_less_list'
-      @button class: 'btn btn-else btn-info inline-block-tight', click: 'add_import', "Add an Less"
+      @button class: 'btn btn-else btn-info inline-block-tight', click: 'add_import', "Add a Less"
 
       @div class: 'error-message', outlet: 'errorMessage'
       @button class: 'btn btn-else btn-info inline-block-tight', click: 'close', "Cancel"

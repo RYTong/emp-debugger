@@ -34,6 +34,14 @@ module.exports =
       type: 'boolean'
       default: false
 
+    defLogFilterFlag:
+      type: 'string'
+      default:','
+
+    defAPIData:
+      type: 'string'
+      default:'app=ebank&o=i'
+
   empDebuggerInitView: null
   empDebuggerStateView: null
   empDebuggerErrView: null
@@ -66,7 +74,8 @@ module.exports =
 
     EmpViewManage.activate(oLessCompile:@empLessAutocompile)
     conf_parser.initial_parser()
-
+    # snippets = require atom.packages.getActivePackage('snippets').mainModulePath
+    # snippets.loadAll()
   # convert: ->
     # @empDebuggerInitView.start_listen(@empDebuggerInitView)
     # @empDebuggerInitView = new empDebuggerInitView(n_state.empDebuggerInitViewState)

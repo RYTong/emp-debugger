@@ -77,7 +77,8 @@ compile_paser = (callback)->
   else
     erl_dir = path.join(__dirname, rel_erl_path, "*.erl")
     ebin_dir = path.join(__dirname, rel_erl_path)
-    erlc_str = 'erlc -o '+ebin_dir+' '+erl_dir+' -noshell -s erlang halt'
+    # erlc_str = 'erlc -o '+ebin_dir+' '+erl_dir+' -noshell -s erlang halt'
+    erlc_str = 'FOR %f in ('+erl_dir+') DO erlc -o '+ebin_dir+' %f '
     # console.log erlc_str
     c_process.exec erlc_str, (error, stdout, stderr) ->
       if (error instanceof Error)

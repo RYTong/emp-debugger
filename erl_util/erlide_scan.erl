@@ -34,13 +34,7 @@
 %% 173 - 176    { - ~        punctuation
 %% 177        DEL        control
 %% 200 - 237            control
-%% 240 - 277    NBSP - ¿    punctuation
-%% 300 - 326    À - Ö        uppercase
-%% 327        ×        punctuation
-%% 330 - 336    Ø - Þ        uppercase
-%% 337 - 366    ß - ö        lowercase
-%% 367        ÷        punctuation
-%% 370 - 377    ø - ÿ        lowercase
+
 %%
 
 -module(erlide_scan).
@@ -206,9 +200,6 @@ scan([C|Cs], _Stack, Toks, Pos, State, Errors)
   when C >= $\000, C =< $\s; C >= $\200, C =< $\240 ->  % Control chars
     scan_white(Cs, [C], Toks, Pos, State, Errors);
 scan([C|Cs], _Stack, Toks, Pos, State, Errors)
-  when C >= $a, C =< $z; C >= $ß, C =< $ÿ, C =/= $÷ ->   % Atoms
-    sub_scan_name(Cs, [C,fun scan_atom/6], Toks, Pos, State, Errors);
-scan([C|Cs], _Stack, Toks, Pos, State, Errors)
   when C >= $A, C =< $Z ->                              % Variables
     sub_scan_name(Cs, [C,fun scan_variable/6], Toks, Pos, State, Errors);
 scan([$_|Cs], _Stack, Toks, Pos, State, Errors) ->      % _Variables
@@ -356,9 +347,7 @@ sub_scan_name(Eof, Stack, Toks, Pos, State, Errors) ->
 	Fun(Eof, Name, Toks, Pos, State, Errors).
 
 name_char(C) when C >= $a, C =< $z -> true;
-name_char(C) when C >= $ß, C =< $ÿ, C =/= $÷ -> true;
 name_char(C) when C >= $A, C =< $Z -> true;
-name_char(C) when C >= $À, C =< $Þ, C =/= $× -> true;
 name_char(C) when C >= $0, C =< $9 -> true;
 name_char($_) -> true;
 name_char($@) -> true;
@@ -753,4 +742,3 @@ incrow({L, P}) ->
 
 incrow0({L, P}) ->
     {L+1, P}.
-

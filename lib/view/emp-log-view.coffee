@@ -82,9 +82,9 @@ class EmpDebuggerLogView extends View
         @span 'Log From The Script Of Views: '
 
 
-        @div class:'bar_div', =>
-          @button outlet:'showFindBtn', class: 'btn btn_right2 inline-block-tight', click: 'show_find', 'Find'
-          @button outlet:'showFilterBtn', class: 'btn btn_right2', click: 'show_filter', 'Show Filter'
+        @div class:'bar_div block', =>
+          @button outlet:'showFindBtn', class: 'btn btn_right2  inline-block-tight ', click: 'show_find', 'Find'
+          @button outlet:'showFilterBtn', class: 'btn btn_right2 ', click: 'show_filter', 'Show Filter'
           @select outlet: "lv_control", class: "select_bar"
           @select outlet: "line_control", class: "select_bar"
           @button class: 'btn btn_right2', click: 'clear_log', 'Clear'
@@ -103,14 +103,7 @@ class EmpDebuggerLogView extends View
             @button outlet:'doFindBtn', class: 'btn btn_top inline-block-tight', click: 'do_find', 'Find'
           @li class:'foot_rf_li', =>
             @button outlet:'doFindPreBtn', class: 'btn btn_top inline-block-tight', click: 'do_find_pre', 'Previous'
-            # @button outlet:'doFilterBtn1', class: 'btn btn_top inline-block-tight', click: 'do_find1', 'Find1'
-          # @li class:'foot_rf_li', =>
-          #   @div class:'btn-group', =>
-          #     @button outlet:'doFilterBtn', class: 'btn btn_top', click: 'do_filter', 'DoFilter'
-          #     @button outlet:'unFilterBtn', class: 'btn btn_top', click: 'un_filter', 'UnFilter'
 
-
-      # @ul class: 'log-console list-group', outlet:'listView'
       @div outlet:"emp_log_panel", class:'emp-log-panel',  =>
         @div outlet:"emp_log_view", id:'emp_log_view', class:'emp-log-view', =>
           @div outlet: 'emp_lineNumber', class: 'line-numbers'

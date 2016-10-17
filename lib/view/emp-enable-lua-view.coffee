@@ -1,4 +1,5 @@
 {$, $$, View, SelectListView} = require 'atom-space-pen-views'
+path = require 'path'
 emp = require '../exports/emp'
 relate_view = require './emp-relate-view'
 path_fliter = require '../util/path-loader'

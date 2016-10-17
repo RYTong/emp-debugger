@@ -457,7 +457,7 @@ deal_with_detail_msg_from_new_pro = (detai_msg, client_id) ->
   # console.log detai_msg
   new_data = detai_msg.split new_start_str
   # console.log new_data
-  result_con = ""
+  # result_con = ""
   for tmp_con in new_data
     if tmp_con?.trim().length > 2
       # result_con = tmp_con

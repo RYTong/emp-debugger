@@ -191,7 +191,7 @@ class EMPAPIDebuggView extends ScrollView
       else
         # console.log @oAPIObject
         @pack_name_editor.setText sFirstPack
-        @change_method_select(default_api_method)
+        @change_method_select(@default_api_method)
         # @api_method.val(default_api_method)
         @api_port.setText "4002"
         @api_data.setText "data"
@@ -207,7 +207,7 @@ class EMPAPIDebuggView extends ScrollView
     else
       # console.log @oAPIObject
       @pack_name_editor.setText @sDefaultPack
-      @change_method_select(default_api_method)
+      @change_method_select(@default_api_method)
       # @api_method.val(default_api_method)
       @api_port.setText "4002"
       @api_data.setText "data"

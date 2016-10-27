@@ -1,4 +1,4 @@
-{Disposable, CompositeDisposable} = require 'atom'
+{Disposable, CompositeDisposable, Emitter} = require 'atom'
 {$, $$, View, TextEditorView} = require 'atom-space-pen-views'
 EMPLog = require '../emp_log/emp_log'
 EMPLogMaps = require '../emp_log/emp_log_map'
@@ -122,6 +122,7 @@ class EmpDebuggerLogView extends View
 
 
   initialize: ()->
+    # @emitter = new Emitter()
     @oLogMaps = new EMPLogMaps()
     @line_number = 1
     @history = new Array()
@@ -154,7 +155,8 @@ class EmpDebuggerLogView extends View
         @lv_control.append @new_option lv_key,lv_val
 
     # 记住日志类型
-    @disposable.add @lv_control.change =>
+    # @disposable.add
+    @lv_control.change =>
 
       @lv_selected = @lv_control.val()
       @lv_map_val = lv_unmap[@lv_selected]
@@ -170,7 +172,9 @@ class EmpDebuggerLogView extends View
 
 
     # 记住用户的行数选择
-    @disposable.add @line_control.change =>
+    # @disposable.add
+    @line_control.change =>
+      # console.log "change line ----------"
       def_line_selected = @line_control.val()
       atom.config.set(emp.EMP_LOG_LINE_LIMIT_SELECTED, def_line_selected)
 
@@ -214,7 +218,8 @@ class EmpDebuggerLogView extends View
           @history_index = @history.length+1
           @lua_console.setText @current_input
 
-    @disposable.add @client_select.change =>
+    # @disposable.add
+    @client_select.change =>
       @selected_client = @client_select.val()
 
 
@@ -234,6 +239,11 @@ class EmpDebuggerLogView extends View
 
     @disposable.add atom.commands.add @log_find.element, 'core:confirm', =>
       @do_find()
+
+    # console.log "emiter on"
+    # @disposable.add @emitter.on 'did-lua-debug-log-stdout', (output) =>
+    #   console.log "----------------------------"
+    #   console.log output
 
     # @test()
   dispose: ->
@@ -780,9 +790,9 @@ class EmpDebuggerLogView extends View
     @test()
 
   test: ->
-    @store_log("test", "\nasdasd `    asda;")
-    @store_log("test", "------\nasdasd\n\n test functione longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong---")
-    @store_log("test", "------\nasdasd\n\n test longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong msg")
-    @store_log("test", "------\nasdasd\n\n test functione")
+    @store_log("test", "#ert#\nasdasd `    asda;")
+    @store_log("test", "#ert#------\nasdasd\n\n test functione longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong---")
+    @store_log("test", "#ert1#------\nasdasd\n\n test longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong msg")
+    @store_log("test", "#ert1#------\nasdasd\n\n test functione")
     @store_log("test", "------\nasdasd\n\n test functione")
     @store_log("test", "------\nasdasd\n\n test functione")

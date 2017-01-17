@@ -47,7 +47,7 @@ class emp_clients
     delete @clients_map[id]
     @obj_len -= 1
     @active_len -= 1 unless @active_len <=0
-    @log_storage.remove_client_log(id)
+    # @log_storage.remove_client_log(id)
 
 
   remove_all_client_socket: (id) ->

@@ -45,6 +45,9 @@ class emp_open_link
   serialize: ->
     pathCache: @pathCache
 
+  destroy: ->
+    @subscriptions.dispose()
+
   refresh: ->
     path_fliter.load_all_path_unignore "", (@path_list) =>
       # console.log @path_list

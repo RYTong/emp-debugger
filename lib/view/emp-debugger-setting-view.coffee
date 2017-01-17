@@ -497,12 +497,20 @@ class EmpDebuggerSettingView extends View
     show_state = @empDebuggerLogView.show_log_state()
     if show_state
       @empDebuggerLogView.hide_log_view()
-      @emp_showlog.context.innerHTML = "Show Log"
-      @refresh_log_st(@log_state_hide)
+      # @emp_showlog.context.innerHTML = "Show Log"
+      # @refresh_log_st(@log_state_hide)
     else
       @empDebuggerLogView.show_log()
-      @emp_showlog.context.innerHTML = "Hide Log"
-      @refresh_log_st(@log_state_show)
+      # @emp_showlog.context.innerHTML = "Hide Log"
+      # @refresh_log_st(@log_state_show)
+
+  show_log_callback: ->
+    @emp_showlog.context.innerHTML = "Hide Log"
+    @refresh_log_st(@log_state_show)
+
+  hide_log_callback: ->
+    @emp_showlog.context.innerHTML = "Show Log"
+    @refresh_log_st(@log_state_hide)
 
   clear_log: ->
     # console.log "clear_log"

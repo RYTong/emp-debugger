@@ -20,7 +20,7 @@ module.exports =
   config:
     defLimitOfLogLine:
       type: 'array'
-      default: [500, 1000, 2000, 5000, 10000]
+      default: [1000, 5000, 10000, 50000, 100000]
 
     defLimitOfLogLineSelected:
       type: 'integer'
@@ -41,6 +41,14 @@ module.exports =
     defAPIData:
       type: 'string'
       default:'app=ebank&o=i'
+
+    defOnlyShowFindedResult:
+      type: 'boolean'
+      default:true
+
+    defLogTimer:
+      type:'integer'
+      default: 2000
 
   empDebuggerInitView: null
   empDebuggerStateView: null
@@ -74,6 +82,7 @@ module.exports =
 
     EmpViewManage.activate(oLessCompile:@empLessAutocompile)
     conf_parser.initial_parser()
+
     # snippets = require atom.packages.getActivePackage('snippets').mainModulePath
     # snippets.loadAll()
   # convert: ->
@@ -105,7 +114,7 @@ module.exports =
   deactivate: ->
     # @empDebuggerInitView.destroy()
     # @empDebuggerStateView.destroy()
-    @empDebuggerErrView.destroy()
+    # @empDebuggerErrView.destroy()
     @empEnableView.destroy()
     @empEnableLuaView.destroy()
     @empDebuggerLogView.destroy()
@@ -115,7 +124,7 @@ module.exports =
     @emp_open_link.destroy()
     @empLessAutocompile.destroy()
     # @empTestPanel.destroy()
-    @empErlIndent.destroy()
+    # @empErlIndent.destroy()
 
   serialize: ->
     # empDebuggerStateViewState: @empDebuggerStateView.serialize()

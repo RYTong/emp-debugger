@@ -30,6 +30,8 @@ module.exports =
   EMP_ERL_INDENT_USE_TAB: 'emp-debugger.defErlangIndentUseTab'
   EMP_FILTER_FLAG:"emp-debugger.defLogFilterFlag"
   EMP_DEF_API_DATA:"emp-debugger.defAPIData"
+  EMP_LOG_SHOW_FIND_RESULT:'emp-debugger.defOnlyShowFindedResult'
+  EMP_LOG_TIMER:'emp-debugger.defLogTimer'
 
   DEFAULT_LESS_NAME:'untitled.less'
   DEFAULT_OUT_LESS_PATH:'../css/untitled.css'
@@ -39,6 +41,8 @@ module.exports =
   EMP_DEF_LOG_LINE_LIMIT:[500, 1000, 2000, 5000, 10000]
 
   EMP_DEF_LOG_TYPE:"lua"
+
+  EMP_DEF_CLIENT:"All"
 
   EMP_NODE_NAME :'emp-debugger.Default-EMP-NODE-NAME'
   EMP_NODE_COOKIE :'emp-debugger.Default-EMP-NODE-COOKIE'

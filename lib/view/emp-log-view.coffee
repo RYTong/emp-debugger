@@ -7,7 +7,7 @@ _ = require 'underscore-plus'
 # default_client_id = 'All'
 emp = require '../exports/emp'
 default_history_length=30
-default_lv = "1"
+iDefaultLv = "1"
 
 lv_list = ["lua", "i", "w", "e"]
 lv_lua = "lua"
@@ -35,7 +35,7 @@ lv_val_lcli = "8"
 lv_val_lcle = "9"
 lv_val_lclie = "10"
 
-lv_map = [{key:"Only Lua",val:"1"},
+aGLogMap = [{key:"Only Lua",val:"1"},
           {key:"All Client",val: "2"},
           {key:"Lua & All Client",val:"3"},
           {key:"Client Info",val: "4"},
@@ -71,6 +71,7 @@ class EmpDebuggerLogView extends View
   stop_state: false
   sSelectClient: emp.EMP_DEF_CLIENT
   aFlagsList:["#", "#"]
+  bLogRefrsh: false
 
   @content: ->
     @div class: 'emp-log-pane tool-panel pannel panel-bottom padding', =>
@@ -103,6 +104,14 @@ class EmpDebuggerLogView extends View
             @label "日志行数限制:"
           @li class:'foot_li_sel', =>
             @select outlet: "line_control", title:"Log Line Limit", class: "select_bar"
+        @ul class:'foot_ul', =>
+          @li class:'foot_li_label', =>
+            @label "有新日志时,显示最新:"
+          # @li class:'foot_li_sel', =>
+          #   @select outlet: "line_control", title:"Log Line Limit", class: "select_bar"
+          @li class:'foot_li_find', =>
+            @input outlet:'doScrollBottom', class:'input-checkbox', type:'checkbox', checked:'true', click:'do_scroll_bottom'
+            @span class:"span_filter", "Scroll To Bottom"
       @div class: 'emp_footer panel-heading padded',outlet:'find_div',style:"display:none;", =>
         @ul class:'foot_ul', =>
           @li class:'foot_li_find_lf', =>
@@ -128,7 +137,7 @@ class EmpDebuggerLogView extends View
           #   @button class: 'btn ', click: 'do_stop', 'Stop'
 
 
-  initialize: ()->
+  initialize: ()=>
     # @emitter = new Emitter()
     @oLogMaps = new EMPLogMaps()
     @line_number = 1
@@ -138,9 +147,16 @@ class EmpDebuggerLogView extends View
     @current_input = ""
     @sShowFilter = atom.config.get(emp.EMP_LOG_SHOW_FIND_RESULT)
 
-    unless @sShowFilter isnt null
+    unless @sShowFilter
       @sShowFilter = true
     @showFilterRe.prop('checked', @sShowFilter) # 设置 checkbox 的状态
+
+    @bDoScrollBottom = atom.config.get(emp.EMP_LOG_SCROLL_TO_BOTTOM)
+    unless @bDoScrollBottom
+      @bDoScrollBottom = true
+      atom.config.set(emp.EMP_LOG_SCROLL_TO_BOTTOM, @bDoScrollBottom)
+    @doScrollBottom.prop('checked', @bDoScrollBottom) # 设置 checkbox 的状态
+
     @disposable = new CompositeDisposable
 
     # 设置日志限制数列表,及默认限制数
@@ -153,6 +169,7 @@ class EmpDebuggerLogView extends View
     # 设置默认行数
     for log_line in @log_line_limit
       if log_line is @def_line_limit_sel
+
         @line_control.append @new_select_option log_line, log_line
       else
         @line_control.append @new_option log_line, log_line
@@ -163,12 +180,18 @@ class EmpDebuggerLogView extends View
       atom.config.set(emp.EMP_LOG_LINE_LIMIT_SELECTED, @sLineSelected)
 
     # 设置默认日志类型
-    for tmp_lv in lv_map
+    # emp.EMP_LOG_TYPE_SELECTED
+    unless @iDefLogLv = atom.config.get(emp.EMP_LOG_LEVEL_SELECTED)
+      @iDefLogLv = iDefaultLv
+      atom.config.set(emp.EMP_LOG_LEVEL_SELECTED, emp.iDefaultLv)
+    # console.log @iDefLogLv
+    for tmp_lv in aGLogMap
       lv_key = tmp_lv.key
       lv_val = tmp_lv.val
-      if lv_val is default_lv
+      if lv_val is @iDefLogLv
         @lv_selected = lv_val
         @lv_map_val = lv_unmap[@lv_selected]
+        # console.log "select:",lv_key,lv_val
         @lv_control.append @new_select_option lv_key,lv_val
       else
         @lv_control.append @new_option lv_key,lv_val
@@ -177,6 +200,8 @@ class EmpDebuggerLogView extends View
     @lv_control.change =>
       @lv_selected = @lv_control.val()
       @lv_map_val = lv_unmap[@lv_selected]
+      console.log @lv_selected
+      atom.config.set(emp.EMP_LOG_LEVEL_SELECTED, @lv_selected)
 
 
 
@@ -238,6 +263,7 @@ class EmpDebuggerLogView extends View
     clearInterval @iTimer
     @iTimer = null
     @panel = null
+
 
   serialize: ->
     attached: @hasParent()
@@ -450,6 +476,9 @@ class EmpDebuggerLogView extends View
     # unless !aFindedLog
       # @emp_log_view.scrollTop(aFindedLog[0].offsetTop)
 
+  do_scroll_bottom:()=>
+    @bDoScrollBottom = @doScrollBottom.prop('checked')
+    atom.config.set(emp.EMP_LOG_SCROLL_TO_BOTTOM, @bDoScrollBottom)
 
   # 是否只显示日志
   show_filter:() =>
@@ -527,6 +556,7 @@ class EmpDebuggerLogView extends View
       @emp_lineNumber.empty()
     @oLogMsgsFindedArr =[]
     @sPreFindLog=""
+    @bLogRefrsh = false
     @clear_store_log()
 
 
@@ -593,58 +623,70 @@ class EmpDebuggerLogView extends View
   # set time interval
   refresh_find_state:false
   timeInterVal:() =>
-    # console.log "now is interval"
+    console.log "now is interval"
 
     # console.log @oLogBuffer
     # TODO 判断是否为暂停,等状态, 并清空缓存
-    unless @panel
-      @oLogBuffer = {}
-      @oLogMaps.clear_log_buffer()
-      return
+    unless !@bLogRefrsh
+      unless @panel
+        @oLogBuffer = {}
+        @oLogMaps.clear_log_buffer()
+        return
 
-    unless this.isVisible()
-      return
+      # unless this.isVisible()
+      #   return
 
-    unless !@stop_state
-      return
+      unless !@stop_state
+        return
 
-    iStartLn = @get_line_number_count()
-    # console.log "start line: #{iStartLn}, line:#{@line_number}"
+      iStartLn = @get_line_number_count()
+      # console.log "start line: #{iStartLn}, line:#{@line_number}"
 
-    # 超过设定行数 清除日志
-    if iStartLn > @sLineSelected
-      @clear_log()
+      # 超过设定行数 清除日志
+      if iStartLn > @sLineSelected
+        @clear_log()
 
-    if @sSelectClient isnt emp.EMP_DEF_CLIENT
-      tmpLogBuf = @oLogMaps.get_log_buf(@sSelectClient)
-      if tmpLogBuf.length > 0
-        @set_refresh_state(true)
-      @append_log(@sSelectClient, tmpLogBuf)
-    else
-      oLogMap = @oLogMaps.get_all_buf()
-      # console.log oLogMap
-      for sClientID , aLogBuf of oLogMap
-        if aLogBuf.length > 0
+      if @sSelectClient isnt emp.EMP_DEF_CLIENT
+        tmpLogBuf = @oLogMaps.get_log_buf(@sSelectClient)
+        @bLogRefrsh = false
+        if tmpLogBuf.length > 0
           @set_refresh_state(true)
-        @append_log(sClientID, aLogBuf)
+          @append_log(@sSelectClient, tmpLogBuf)
+          @append_ln()
+          unless !@bDoScrollBottom
+            @emp_log_view.scrollToBottom()
+      else
+        oLogMap = @oLogMaps.get_all_buf()
+        @bLogRefrsh = false
+        # console.log oLogMap
+        bTmpFlag = true
+        for sClientID , aLogBuf of oLogMap
+          if aLogBuf.length > 0
+            bTmpFlag = false
+            @set_refresh_state(true)
+            @append_log(sClientID, aLogBuf)
+        unless bTmpFlag
+          @append_ln()
+          unless !@bDoScrollBottom
+            @emp_log_view.scrollToBottom()
+        # @oLogMaps.clear_log_buffer_by_limit(@sLineSelected)
 
-      # @oLogMaps.clear_log_buffer_by_limit(@sLineSelected)
-    @append_ln()
 
     # @emp_log_view.scrollToBottom()
     # @update_log(sClientID, sLogMsg, sShowColor, log_con_color)
     # @update_gutter(sShowColor, start_color_ln, sClientID)
 
   append_log:(sClientID, aLogBuf)->
-    return unless aLogBuf.length > 0
+    # return unless aLogBuf.length > 0
     sShowColor = @oLogMaps.get_log_col(sClientID)
     oTmpView =  $$ ->
+      @pre id:"log_#{sClientID}",class: "emp-log-con #{sLogConColor}",style:"color:#{sShowColor};padding:0px;", "<#{sClientID}>: ----------------------"
       for oLog in aLogBuf
         sLogMsg = oLog.log
         sLogConColor = oLog.color
         for sTmpLog in sLogMsg.split("\n")
           if sTmpLog isnt "" and sTmpLog isnt " "
-            @pre id:"log_#{sClientID}",class: "emp-log-con #{sLogConColor}",style:"color:#{sShowColor};padding:0px;", "<#{sClientID}>: #{sTmpLog}"
+              @pre id:"log_#{sClientID}",class: "emp-log-con #{sLogConColor}",style:"color:#{sShowColor};padding:0px;", "#{sTmpLog}"
     @log_detail.append oTmpView
 
   append_ln:()->
@@ -663,6 +705,7 @@ class EmpDebuggerLogView extends View
 
   store_log: (sClientID, sLogMsg, sLogLv=emp.EMP_DEF_LOG_TYPE) ->
     # console.log client_id, log, log_lv
+    @bLogRefrsh = true
     if !@stop_state
       # @store_log_buf(sClientID, sLogLv, sLogMsg)
       if (@sSelectClient is emp.EMP_DEF_CLIENT) or (@sSelectClient is sClientID)
@@ -681,7 +724,7 @@ class EmpDebuggerLogView extends View
     # console.log log_obj
     iLogLv = oLog.level.toLowerCase()
     sLog = emp.base64_decode oLog.message
-    @store_log(sClientID, log_msg, iLogLv)
+    @store_log(sClientID, sLog, iLogLv)
 
 
   refresh_conf_view: (client_id, color)->
@@ -786,8 +829,9 @@ class EmpDebuggerLogView extends View
     @client_disconnect("test")
 
   do_test: ->
-    @do_test_pre("test")
-    @do_test_pre("asd11111")
+    for i in [0..30]
+      @do_test_pre("test")
+    # @do_test_pre("asd11111")
 
   do_test_pre:(sClientID = "test") ->
     unless @oLogMaps.has_log(sClientID)
@@ -800,4 +844,7 @@ class EmpDebuggerLogView extends View
     @store_log(sClientID, "#ert1#------\nasdasd\n\n test longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong msg")
     @store_log(sClientID, "#ert1#------\nasdasd\n\n test functione")
     @store_log(sClientID, "-\t-----\nasdasd\n\n test functione")
-    @store_log(sClientID, "------\nasdasd\n\n test functione")
+    @store_log(sClientID, "111111111111111------\nasdasd\n\n test functione")
+    @store_log(sClientID, "2222222222222222#ert1#------\nasdasd\n\n test functione")
+    @store_log(sClientID, "3333333333333333-\t-----\nasdasd\n\n test functione")
+    @store_log(sClientID, "4444444444444444------\nasdasd\n\n test functione")

@@ -50,6 +50,10 @@ module.exports =
       type:'integer'
       default: 2000
 
+    defLogLevelSelected:
+      type: 'string'
+      default: "1"
+
   empDebuggerInitView: null
   empDebuggerStateView: null
   empDebuggerErrView: null
@@ -81,7 +85,7 @@ module.exports =
     }
 
     EmpViewManage.activate(oLessCompile:@empLessAutocompile)
-    conf_parser.initial_parser()
+    # conf_parser.initial_parser()
 
     # snippets = require atom.packages.getActivePackage('snippets').mainModulePath
     # snippets.loadAll()

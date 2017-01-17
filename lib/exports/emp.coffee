@@ -22,6 +22,7 @@ module.exports =
   EMP_LINK_UNIGNORE_CONF :'emp-debugger.EMP-Link-Unignore'
   EMP_LOG_LINE_LIMIT :'emp-debugger.defLimitOfLogLine'
   EMP_LOG_LINE_LIMIT_SELECTED :'emp-debugger.defLimitOfLogLineSelected'
+  EMP_LOG_LEVEL_SELECTED :'emp-debugger.defLogLevelSelected'
   EMP_ERL_SOURCE_PATH: 'emp-debugger.erl_source_path'
   EMP_EWP_SOURE_PATH: 'emp-debugger.ewp_source_path'
   EMP_YAWS_SOURCE_PATH: 'emp-debugger.yaws_source_path'

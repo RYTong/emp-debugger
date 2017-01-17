@@ -199,6 +199,9 @@
       min-width: 300px;
       right:5px;
       margin:2px;
+      display: -webkit-flex;
+      -webkit-flex-direction: row;
+      justify-content:space-between;
 
         .btn_right {
           right:0;
@@ -208,6 +211,16 @@
         .btn_right2 {
           // right:5px;
           margin-right: 5px;
+          top:0;
+        }
+
+        .span-else {
+          margin: 1px 10px 0 5px;
+          top:0;
+        }
+        .span-right {
+          right:0px;
+          // margin: 1px 10px 0 5px;
           top:0;
         }
 
@@ -241,7 +254,22 @@
       display: -webkit-flex;
       padding-left:@component-padding/2;
       // border-bottom: 1px solid #858585;
-
+      .foot_li_label {
+        -webkit-flex-direction: column;
+        display: -webkit-flex;
+        -webkit-flex: 0.2;
+        margin-left:@component-padding/4;
+        margin-right:@component-padding/4;
+        padding-top: @component-padding/2;
+      }
+      .foot_li_sel {
+        -webkit-flex-direction: column;
+        display: -webkit-flex;
+        -webkit-flex: 0.3;
+        margin-left:@component-padding/4;
+        margin-right:@component-padding/4;
+        padding-top: @component-padding/2;
+      }
       .foot_lf_li {
         -webkit-flex-direction: column;
         display: -webkit-flex;
@@ -264,15 +292,66 @@
         margin-left:@component-padding/4;
         margin-right:@component-padding/4;
         padding-top: @component-padding/2;
+        // flex-wrap: nowrap;
 
         .btn_top {
           top:0px;
         }
+        .label {
+          margin-right: 10px;
+          // right:20px;
+          top:0;
+          // display: inline-block;
+        }
       }
+      .foot_li_find {
+        -webkit-flex-direction: row;
+        display: -webkit-flex;
+        -webkit-flex: 0.2;
+        margin-left:@component-padding/4;
+        margin-right:@component-padding/4;
+        padding-top: @component-padding/2;
+        // flex-wrap: nowrap;
+
+        .btn_top {
+          top:0px;
+        }
+        .span_filter {
+          margin-left: 5px;
+
+        }
+
+      }
+
+      .foot_li_find_lf {
+        -webkit-flex-direction: column;
+        display: -webkit-flex;
+        -webkit-flex: 0.5;
+        margin-left:@component-padding/4;
+        margin-right:@component-padding/4;
+        atom-text-editor[mini],
+        atom-text-editor[mini].is-focused::shadow {
+          // color: @text-color;
+          color: #333333;
+          background-color: #FAFFFF;
+          // padding: 6px 12px;
+
+          .cursor {
+            border-color: #000;
+          }
+          .selection .region {
+            background-color: rgba(0, 0, 0, .2)
+          }
+          .placeholder-text {
+            color: #888;
+          }
+        }
+      }
+
       .foot_li {
         -webkit-flex-direction: column;
         display: -webkit-flex;
-        -webkit-flex: 0.7;
+        -webkit-flex: 0.8;
         margin-left:@component-padding/4;
         margin-right:@component-padding/4;
         atom-text-editor[mini],
@@ -326,7 +405,7 @@
         min-width: 0;
         position: absolute;
         opacity: 0.6;
-        overflow:auto;
+        overflow:hidden;
 
         .emp-log-con{
           color:#FFFFFF;
@@ -341,6 +420,8 @@
           left:0;
           font-size: 1.2em;
           line-height: 1.3em;
+          white-space: pre-wrap;
+          word-wrap: break-word;
         }
 
         .emp_log_selected{
@@ -455,4 +536,41 @@
   box-sizing: border-box;
   background-color: #fff;
   padding: 10px;
+}
+
+.icon-pointer {
+  cursor: pointer;
+}
+
+.icon {
+  &,
+  &:active,
+  &.active {
+    &:focus,
+    &.focus {
+      .tab-focus();
+    }
+  }
+
+  &:hover,
+  &:focus,
+  &.focus {
+    color: @text-color-highlight;
+    text-decoration: none;
+  }
+
+  &:active,
+  &.active {
+    outline: 0;
+    background-image: none;
+    // .box-shadow(inset 0 3px 5px rgba(0,0,0,.125));
+  }
+}
+
+.tab-focus() {
+  // Default
+  outline: thin dotted;
+  // WebKit
+  outline: 5px auto -webkit-focus-ring-color;
+  outline-offset: -2px;
 }

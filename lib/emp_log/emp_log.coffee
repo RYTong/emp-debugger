@@ -9,19 +9,31 @@ class EMPLog
   constructor: (@id, @color)->
     @log_arr = []
     @glo_color = atom.config.get(emp.EMP_LOG_GLOBAL_COLOR)
+    @sLineSelected = atom.config.get(emp.EMP_LOG_LINE_LIMIT_SELECTED)
+    @sLineSelected ?= 1000
 
 
-  put_log: (log)->
-    if @log_arr.length > 2000
+  store_log: (sLogLv, sLvColor, sLogDetail)->
+    if @log_arr.length > @sLineSelected
       @log_arr = []
-    @log_arr.push(log)
+    oNewBuf = {lv:sLogLv, log:sLogDetail, color:sLvColor}
+    @log_arr.push(oNewBuf)
 
 
   get_log: ->
     @log_arr
 
-  reset_log: ->
+  get_and_clear:() ->
+    aTmpA = @log_arr
     @log_arr = []
+    return aTmpA
+
+  clear_log: ->
+    @log_arr = []
+
+
+
+
 
   get_color: ->
     if @glo_color
@@ -36,3 +48,12 @@ class EMPLog
 
   get_id: ->
     @id
+
+  store_oView:(@oOption) ->
+
+  get_oView:() ->
+    return @oOption
+
+  remove_oView:() ->
+    @oOption.remove()
+    return

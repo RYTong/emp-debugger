@@ -47,7 +47,7 @@ class emp_socket
 
     new_client = emp_client_map.new_client(remotePort, socket) #创建新的client 对象
     emp_conf_view.refresh_state_pane_ln() unless !emp_conf_view# 刷新状态页面链接数量
-    log_storage.add_clients(remotePort)
+    log_storage.client_connect(remotePort)
 
     buffers = ''
     #  设置监听--接受消息的方法
@@ -89,7 +89,7 @@ class emp_socket
     socket.on 'close', (data) ->
       console.log 'Client close:', remotePort
       emp_client_map.remove_client_socket(remotePort) # 清除client 的socket状态
-      # log_storage.remove_client_log(remotePort) # 清除
+      log_storage.client_disconnect(remotePort) # 清除
       emp_conf_view.remove_client(remotePort) unless !emp_conf_view
 
 
@@ -311,6 +311,18 @@ class emp_socket
       emp_server = null
       emp_server_error = null
 
+  destroy: () ->
+    try
+      if emp_server
+        emp_client_map.close_all_socket()
+        emp_server.close()
+        emp_server_state = false
+        emp_server = null
+        emp_server_error = null
+    catch exc
+      emp_server_state = false
+      emp_server = null
+      emp_server_error = null
 
   get_server: ->
     emp_server
@@ -347,12 +359,18 @@ class emp_socket
       lua_obj = {"lua_console": emp.base64_encode lua_code}
       lua_json_str = JSON.stringify lua_obj
       lua_json_str = new_start_str+lua_json_str+new_end_str
-      all_socket = emp_client_map.get_all_socket()
-      new_p_socket = all_socket.new_p
-      # console.log lua_json_str
-      # console.log new_p_socket
-      for socket_m in new_p_socket
-        socket_m.write(lua_json_str)
+
+      if client_id
+        oSocket = emp_client_map.get_client_socket(client_id)
+        oSocket.write?(lua_json_str)
+      else
+        all_socket = emp_client_map.get_all_socket()
+
+        new_p_socket = all_socket.new_p
+        # console.log lua_json_str
+        # console.log new_p_socket
+        for socket_m in new_p_socket
+          socket_m.write?(lua_json_str)
     else
       console.log "do nothing"
   # argsContent = message.split "#EditorContent#"

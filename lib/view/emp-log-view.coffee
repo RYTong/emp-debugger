@@ -104,6 +104,14 @@ class EmpDebuggerLogView extends View
             @label "日志行数限制:"
           @li class:'foot_li_sel', =>
             @select outlet: "line_control", title:"Log Line Limit", class: "select_bar"
+        @ul class:'foot_ul', =>
+          @li class:'foot_li_label', =>
+            @label "有新日志时,显示最新:"
+          # @li class:'foot_li_sel', =>
+          #   @select outlet: "line_control", title:"Log Line Limit", class: "select_bar"
+          @li class:'foot_li_find', =>
+            @input outlet:'doScrollBottom', class:'input-checkbox', type:'checkbox', checked:'true', click:'do_scroll_bottom'
+            @span class:"span_filter", "Scroll To Bottom"
       @div class: 'emp_footer panel-heading padded',outlet:'find_div',style:"display:none;", =>
         @ul class:'foot_ul', =>
           @li class:'foot_li_find_lf', =>
@@ -124,12 +132,12 @@ class EmpDebuggerLogView extends View
         @ul class:'foot_ul', =>
           @li class:'foot_li', =>
             @subview 'lua_console', new TextEditorView(mini: true, attributes: {id: 'lua_console', type: 'string'},  placeholderText: 'Lua Console')
-          @li class:'foot_lf_li', =>
-            @button class: 'btn ', click: 'do_test', 'Test'
-            @button class: 'btn ', click: 'do_stop', 'Stop'
+          # @li class:'foot_lf_li', =>
+          #   @button class: 'btn ', click: 'do_test', 'Test'
+          #   @button class: 'btn ', click: 'do_stop', 'Stop'
 
 
-  initialize: ()->
+  initialize: ()=>
     # @emitter = new Emitter()
     @oLogMaps = new EMPLogMaps()
     @line_number = 1
@@ -139,9 +147,16 @@ class EmpDebuggerLogView extends View
     @current_input = ""
     @sShowFilter = atom.config.get(emp.EMP_LOG_SHOW_FIND_RESULT)
 
-    unless @sShowFilter isnt null
+    unless @sShowFilter
       @sShowFilter = true
     @showFilterRe.prop('checked', @sShowFilter) # 设置 checkbox 的状态
+
+    @bDoScrollBottom = atom.config.get(emp.EMP_LOG_SCROLL_TO_BOTTOM)
+    unless @bDoScrollBottom
+      @bDoScrollBottom = true
+      atom.config.set(emp.EMP_LOG_SCROLL_TO_BOTTOM, @bDoScrollBottom)
+    @doScrollBottom.prop('checked', @bDoScrollBottom) # 设置 checkbox 的状态
+
     @disposable = new CompositeDisposable
 
     # 设置日志限制数列表,及默认限制数
@@ -461,6 +476,9 @@ class EmpDebuggerLogView extends View
     # unless !aFindedLog
       # @emp_log_view.scrollTop(aFindedLog[0].offsetTop)
 
+  do_scroll_bottom:()=>
+    @bDoScrollBottom = @doScrollBottom.prop('checked')
+    atom.config.set(emp.EMP_LOG_SCROLL_TO_BOTTOM, @bDoScrollBottom)
 
   # 是否只显示日志
   show_filter:() =>
@@ -635,6 +653,8 @@ class EmpDebuggerLogView extends View
           @set_refresh_state(true)
           @append_log(@sSelectClient, tmpLogBuf)
           @append_ln()
+          unless !@bDoScrollBottom
+            @emp_log_view.scrollToBottom()
       else
         oLogMap = @oLogMaps.get_all_buf()
         @bLogRefrsh = false
@@ -647,6 +667,8 @@ class EmpDebuggerLogView extends View
             @append_log(sClientID, aLogBuf)
         unless bTmpFlag
           @append_ln()
+          unless !@bDoScrollBottom
+            @emp_log_view.scrollToBottom()
         # @oLogMaps.clear_log_buffer_by_limit(@sLineSelected)
 
 
@@ -655,7 +677,7 @@ class EmpDebuggerLogView extends View
     # @update_gutter(sShowColor, start_color_ln, sClientID)
 
   append_log:(sClientID, aLogBuf)->
-    return unless aLogBuf.length > 0
+    # return unless aLogBuf.length > 0
     sShowColor = @oLogMaps.get_log_col(sClientID)
     oTmpView =  $$ ->
       @pre id:"log_#{sClientID}",class: "emp-log-con #{sLogConColor}",style:"color:#{sShowColor};padding:0px;", "<#{sClientID}>: ----------------------"

@@ -32,6 +32,7 @@ module.exports =
   EMP_FILTER_FLAG:"emp-debugger.defLogFilterFlag"
   EMP_DEF_API_DATA:"emp-debugger.defAPIData"
   EMP_LOG_SHOW_FIND_RESULT:'emp-debugger.defOnlyShowFindedResult'
+  EMP_LOG_SCROLL_TO_BOTTOM:'emp-debugger.defScrollToBottom'
   EMP_LOG_TIMER:'emp-debugger.defLogTimer'
 
   DEFAULT_LESS_NAME:'untitled.less'

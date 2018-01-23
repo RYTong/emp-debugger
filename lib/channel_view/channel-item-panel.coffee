@@ -47,7 +47,7 @@ class ChannelItemPanel extends View
   refresh_cha_list:(@new_all_obj) ->
     # console.log new_all_obj
     @gen_cha_list.empty()
-    cha_obj = @new_all_obj.cha.obj_list
+    cha_obj = @new_all_obj?.cha.obj_list
     for n, obj of cha_obj
       tmp_item = new ChaItemView(obj)
       # @cha_view_list[obj.id] = tmp_item
@@ -136,9 +136,13 @@ class ChannelItemPanel extends View
 
   dl_al_adapter:(e, element) ->
     # console.log "dl all adapter"
-    cha_obj = @new_all_obj.cha.obj_list
-    # console.log cha_obj
-    @emp_package_all_view.show_view(this, cha_obj)
+    if @new_all_obj
+      cha_obj = @new_all_obj?.cha.obj_list
+      # console.log cha_obj
+      @emp_package_all_view.show_view(this, cha_obj)
+    else
+      emp.show_warnning("抱歉,本地没有安装 erlang ,无法为您打包~")
+
 
   refresh_add_cha: (cha_obj)->
     tmp_item = new ChaItemView(cha_obj)

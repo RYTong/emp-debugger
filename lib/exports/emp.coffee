@@ -2,8 +2,8 @@
 fs = require 'fs'
 path = require 'path'
 os = require 'os'
-remote = require 'remote'
-dialog = remote.require 'dialog'
+{ dialog } = require('electron').remote
+
 
 module.exports =
   parser_beam_file_mod : 'atom_pl_parse_json'

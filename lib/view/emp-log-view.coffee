@@ -564,7 +564,7 @@ class EmpDebuggerLogView extends View
   #close and clear the log pane
   close_log_view: ->
     # console.log "close1"
-    if @panel()
+    if @panel
       @clear_log()
       @detach()
       @show_state = false

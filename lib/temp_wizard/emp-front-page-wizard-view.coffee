@@ -1,5 +1,6 @@
 {$, $$, ScrollView, TextEditorView} = require 'atom-space-pen-views'
-{ dialog } = require('electron').remote
+remote = require 'remote'
+dialog = remote.Dialog
 fs = require 'fs'
 path = require 'path'
 # EmpEditView = require '../channel_view/item-editor-view'

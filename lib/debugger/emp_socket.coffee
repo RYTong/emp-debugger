@@ -60,26 +60,28 @@ class emp_socket
       # console.log data
       # console.log buffers
 
-      if String(data).indexOf(old_start_str) == 0  # data以"EditorMessageStart"开头
-        #  标示是否为新协议
-
-        data_flag = false
-        if (String(data).lastIndexOf(old_end_str) == String(data).length - String(old_end_str).length - tailFlag)
-          deal_with_msg_detail(data_flag, data, remotePort, new_client)
-        else
-          buffers += data
-      else if String(data).indexOf(new_start_str) == 0  # data以"#s#"开头
+      # if String(data).indexOf(old_start_str) == 0  # data以"EditorMessageStart"开头
+      #   #  标示是否为新协议
+      #
+      #   data_flag = false
+      #   if (String(data).lastIndexOf(old_end_str) == String(data).length - String(old_end_str).length - tailFlag)
+      #     deal_with_msg_detail(data_flag, data, remotePort, new_client)
+      #   else
+      #     buffers += data
+      # else
+      if String(data).indexOf(new_start_str) == 0  # data以"#s#"开头
         data_flag = true
         if (String(data).lastIndexOf(new_end_str) == String(data).length - String(new_end_str).length - tailFlag)
           deal_with_msg_detail(data_flag, data, remotePort, new_client)
         else
           buffers += data
       else
-        if (String(data).lastIndexOf(old_end_str) == String(data).length - String(old_end_str).length - tailFlag)
-          buffers += data
-          deal_with_msg_detail(data_flag=false, buffers, remotePort, new_client)
-          buffers = ''
-        else if (String(data).lastIndexOf(new_end_str) == String(data).length - String(new_end_str).length - tailFlag)
+        # if (String(data).lastIndexOf(old_end_str) == String(data).length - String(old_end_str).length - tailFlag)
+        #   buffers += data
+        #   deal_with_msg_detail(data_flag=false, buffers, remotePort, new_client)
+        #   buffers = ''
+        # else
+        if (String(data).lastIndexOf(new_end_str) == String(data).length - String(new_end_str).length - tailFlag)
           buffers += data
           deal_with_msg_detail(data_flag=true, buffers, remotePort, new_client)
           buffers = ''
@@ -433,33 +435,34 @@ class emp_socket
 
 
 deal_with_msg_detail =(data_flag=false, data, client_id, new_client) ->
+  # console.log "income:", data
   new_client.set_protocal_type(data_flag)
   # console.log data
-  if !data_flag
-    dealWithMessageFromTarget(data, client_id)
-  else
-    deal_with_msg_from_new_pro(data, client_id)
+  # if !data_flag
+  #   dealWithMessageFromTarget(data, client_id)
+  # else
+  deal_with_msg_from_new_pro(data, client_id)
 
-dealWithMessageFromTarget = (data, client_id) ->
-  # console.log "line: #{data}"
+# dealWithMessageFromTarget = (data, client_id) ->
+#   # console.log "line: #{data}"
+#
+#   dataList = []
+#   dataList = data.split old_end_str
+#   dealWithOneMessage(key + old_end_str, client_id) for key in dataList
 
-  dataList = []
-  dataList = data.split old_end_str
-  dealWithOneMessage(key + old_end_str, client_id) for key in dataList
 
-
-dealWithOneMessage = (message, client_id) ->
-  # console.log "+++++++++++++++++++++++++++dealWithOneMessage+++++++++++++++++++++++++++++"
-  # console.log "信息: #{message}"
-  # console.log "--------- message log -----------"
-  # console.log message
-  argsLog = message.split old_log_str
-  # console.log argsLog
-  # console.log argsLog
-  if argsLog.length == 3
-    logInfo = argsLog[1]
-    log_storage.store_log(client_id, logInfo)
-  emp_client_map.store_view(client_id, message)
+# dealWithOneMessage = (message, client_id) ->
+#   # console.log "+++++++++++++++++++++++++++dealWithOneMessage+++++++++++++++++++++++++++++"
+#   # console.log "信息: #{message}"
+#   # console.log "--------- message log -----------"
+#   # console.log message
+#   argsLog = message.split old_log_str
+#   # console.log argsLog
+#   # console.log argsLog
+#   if argsLog.length == 3
+#     logInfo = argsLog[1]
+#     log_storage.store_log(client_id, logInfo)
+#   emp_client_map.store_view(client_id, message)
 
 deal_with_msg_from_new_pro = (data, client_id) ->
   # console.log data

@@ -1,6 +1,7 @@
 {Disposable, CompositeDisposable} = require 'atom'
 {$, $$, ScrollView, TextEditorView} = require 'atom-space-pen-views'
-{ dialog } = require('electron').remote
+remote = require 'remote'
+dialog = remote.Dialog
 fs = require 'fs'
 fs_plus = require 'fs-plus'
 path = require 'path'

@@ -2,7 +2,8 @@
 fs = require 'fs'
 path = require 'path'
 os = require 'os'
-{ dialog } = require('electron').remote
+remote = require 'remote'
+dialog = remote.Dialog
 
 
 module.exports =
@@ -516,6 +517,7 @@ module.exports.chose_path_d = (callback)->
   @chose_path(['openFile', 'openDirectory'], '', callback)
 
 module.exports.chose_path = (opts=['openFile', "openDirectory"], def_path, callback)->
+  console.log dialog
   dialog.showOpenDialog title: 'Select', defaultPath:def_path, properties: opts, (cho_path) =>
     if cho_path
       if callback

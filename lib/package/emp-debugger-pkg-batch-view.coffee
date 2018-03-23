@@ -1,6 +1,7 @@
 {Disposable, CompositeDisposable} = require 'atom'
 {$, $$, View} = require 'atom-space-pen-views'
-{ dialog } = require('electron').remote
+remote = require 'remote'
+dialog = remote.Dialog
 ZipWriter = require("moxie-zip").ZipWriter
 event = (require 'events').EventEmitter
 
